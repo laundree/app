@@ -6,8 +6,8 @@
 'use strict';
 import React from 'react';
 import {AppRegistry} from 'react-native';
-import QrCodeScanner from './src/QrCodeScanner';
+import MainRouter from './src/MainRouter'
 
-const LaundreeApp = () => <QrCodeScanner/>
+const LaundreeApp = () => <MainRouter/>
 
 AppRegistry.registerComponent('LaundreeApp', () => LaundreeApp);
