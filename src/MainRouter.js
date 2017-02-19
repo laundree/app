@@ -8,7 +8,10 @@ import Login from './Login'
 import Timetable from './Timetable'
 
 export default class MainRouter extends React.Component {
-    render () {
-        return <Timetable/>;
+    render() {
+        return <Timetable
+            currentUser={this.props.currentUser}
+            laundry={this.props.laundry}
+        />
     }
 }
