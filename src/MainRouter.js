@@ -9,6 +9,6 @@ import Timetable from './Timetable'
 
 export default class MainRouter extends React.Component {
     render () {
-        return <QrCodeScanner/>;
+        return <Timetable/>;
     }
 }
