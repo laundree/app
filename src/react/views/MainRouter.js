@@ -3,20 +3,27 @@
  */
 
 import React from 'react'
-import QrCodeScanner from './QrCodeScanner'
 import Login from './Login'
-import Timetable from './Timetable'
+import StateHandler from '../../stateHandler'
+import { Provider } from 'react-redux'
 
 export default class MainRouter extends React.Component {
+
+  constructor (props) {
+    super(props)
+    this.stateHandler = new StateHandler()
+  }
+
+  componentDidMount () {
+  }
+
+  renderContent () {
+    return <Login stateHandler={this.stateHandler}/>
+  }
+
   render () {
-    switch (Math.floor(Math.random() * 3)) {
-      case 0:
-        return <QrCodeScanner/>
-      case 1:
-        return <Login/>
-      case 2:
-        return <Timetable/>
-    }
-    return null
+    return <Provider store={this.stateHandler.store}>
+      {this.renderContent()}
+    </Provider>
   }
 }
