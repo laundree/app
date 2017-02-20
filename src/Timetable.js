@@ -47,23 +47,54 @@ class TimetableTable extends React.Component {
     }
 
     renderItem(rowData, itemData) {
-        var booking = this.state.bookings[parseInt(rowData)];
-        console.log("bookings: " + this.state.bookings)
-
-        return <TouchableHighlight onPress={(event) => this.onPress(event)}>
-            <View style={styles.item}>
-                <Text>{booking ? booking[parseInt(itemData)] : ''}</Text>
+        var isBooked = true;
+        var isMine = true;
+        if (isBooked && isMine) {
+            return <TouchableHighlight style={styles.highlightItem} onPress={(event) => this.onPress(event, rowData, itemData, isBooked)}>
+                <View style={[styles.cell,styles.item,styles.ownBookedItem]}>
+                    <Text></Text>
+                </View>
+            </TouchableHighlight>
+        } else if (isBooked) {
+            return <TouchableHighlight style={styles.highlightItem} onPress={(event) => this.onPress(event, rowData, itemData, isBooked)}>
+                <View style={[styles.cell,styles.item,styles.bookedItem]}>
+                    <Text></Text>
+                </View>
+            </TouchableHighlight>
+        }
+        return <TouchableHighlight style={styles.highlightItem} onPress={(event) => this.onPress(event, rowData, itemData, isBooked)}>
+            <View style={[styles.cell,styles.item]}>
+                <Text></Text>
             </View>
         </TouchableHighlight>
     }
 
     renderRow(rowData, rowId) {
-        return <View style={styles.itemContainer}>
-            <Text style={styles.itemHour}>{rowData}</Text>
+        return <View style={styles.row}>
+            <Text style={[styles.hour,styles.itemHour]}>{rowData}</Text>
             <ListView
-                contentContainerStyle={styles.itemList}
+                contentContainerStyle={styles.itemContainer}
                 dataSource={this.state.machines}
                 renderRow={(itemData) => this.renderItem(rowData, itemData)}
+                horizontal={true}
+            />
+        </View>
+    }
+
+    renderHeaderItem(itemData) {
+        return <View style={[styles.cell,styles.header]}>
+                <Text>{itemData}</Text>
+            </View>
+    }
+
+    renderHeader() {
+        console.log(styles.hour);
+        return <View style={styles.row}>
+            <Text style={styles.hour}></Text>
+            <ListView
+                contentContainerStyle={styles.itemContainer}
+                dataSource={this.state.machines}
+                renderRow={(itemData) => this.renderHeaderItem(itemData)}
                 horizontal={true}
             />
         </View>
@@ -73,13 +104,15 @@ class TimetableTable extends React.Component {
         return <ListView
             contentContainerStyle={styles.list}
             dataSource={this.state.timeSlots}
+            renderHeader={() => this.renderHeader()}
             renderRow={(rowData, sectionId, rowId) => this.renderRow(rowData, rowId)}
         />
         //TODO set initiallistsize correctly
     }
 
-    onPress(e) {
-        console.log("Pressed booking slot");
+    onPress(event, rowData, itemData, isBooked) {
+        var booked = isBooked ? "booked" : "not booked"
+        console.log("Pressed " + booked + " slot with " + rowData + ", " + itemData);
         //this.setState({showQr: false});
     }
 
@@ -101,7 +134,7 @@ export default class TimetableWrapper extends React.Component {
     }
 
     renderEmpty() {
-        return <View style={styles.container}>
+        return <View style={Object.assign({},styles.container)}>
             <Text>
                 There are no machines registered.
             </Text>
@@ -134,23 +167,50 @@ const styles = StyleSheet.create({
     list: {
         justifyContent: 'center',
     },
+    row: {
+        flex: 1,
+        flexDirection: 'row',
+        width: Dimensions.get('window').width,
+        height: 50,
+    },
     itemContainer: {
         flex: 1,
         flexDirection: 'row',
-        backgroundColor: '#CCC',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: Dimensions.get('window').width,
+        height: 50,
+        marginLeft: 10,
+        marginRight: 10
+    },
+    cell: {
+        flex: 1,
+        height: 50,
         borderWidth: 1,
-        borderBottomWidth: 0,
-        width: Dimensions.get('window').width - 20,
-        height: 100
+        borderColor: '#7DD8D5',
+        height: 50
     },
     item: {
-        backgroundColor: '#CCC',
-        width: 100,
-        height: 100
+        backgroundColor: '#57CCC9',
+    },
+    highlightItem: {
+      flex: 1
+    },
+    ownBookedItem: {
+        backgroundColor: '#49A044'
+    },
+    bookedItem: {
+        backgroundColor: '#A04444'
+    },
+    header: {
+        backgroundColor: '#4DC4C1',
+    },
+    hour: {
+        width: 20
     },
     itemHour: {
-        backgroundColor: '#CCC',
-        width: 100,
-        height: 100,
+        backgroundColor: '#4DC4C1',
+        height: 20,
+        textAlign: 'center'
     }
 });
