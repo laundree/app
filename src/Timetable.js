@@ -13,9 +13,8 @@ import {
 } from 'react-native';
 
 const TimetableHeader = (props) => {
-    return <View>
-        <Text>Monday 20, February 2017</Text>
-
+    return <View style={{marginBottom: 10}}>
+        <Text style={styles.dateHeader}>Monday 20, February 2017</Text>
     </View>
 }
 
@@ -24,31 +23,17 @@ class TimetableTable extends React.Component {
     constructor() {
         super();
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        var bookings = {};
-        var booking = {};
-        booking[0] = 'bob';
-        bookings[8] = booking;
 
-        booking = {};
-        booking[0] = 'alice';
-        bookings[9] = booking;
-
-        booking = {}
-        booking[0] = 'alice'
-        booking[1] = 'charlie'
-        bookings[10] = booking;
-
-        var timeSlots = [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
         this.state = {
-            bookings: bookings,
-            timeSlots: ds.cloneWithRows(timeSlots),
-            machines: ds.cloneWithRows([0,1])
+            timeSlots: ds.cloneWithRows([8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16,16.5,17,17.5,18,18.5,19,19.5,20,20.5,21,21.5
+            ]),
+            machines: ds.cloneWithRows(['Washing machine','Tumble dryer'])
         }
     }
 
     renderItem(rowData, itemData) {
-        var isBooked = true;
-        var isMine = true;
+        var isBooked = false;
+        var isMine = false;
         if (isBooked && isMine) {
             return <TouchableHighlight style={styles.highlightItem} onPress={(event) => this.onPress(event, rowData, itemData, isBooked)}>
                 <View style={[styles.cell,styles.item,styles.ownBookedItem]}>
@@ -69,26 +54,33 @@ class TimetableTable extends React.Component {
         </TouchableHighlight>
     }
 
-    renderRow(rowData, rowId) {
+    renderRow(rowData,rowId) {
+        var showHour = parseFloat(rowData) % 1 == 0 && parseFloat(rowData) != 8;
+        var hourData = showHour ? rowData : '';
+        var style = showHour ? styles.itemHour : styles.emptyHour;
         return <View style={styles.row}>
-            <Text style={[styles.hour,styles.itemHour]}>{rowData}</Text>
+            <View>
+                <Text style={[styles.hour,style]}>{hourData}</Text>
+            </View>
             <ListView
                 contentContainerStyle={styles.itemContainer}
                 dataSource={this.state.machines}
                 renderRow={(itemData) => this.renderItem(rowData, itemData)}
                 horizontal={true}
             />
+            <View>
+                <Text style={[styles.hour,style]}>{hourData}</Text>
+            </View>
         </View>
     }
 
     renderHeaderItem(itemData) {
         return <View style={[styles.cell,styles.header]}>
-                <Text>{itemData}</Text>
+                <Text style={styles.headerText}>{itemData}</Text>
             </View>
     }
 
     renderHeader() {
-        console.log(styles.hour);
         return <View style={styles.row}>
             <Text style={styles.hour}></Text>
             <ListView
@@ -97,15 +89,20 @@ class TimetableTable extends React.Component {
                 renderRow={(itemData) => this.renderHeaderItem(itemData)}
                 horizontal={true}
             />
+            <Text style={styles.hour}></Text>
         </View>
+    }
+
+    onRenderSectionHeader(sectionData) {
+        return this.renderHeader();
     }
 
     render() {
         return <ListView
             contentContainerStyle={styles.list}
+            renderSectionHeader={(sectionData, sectionId) => this.onRenderSectionHeader(sectionData)}
             dataSource={this.state.timeSlots}
-            renderHeader={() => this.renderHeader()}
-            renderRow={(rowData, sectionId, rowId) => this.renderRow(rowData, rowId)}
+            renderRow={(rowData, sectionId, rowId) => this.renderRow(rowData,rowId)}
         />
         //TODO set initiallistsize correctly
     }
@@ -120,7 +117,7 @@ class TimetableTable extends React.Component {
 
 class Timetable extends React.Component {
     render() {
-        return <View>
+        return <View style={{marginTop: 10, marginBottom: 10}}>
             <TimetableHeader />
             <TimetableTable />
         </View>
@@ -134,7 +131,7 @@ export default class TimetableWrapper extends React.Component {
     }
 
     renderEmpty() {
-        return <View style={Object.assign({},styles.container)}>
+        return <View style={styles.container}>
             <Text>
                 There are no machines registered.
             </Text>
@@ -164,6 +161,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#66D3D3'
     },
+    dateHeader: {
+        fontSize: 20,
+        textAlign: 'center'
+    },
     list: {
         justifyContent: 'center',
     },
@@ -188,7 +189,9 @@ const styles = StyleSheet.create({
         height: 50,
         borderWidth: 1,
         borderColor: '#7DD8D5',
-        height: 50
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     item: {
         backgroundColor: '#57CCC9',
@@ -205,11 +208,20 @@ const styles = StyleSheet.create({
     header: {
         backgroundColor: '#4DC4C1',
     },
+    headerText: {
+        textAlign: 'center',
+
+    },
     hour: {
-        width: 20
+        width: 20,
+        marginTop: -9
     },
     itemHour: {
         backgroundColor: '#4DC4C1',
+        height: 20,
+        textAlign: 'center'
+    },
+    emptyHour: {
         height: 20,
         textAlign: 'center'
     }
