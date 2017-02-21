@@ -6,17 +6,12 @@ import React from 'react';
 import {
     Dimensions,
     ListView,
+    ScrollView,
     StyleSheet,
     Text,
     TouchableHighlight,
     View
 } from 'react-native';
-
-const TimetableHeader = (props) => {
-    return <View style={{marginBottom: 10}}>
-        <Text style={styles.dateHeader}>Monday 20, February 2017</Text>
-    </View>
-}
 
 class TimetableTable extends React.Component {
 
@@ -27,7 +22,8 @@ class TimetableTable extends React.Component {
         this.state = {
             timeSlots: ds.cloneWithRows([8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16,16.5,17,17.5,18,18.5,19,19.5,20,20.5,21,21.5
             ]),
-            machines: ds.cloneWithRows(['Washing machine','Tumble dryer'])
+            machines: ds.cloneWithRows(['Washing machine','Tumble dryer']),
+            offset: null
         }
     }
 
@@ -93,18 +89,34 @@ class TimetableTable extends React.Component {
         </View>
     }
 
-    onRenderSectionHeader(sectionData) {
-        return this.renderHeader();
-    }
-
     render() {
-        return <ListView
-            contentContainerStyle={styles.list}
-            renderSectionHeader={(sectionData, sectionId) => this.onRenderSectionHeader(sectionData)}
-            dataSource={this.state.timeSlots}
-            renderRow={(rowData, sectionId, rowId) => this.renderRow(rowData,rowId)}
-        />
-        //TODO set initiallistsize correctly
+        return <ScrollView
+            horizontal={true}
+            pagingEnabled={true}
+            showsHorizontalScrollIndicator={true}>
+            <View style={{marginTop: 10, marginBottom: 10}}>
+                <View style={{marginBottom: 10}}>
+                    <Text style={styles.dateHeader}>Monday 20, February 2017</Text>
+                </View>
+                {this.renderHeader()}
+                <ListView
+                    dataSource={this.state.timeSlots}
+                    renderRow={(rowData, sectionId, rowId) => this.renderRow(rowData,rowId)}
+                    initialListSize={15}
+                />
+            </View>
+            <View style={{marginTop: 10, marginBottom: 10}}>
+                <View style={{marginBottom: 10}}>
+                    <Text style={styles.dateHeader}>Tuesday 21, February 2017</Text>
+                </View>
+                {this.renderHeader()}
+                <ListView
+                    dataSource={this.state.timeSlots}
+                    renderRow={(rowData, sectionId, rowId) => this.renderRow(rowData,rowId)}
+                    initialListSize={15}
+                />
+            </View>
+        </ScrollView>
     }
 
     onPress(event, rowData, itemData, isBooked) {
@@ -117,10 +129,7 @@ class TimetableTable extends React.Component {
 
 class Timetable extends React.Component {
     render() {
-        return <View style={{marginTop: 10, marginBottom: 10}}>
-            <TimetableHeader />
-            <TimetableTable />
-        </View>
+        return <TimetableTable />
     }
 }
 
@@ -165,11 +174,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         textAlign: 'center'
     },
-    list: {
-        justifyContent: 'center',
-    },
     row: {
-        flex: 1,
         flexDirection: 'row',
         width: Dimensions.get('window').width,
         height: 50,
