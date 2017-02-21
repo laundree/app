@@ -4,31 +4,247 @@
 
 import React from 'react';
 import {
+    Dimensions,
+    ListView,
+    ScrollView,
     StyleSheet,
     Text,
+    TouchableHighlight,
     View
 } from 'react-native';
 
-export default class Timetable extends React.Component {
-    render() {
-        return <View style={styles.container}>
-            <Text style={styles.login}>
-                Haha you cannot see the timetable yet
-            </Text>
+class TimetableTable extends React.Component {
+
+    constructor() {
+        super();
+        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
+        this.state = {
+            timeSlots: ds.cloneWithRows([8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16,16.5,17,17.5,18,18.5,19,19.5,20,20.5,21,21.5
+            ]),
+            machines: ds.cloneWithRows(['Washing machine','Tumble dryer']),
+            offset: null
+        }
+    }
+
+    renderItem(rowData, itemData) {
+        var isBooked = false;
+        var isMine = false;
+        if (isBooked && isMine) {
+            return <TouchableHighlight style={styles.highlightItem} onPress={(event) => this.onPress(event, rowData, itemData, isBooked)}>
+                <View style={[styles.cell,styles.item,styles.ownBookedItem]}>
+                    <Text></Text>
+                </View>
+            </TouchableHighlight>
+        } else if (isBooked) {
+            return <TouchableHighlight style={styles.highlightItem} onPress={(event) => this.onPress(event, rowData, itemData, isBooked)}>
+                <View style={[styles.cell,styles.item,styles.bookedItem]}>
+                    <Text></Text>
+                </View>
+            </TouchableHighlight>
+        }
+        return <TouchableHighlight style={styles.highlightItem} onPress={(event) => this.onPress(event, rowData, itemData, isBooked)}>
+            <View style={[styles.cell,styles.item]}>
+                <Text></Text>
+            </View>
+        </TouchableHighlight>
+    }
+
+    renderRow(rowData,rowId) {
+        var showHour = parseFloat(rowData) % 1 == 0 && parseFloat(rowData) != 8;
+        var hourData = showHour ? rowData : '';
+        var style = showHour ? styles.itemHour : styles.emptyHour;
+        return <View style={styles.row}>
+            <View>
+                <Text style={[styles.hour,style]}>{hourData}</Text>
+            </View>
+            <ListView
+                contentContainerStyle={styles.itemContainer}
+                dataSource={this.state.machines}
+                renderRow={(itemData) => this.renderItem(rowData, itemData)}
+                horizontal={true}
+            />
+            <View>
+                <Text style={[styles.hour,style]}>{hourData}</Text>
+            </View>
+            <ListView
+                contentContainerStyle={styles.itemContainer}
+                dataSource={this.state.machines}
+                renderRow={(itemData) => this.renderItem(rowData, itemData)}
+                horizontal={true}
+            />
         </View>
+    }
+
+    renderHeaderItem(itemData) {
+        return <View style={[styles.cell,styles.header]}>
+                <Text style={styles.headerText}>{itemData}</Text>
+            </View>
+    }
+
+    renderHeader() {
+        return <View style={styles.row}>
+            <Text style={styles.hour}></Text>
+            <ListView
+                contentContainerStyle={styles.itemContainer}
+                dataSource={this.state.machines}
+                renderRow={(itemData) => this.renderHeaderItem(itemData)}
+                horizontal={true}
+            />
+            <Text style={styles.hour}></Text>
+            <ListView
+                contentContainerStyle={styles.itemContainer}
+                dataSource={this.state.machines}
+                renderRow={(itemData) => this.renderHeaderItem(itemData)}
+                horizontal={true}
+            />
+        </View>
+    }
+
+    render() {
+        return <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={true}>
+            <View style={{marginTop: 10, marginBottom: 10}}>
+                <View style={styles.row}>
+                    <View style={styles.dateView}>
+                        <Text style={styles.dateHeader}>Monday 20, February 2017</Text>
+                    </View>
+                    <View style={styles.dateView}>
+                        <Text style={styles.dateHeader}>Tuesday 21, February 2017</Text>
+                    </View>
+                </View>
+                {this.renderHeader()}
+                <ListView
+                    style={styles.listView}
+                    contentContainerStyle={styles.listViewContainer}
+                    dataSource={this.state.timeSlots}
+                    renderRow={(rowData, sectionId, rowId) => this.renderRow(rowData,rowId)}
+                    initialListSize={15}
+                />
+            </View>
+        </ScrollView>
+    }
+
+    onPress(event, rowData, itemData, isBooked) {
+        var booked = isBooked ? "booked" : "not booked"
+        console.log("Pressed " + booked + " slot with " + rowData + ", " + itemData);
+    }
+
+}
+
+class Timetable extends React.Component {
+    render() {
+        return <TimetableTable />
+    }
+}
+
+export default class TimetableWrapper extends React.Component {
+    get isOwner() {
+        // TODO: return this.props.laundry.owners.indexOf(this.props.currentUser) >= 0
+        return 0 >= 0
+    }
+
+    renderEmpty() {
+        return <View style={styles.container}>
+            <Text>
+                There are no machines registered.
+            </Text>
+            {this.isOwner ? <Text>
+                    Go to the website and register machines.
+                </Text> : <Text>
+                    Ask your administrator to register machines.
+                </Text>}
+        </View>
+    }
+
+    renderTables() {
+        return <View style={styles.container}>
+            <Timetable />
+        </View>
+    }
+
+    render() {
+        // TODO: return this.props.laundry.machines.length ? this.renderTables() : this.renderEmpty();
+        return true ? this.renderTables() : this.renderEmpty();
     }
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        alignItems: 'center',
+        backgroundColor: '#66D3D3'
+    },
+    listView: {
+
+    },
+    listViewContainer: {
+        width: Dimensions.get('window').width*2,
+        height: 1400
+    },
+    dateView: {
+        marginBottom: 10,
+        width: Dimensions.get('window').width
+    },
+    dateHeader: {
+        fontSize: 20,
+        textAlign: 'center'
+    },
+    row: {
+        flexDirection: 'row',
+        width: Dimensions.get('window').width*2,
+        height: 50,
+    },
+    itemContainer: {
+        flex: 1,
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+        width: Dimensions.get('window').width,
+        height: 50,
+        marginLeft: 10,
+        marginRight: 10
     },
-    login: {
+    cell: {
+        flex: 1,
+        height: 50,
+        borderWidth: 1,
+        borderColor: '#7DD8D5',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    item: {
+        backgroundColor: '#57CCC9',
+    },
+    highlightItem: {
+      flex: 1
+    },
+    ownBookedItem: {
+        backgroundColor: '#49A044'
+    },
+    bookedItem: {
+        backgroundColor: '#A04444'
+    },
+    header: {
+        backgroundColor: '#4DC4C1',
+    },
+    headerText: {
         textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
+
     },
+    hour: {
+        width: 20,
+        marginTop: -9
+    },
+    itemHour: {
+        backgroundColor: '#4DC4C1',
+        height: 20,
+        textAlign: 'center'
+    },
+    emptyHour: {
+        height: 20,
+        textAlign: 'center'
+    }
 });
