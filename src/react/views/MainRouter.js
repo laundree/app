@@ -8,6 +8,7 @@ import Timetable from './Timetable'
 import Settings from './Settings'
 import fetchStateHandler from '../../stateHandler'
 import { View, Text, StyleSheet, Navigator, Image, TouchableHighlight } from 'react-native'
+import { Provider } from 'react-redux'
 
 export default class MainRouter extends React.Component {
 
@@ -83,19 +84,21 @@ export default class MainRouter extends React.Component {
     if (!this._stateHandler.isAuthenticated) {
       return this.renderLogin()
     }
-    return <Navigator
-      initialRoute={this.initialRoute}
-      renderScene={route => this.renderScene(route)}
-      navigationBar={<Navigator.NavigationBar
-        routeMapper={{
-          LeftButton: (route, navigator) => this.renderLeftButton(route, navigator),
-          Title: route => this.renderTitle(route),
-          RightButton: (route, navigator) => this.renderRightButton(route, navigator)
+    return <Provider store={this._stateHandler.store}>
+      <Navigator
+        initialRoute={this.initialRoute}
+        renderScene={route => this.renderScene(route)}
+        navigationBar={<Navigator.NavigationBar
+          routeMapper={{
+            LeftButton: (route, navigator) => this.renderLeftButton(route, navigator),
+            Title: route => this.renderTitle(route),
+            RightButton: (route, navigator) => this.renderRightButton(route, navigator)
 
-        }}
-        style={{backgroundColor: '#E55564'}}
-      />}
-    />
+          }}
+          style={{backgroundColor: '#E55564'}}
+        />}
+      />
+    </Provider>
   }
 
   render () {

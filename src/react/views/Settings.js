@@ -6,10 +6,21 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Button
+  Button,
+  Text
 } from 'react-native'
 
 export default class Login extends React.Component {
+  get user () {
+    return this.props.users && this.props.users[this.props.currentUser]
+  }
+
+  renderUser () {
+    if (!this.user) return null
+    return <Text>
+      {this.user.displayName}
+    </Text>
+  }
 
   render () {
     return <View style={styles.container}>
@@ -23,6 +34,8 @@ export default class Login extends React.Component {
 }
 
 Login.propTypes = {
+  currentUser: React.PropTypes.string,
+  users: React.PropTypes.object,
   stateHandler: React.PropTypes.object.isRequired
 }
 

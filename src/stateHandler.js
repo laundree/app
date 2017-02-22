@@ -7,19 +7,8 @@ import io from 'socket.io-client'
 import uuid from 'uuid'
 import { AsyncStorage } from 'react-native'
 import EventEmitter from 'events'
-/*
- console.log('Did mount')
- const s = socket('http://localhost:3000/redux')
- const store = createStore(redux.reducers, {})
- s.on('actions', actions => {
- console.log('Dispatching actions ', actions)
- actions.forEach(action => store.dispatch(action))
- })
- const sdk = new Sdk('http://localhost:3000')
- sdk.setupRedux(store, s)
- sdk.setupInitialEvents()
+import config from './config'
 
- */
 const storageKey = '@LaundreeStorage'
 
 function saveUserIdAndToken (userId, token) {
@@ -58,7 +47,7 @@ class StateHandler extends EventEmitter {
 
   get sdk () {
     if (this._sdk) return this._sdk
-    this._sdk = new Sdk('http://localhost:3000')
+    this._sdk = new Sdk(config.laundree.host)
     return this._sdk
   }
 
