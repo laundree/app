@@ -5,7 +5,7 @@
 import React from 'react'
 import Login from './Login'
 import Timetable from './Timetable'
-import Settings from './Settings'
+import Settings from './../containers/Settings'
 import fetchStateHandler from '../../stateHandler'
 import { View, Text, StyleSheet, Navigator, Image, TouchableHighlight } from 'react-native'
 import { Provider } from 'react-redux'

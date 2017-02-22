@@ -7,23 +7,32 @@ import {
   StyleSheet,
   View,
   Button,
-  Text
+  Text,
+  Image
 } from 'react-native'
 
-export default class Login extends React.Component {
+export default class Settings extends React.Component {
   get user () {
     return this.props.users && this.props.users[this.props.currentUser]
   }
 
   renderUser () {
     if (!this.user) return null
-    return <Text>
-      {this.user.displayName}
-    </Text>
+    const {displayName, photo} = this.user
+    console.log('User', photo)
+    return <View>
+      <Image
+        style={{width: 50, height: 50}}
+        source={{uri: photo}}/>
+      <Text>
+        {displayName}
+      </Text>
+    </View>
   }
 
   render () {
     return <View style={styles.container}>
+      {this.renderUser()}
       <Button
         onPress={() => this.props.stateHandler.logOut()}
         title='Log out'
@@ -33,7 +42,7 @@ export default class Login extends React.Component {
   }
 }
 
-Login.propTypes = {
+Settings.propTypes = {
   currentUser: React.PropTypes.string,
   users: React.PropTypes.object,
   stateHandler: React.PropTypes.object.isRequired
