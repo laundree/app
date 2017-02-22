@@ -53,10 +53,12 @@ class StateHandler extends EventEmitter {
 
   _disconnectSocket () {
     if (!this._socket) return
+    console.log('Disconnecting socket')
     this._socket.disconnect()
   }
 
   _setupAuth (userId, token) {
+    console.log('Setting up auth', userId, token)
     if (!(userId && token)) {
       this.sdk.updateAuth({})
       this._disconnectSocket()
@@ -65,11 +67,16 @@ class StateHandler extends EventEmitter {
     }
     this.sdk.updateAuth({userId, token})
     this._disconnectSocket()
-    this._socket = io(`http://localhost:3000/redux?userId=${userId}&token=${token}`)
+    const path = `${config.laundree.host}/redux?userId=${userId}&token=${token}`
+    console.log('Connecting socket to path', path)
+    this._socket = io(path)
     this._socket.on('actions', actions => {
       console.log('Dispatching actions ', actions)
       actions.forEach(action => this.store.dispatch(action))
     })
+    this._socket.on('disconnect', () => console.log('Socket disconnected'))
+    this._socket.on('error', err => console.log('Socket errored', err))
+    this._socket.on('connect', () => console.log('Socket connected'))
     this.sdk.setupRedux(this.store, this._socket) // Possible event emitter leak
     this._authenticated = true
   }
