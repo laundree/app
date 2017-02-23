@@ -31,6 +31,28 @@ class Timetable extends React.Component {
         }
     }
 
+    get user() {
+        return this.props.users[this.props.currentUser]
+    }
+
+    get laundryId() {
+        return this.user.laundries[0]
+    }
+
+    get laundry() {
+        if (this.user) {
+            laundryId = this.user.laundries[0]
+            if (laundryId) return this.props.laundries[laundryId]
+        }
+        return undefined
+    }
+
+    get machines() {
+        if (!this.laundry || !this.machines) return undefined
+        machineId = this.laundry.machines[0]
+        if (machineId) return this.props.machines[machineId]
+    }
+
     renderItem(rowData, itemData) {
         let isBooked = false
         let isMine = false
@@ -65,6 +87,18 @@ class Timetable extends React.Component {
         let hourData = showHour ? rowData : ''
         let style = showHour ? styles.itemHour : styles.emptyHour
         return <View style={styles.row}>
+            <View style={[styles.hourTest]}>
+                <Text style={[style]}>{hourData}</Text>
+            </View>
+            <ListView
+                contentContainerStyle={styles.itemContainer}
+                dataSource={this.state.machines}
+                renderRow={(itemData) => this.renderItem(rowData, itemData)}
+                horizontal
+            />
+            <View>
+                <Text style={[styles.hour, styles.emptyHour]}></Text>
+            </View>
             <View>
                 <Text style={[styles.hour, style]}>{hourData}</Text>
             </View>
@@ -75,14 +109,8 @@ class Timetable extends React.Component {
                 horizontal
             />
             <View>
-                <Text style={[styles.hour, style]}>{hourData}</Text>
+                <Text style={[styles.hour, styles.emptyHour]}></Text>
             </View>
-            <ListView
-                contentContainerStyle={styles.itemContainer}
-                dataSource={this.state.machines}
-                renderRow={(itemData) => this.renderItem(rowData, itemData)}
-                horizontal
-            />
         </View>
     }
 
@@ -102,19 +130,18 @@ class Timetable extends React.Component {
                 horizontal
             />
             <Text style={styles.hour}/>
+            <Text style={styles.hour}/>
             <ListView
                 contentContainerStyle={styles.itemContainer}
                 dataSource={this.state.machines}
                 renderRow={(itemData) => this.renderHeaderItem(itemData)}
                 horizontal
             />
+            <Text style={styles.hour}/>
         </View>
     }
-    get user () {
-        return this.props.users && this.props.users[this.props.currentUser]
-    }
 
-    renderUser () {
+    renderUser() {
         if (!this.user) {
             console.log('User not available')
             return null
@@ -125,9 +152,11 @@ class Timetable extends React.Component {
     }
 
     renderDateRow(rowData) {
-        return <Text style={styles.dateHeader}>
-            {rowData.toString()}
-        </Text>
+        return <View style={styles.dateView}>
+            <Text style={styles.dateHeader}>
+                {rowData.format('dddd D[/]M, YYYY')}
+            </Text>
+        </View>
     }
 
     render() {
@@ -139,17 +168,11 @@ class Timetable extends React.Component {
             <View style={{marginTop: 10, marginBottom: 10}}>
                 <View style={styles.row}>
                     <ListView
+                        style={styles.dateListView}
                         horizontal={true}
-                        contentContainerStyle={styles.dateView}
                         dataSource={this.state.dates}
                         renderRow={(rowData) => this.renderDateRow(rowData)}
-                     />
-                    {/*<View style={styles.dateView}>
-                        <Text style={styles.dateHeader}>I dag</Text>
-                    </View>
-                    <View style={styles.dateView}>
-                        <Text style={styles.dateHeader}>Torsdag d. 23 februar</Text>
-                    </View>*/}
+                    />
                 </View>
                 {this.renderHeader()}
                 <ListView
@@ -170,9 +193,27 @@ class Timetable extends React.Component {
 }
 
 export default class TimetableWrapper extends React.Component {
+
+    get user() {
+        return this.props.users[this.props.currentUser]
+    }
+
+    get laundry() {
+        if (this.user) {
+            laundryId = this.user.laundries[0]
+            if (laundryId) return this.props.laundries[laundryId]
+        }
+        return undefined
+    }
+
+    get machines() {
+        if (!this.laundry) return undefined
+        return this.laundry.machines
+    }
+
     get isOwner() {
-        // TODO: return this.props.laundry.owners.indexOf(this.props.currentUser) >= 0
-        return false
+        if (this.laundry) return this.laundry.owners.indexOf(this.props.currentUser) >= 0
+        return undefined
     }
 
     renderEmpty() {
@@ -200,8 +241,8 @@ export default class TimetableWrapper extends React.Component {
     }
 
     render() {
-        // TODO: return this.props.laundry.machines.length ? this.renderTables() : this.renderEmpty();
-        return this.renderTables()
+        if (!this.machines) this.renderEmpty()
+        return this.laundry && this.machines.length ? this.renderTables() : this.renderEmpty();
     }
 }
 
@@ -224,9 +265,12 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width * 2,
         height: 1400
     },
+    dateListView: {
+        width: Dimensions.get('window').width * 2
+    },
     dateView: {
         flex: 1,
-        width: Dimensions.get('window').width * 2
+        width: Dimensions.get('window').width
     },
     dateHeader: {
         fontSize: 20,
@@ -273,6 +317,11 @@ const styles = StyleSheet.create({
     headerText: {
         textAlign: 'center'
 
+    },
+    hourTest: {
+        width: 20,
+        marginTop: -9,
+        alignSelf: 'flex-start'
     },
     hour: {
         width: 20,
