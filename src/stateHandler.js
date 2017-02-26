@@ -62,7 +62,7 @@ class StateHandler extends EventEmitter {
     if (!(userId && token)) {
       this.sdk.updateAuth({})
       this._disconnectSocket()
-      this._authenticated = false
+      this._auth = null
       return
     }
     this.sdk.updateAuth({userId, token})
@@ -78,11 +78,11 @@ class StateHandler extends EventEmitter {
     this._socket.on('error', err => console.log('Socket errored', err))
     this._socket.on('connect', () => console.log('Socket connected'))
     this.sdk.setupRedux(this.store, this._socket) // Possible event emitter leak
-    this._authenticated = true
+    this._auth = {userId, token}
   }
 
   get isAuthenticated () {
-    return this._authenticated
+    return Boolean(this._auth)
   }
 
   loginEmailPassword (email, password) {
@@ -95,6 +95,12 @@ class StateHandler extends EventEmitter {
   updateAuth (userId, secret) {
     return Promise.all([saveUserIdAndToken(userId, secret), this._setupAuth(userId, secret)])
       .then(() => this.emit('authChange'))
+  }
+
+  refresh () {
+    if (!this._auth) return this._setupAuth()
+    this._setupAuth(this._auth.userId, this._auth.token)
+      .then(() => this.emit('refresh'))
   }
 
   logOut () {

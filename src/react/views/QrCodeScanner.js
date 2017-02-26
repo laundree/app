@@ -4,15 +4,11 @@
 'use strict'
 import React, { Component } from 'react'
 import {
-  Alert,
-  Dimensions,
   Image,
-  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Navigator
+  View
 } from 'react-native'
 
 export default class QrCodeScanner extends Component {
@@ -24,7 +20,7 @@ export default class QrCodeScanner extends Component {
           Press the button to start scanning the QR code for the laundry
         </Text>
         <TouchableOpacity onPress={this.props.onShowScanner} style={styles.image} >
-          <Image source={require('../../../img/qrcode_240.png')} resizeMode="contain" style={{flex: 1}}/>
+          <Image source={require('../../../img/qrcode_240.png')} resizeMode='contain' style={{flex: 1}}/>
         </TouchableOpacity>
         <Text style={styles.message}>
           Or ask the admin to add your {'\n'}
@@ -40,7 +36,6 @@ export default class QrCodeScanner extends Component {
 QrCodeScanner.propTypes = {
   onShowScanner: TouchableOpacity.propTypes.onPress
 }
-
 
 const styles = StyleSheet.create({
   container: {

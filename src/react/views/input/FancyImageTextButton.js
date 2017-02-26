@@ -25,7 +25,7 @@ const styleSheet = StyleSheet.create({
     flexDirection: 'row',
     alignSelf: 'stretch',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-start'
   },
   image: {
     height: 20,
@@ -35,18 +35,20 @@ const styleSheet = StyleSheet.create({
     marginLeft: 15
   },
   text: {
-    color: "#fff"
+    color: '#fff'
   },
   enabled: {
-    color: "#fff"
+    color: '#fff'
   },
   disabled: {
-    color: "#e2e2e2"
+    color: '#e2e2e2'
   }
 })
 
 FancyImageTextButton.propTypes = {
   imageSource: Image.propTypes.source,
+  style: FancyButton.propTypes.style,
+  text: React.PropTypes.string.isRequired,
   onPress: React.PropTypes.func.isRequired,
   disabled: React.PropTypes.bool
 }

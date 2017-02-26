@@ -6,7 +6,7 @@ import React from 'react'
 import LoginApp from './LoginApp'
 import fetchStateHandler from '../../stateHandler'
 import LoggedInApp from '../containers/LoggedInApp'
-import { View, Text, StyleSheet, Navigator, Image, TouchableHighlight } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { Provider } from 'react-redux'
 import constants from '../../constants'
 

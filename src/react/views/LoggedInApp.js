@@ -16,13 +16,18 @@ export default class LoggedInApp extends Backable {
     const user = u || this.props.users[this.props.currentUser]
     if (!user) return {title: 'Loading', element: null, index: 0}
     return user.laundries.length ? this.timetableRoute : this.qrRoute
+  }
 
+  refresh (users, currentUser) {
+    this.navigator.replace(this.findInitialRoute(users[currentUser]))
   }
 
   componentWillReceiveProps ({currentUser, users}) {
-    if (this.props.currentUser) return
-    if (!currentUser) return
-    this.navigator.replace(this.findInitialRoute(users[currentUser]))
+    if (!this.props.currentUser && currentUser) return this.refresh(users, currentUser)
+    if (!currentUser || this.props.users[this.props.currentUser].laundries.length === users[currentUser].laundries.length) {
+      return
+    }
+    this.refresh(users, currentUser)
   }
 
   get timetableRoute () {
@@ -44,6 +49,7 @@ export default class LoggedInApp extends Backable {
       id: 'qr'
     }
   }
+
   get qrScannerRoute () {
     return {
       index: 1,
@@ -52,6 +58,7 @@ export default class LoggedInApp extends Backable {
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom
     }
   }
+
   renderTitle ({title}) {
     return <View style={styles.navBarContainer}>
       <Text style={styles.navBarTitle}>{title}</Text>
@@ -67,7 +74,7 @@ export default class LoggedInApp extends Backable {
       case 'timetable':
         return <Timetable/>
       case 'qr-scanner':
-        return <QrCodeScannerCamera />
+        return <QrCodeScannerCamera stateHandler={this.props.stateHandler}/>
       default:
         return null
     }
@@ -82,7 +89,7 @@ export default class LoggedInApp extends Backable {
   }
 
   renderRightButton ({index}, navigator) {
-    if (index > 0) return null
+    if (index > 0) return <View style={styles.navBarContainer}/>
     return <View style={styles.navBarContainer}>
       <TouchableOpacity onPress={() => navigator.push(this.settingsRoute)}>
         <Image
@@ -93,7 +100,7 @@ export default class LoggedInApp extends Backable {
   }
 
   renderLeftButton (_, navigator) {
-    if (!this.backAction) return null
+    if (!this.backAction) return <View style={styles.navBarContainer}/>
     return <View style={styles.navBarContainer}>
       <TouchableOpacity onPress={this.backAction}>
         <Image
@@ -103,14 +110,14 @@ export default class LoggedInApp extends Backable {
     </View>
   }
 
-  configureScene({sceneConfig}, routeStack) {
+  configureScene ({sceneConfig}, routeStack) {
     return sceneConfig || Navigator.SceneConfigs.PushFromRight
   }
 
   render () {
     return <Navigator
       configureScene={(route, routeStack) => this.configureScene(route, routeStack)}
-      ref={navigator => this.navigator = navigator}
+      ref={navigator => { this.navigator = navigator }}
       initialRoute={this.findInitialRoute()}
       renderScene={(route, navigator) => this.renderScene(route, navigator)}
       navigationBar={<Navigator.NavigationBar
@@ -120,7 +127,7 @@ export default class LoggedInApp extends Backable {
           RightButton: (route, navigator) => this.renderRightButton(route, navigator)
 
         }}
-        style={{backgroundColor: '#E55564'}}
+        style={styles.navigationBar}
       />}
     />
   }
@@ -133,10 +140,15 @@ const styles = StyleSheet.create({
     paddingTop: Navigator.NavigationBar.Styles.General.NavBarHeight + constants.statusBarHeight
 
   },
+  navigationBar: {
+    backgroundColor: constants.colorRed
+  },
   navBarContainer: {
+    backgroundColor: constants.colorRed,
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1
+    flex: 1,
+    minWidth: 40
   },
   navBarTitle: {
     fontSize: 20,

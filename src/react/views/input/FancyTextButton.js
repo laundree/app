@@ -13,13 +13,13 @@ export default FancyTextButton
 
 const styleSheet = StyleSheet.create({
   text: {
-    color: "#fff"
+    color: '#fff'
   },
   enabled: {
-    color: "#fff"
+    color: '#fff'
   },
   disabled: {
-    color: "#e2e2e2"
+    color: '#e2e2e2'
   }
 })
 

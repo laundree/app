@@ -2,7 +2,7 @@
  * Created by budde on 25/02/2017.
  */
 import React from 'react'
-import { TouchableHighlight, StyleSheet, View, Text } from 'react-native'
+import { TouchableHighlight, StyleSheet, View } from 'react-native'
 
 const FancyButton = ({children, onPress, disabled, style}) => <TouchableHighlight disabled={disabled} onPress={onPress}>
   <View style={[styleSheet.button, disabled ? styleSheet.disabled : styleSheet.enabled, style]}>
@@ -21,10 +21,10 @@ const styleSheet = StyleSheet.create({
     height: 40
   },
   enabled: {
-    backgroundColor: "#28aaba"
+    backgroundColor: '#28aaba'
   },
   disabled: {
-    backgroundColor: "#d1d1d1"
+    backgroundColor: '#d1d1d1'
   }
 })
 

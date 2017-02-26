@@ -5,9 +5,7 @@ import React from 'react'
 import {
   Navigator,
   View,
-  StyleSheet,
-  Text,
-  BackAndroid
+  StyleSheet
 } from 'react-native'
 import Login from './Login'
 import constants from '../../constants'
@@ -58,7 +56,6 @@ export default class LoginApp extends Backable {
       renderScene={(route, navigator) => <View style={styles.mainContainer}>
         {this.renderScene(route, navigator)}
       </View>}/>
-
   }
 }
 const styles = StyleSheet.create({

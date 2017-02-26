@@ -5,10 +5,14 @@ import React from 'react'
 import { BackAndroid } from 'react-native'
 
 export default class Backable extends React.Component {
-  listener = () => {
-    if (!this.backAction) return false
-    this.backAction()
-    return true
+
+  constructor (props) {
+    super(props)
+    this.listener = () => {
+      if (!this.backAction) return false
+      this.backAction()
+      return true
+    }
   }
 
   componentDidMount () {

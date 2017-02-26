@@ -5,7 +5,6 @@
 import React from 'react'
 import {
   StyleSheet,
-  TextInput,
   Text,
   View
 } from 'react-native'
@@ -37,7 +36,7 @@ class EmailPasswordLoginForm extends React.Component {
         <FancyTextButton
           disabled={this.disabled}
           onPress={() => this.props.stateHandler.loginEmailPassword(this.state.email, this.state.password)}
-          text="Login"/>
+          text='Login'/>
       </View>
     </View>
   }
@@ -59,10 +58,10 @@ export default class Login extends React.Component {
       <View style={{alignSelf: 'stretch'}}>
         <View style={styles.socialLogin}>
           <View style={styles.socialButton}>
-            <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} text="Login with Facebook"/>
+            <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} text='Login with Facebook'/>
           </View>
           <View style={styles.socialButton}>
-            <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} text="Login with Google"/>
+            <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} text='Login with Google'/>
           </View>
         </View>
         <View style={styles.divider}>
@@ -102,7 +101,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   login: {
     textAlign: 'center',

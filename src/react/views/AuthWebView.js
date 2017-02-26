@@ -5,8 +5,7 @@ import React from 'react'
 import {
   WebView,
   View,
-  StyleSheet,
-  Platform
+  StyleSheet
 } from 'react-native'
 import FancyTextButton from './input/FancyTextButton'
 import constants from '../../constants'
@@ -73,7 +72,7 @@ class AuthWebView extends React.Component {
   render () {
     return <View style={style.view}>
       <WebView
-        ref={ref => {this.ref = ref}}
+        ref={ref => { this.ref = ref }}
         onMessage={this.state.onMessage}
         source={this.props.source}
         style={style.webView}
@@ -95,7 +94,7 @@ const style = StyleSheet.create({
     backgroundColor: constants.appBackgroundColor
   },
   view: {
-    flex: 1,
+    flex: 1
   },
   button: {
     backgroundColor: constants.colorRed

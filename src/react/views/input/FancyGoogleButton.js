@@ -21,6 +21,7 @@ const styleSheet = StyleSheet.create({
 })
 
 FancyGoogleButton.propTypes = {
+  text: FancyImageTextButton.propTypes.text,
   onPress: React.PropTypes.func.isRequired,
   disabled: React.PropTypes.bool
 }
