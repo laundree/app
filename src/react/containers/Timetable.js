@@ -4,8 +4,8 @@
 import { connect } from 'react-redux'
 import Timetable from '../views/Timetable'
 
-function mapStateToProps ({currentUser, users, laundries, machines, bookings}) {
-    return {currentUser, users, laundries, machines, bookings}
+function mapStateToProps ({machines, bookings}) {
+    return {machines, bookings}
 }
 
 export default connect(mapStateToProps)(Timetable)

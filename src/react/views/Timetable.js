@@ -16,11 +16,14 @@ import {
 import moment from 'moment'
 import Table from './Table'
 
+const {range} = require('../../utils/array')
+const today = moment().startOf('day')
+
+
 class Timetable extends React.Component {
 
     render() {
         return <View style={{
-            paddingTop: Navigator.NavigationBar.Styles.General.NavBarHeight,
             paddingBottom: Navigator.NavigationBar.Styles.General.NavBarHeight,
             marginTop: 10, marginBottom: 10
         }}>
@@ -33,7 +36,7 @@ class Timetable extends React.Component {
         return <View style={styles.row}>
             <View style={styles.dateView}>
                 <Text style={styles.dateHeader}>
-                    {moment().format('dddd D[/]M, YYYY')}
+                    {today.format('dddd D[/]M, YYYY')}
                 </Text>
             </View>
         </View>
@@ -43,40 +46,14 @@ class Timetable extends React.Component {
         return <View>
             <Table
                 headersData={this.props.machines}
-                data={[{time: '8', cells: ['mybooking','free']},
-                    {time: '8.5', cells: ['free','free']},
-                    {time: '9', cells: ['mybooking','booked']},
-                    {time: '9.5', cells: ['mybooking','booked']},
-                    {time: '10', cells: ['free','free']},
-                    {time: '10.5', cells: ['free','free']},
-                    {time: '11', cells: ['free','free']},
-                    {time: '11.5', cells: ['free','free']},
-                    {time: '12', cells: ['free','free']},
-                    {time: '12.5', cells: ['free','free']},
-                    {time: '13', cells: ['free','free']},
-                    {time: '13.5', cells: ['free','free']},
-                    {time: '14', cells: ['free','free']},
-                    {time: '14.5', cells: ['free','free']},
-                    {time: '15', cells: ['free','free']},
-                    {time: '15.5', cells: ['free','free']},
-                    {time: '16', cells: ['free','free']},
-                    {time: '16.5', cells: ['free','free']},
-                    {time: '17', cells: ['free','free']},
-                    {time: '17.5', cells: ['free','free']},
-                    {time: '18', cells: ['free','free']},
-                    {time: '18.5', cells: ['free','free']},
-                    {time: '19', cells: ['free','free']},
-                    {time: '19.5', cells: ['free','free']},
-                    {time: '20', cells: ['free','free']},
-                    {time: '20.5', cells: ['free','free']},
-                    {time: '21', cells: ['free','free']},
-                    {time: '21.5', cells: ['free','free']}]}
+                data={range(0,48)}
                 tableStyles={this.tableStyles}
                 cellStyle={(cellData) => this.cellStyle(cellData)}
                 underlayCellStyle={(cellData) => this.underlayCellStyle(cellData)}
                 renderBetweenMarkers={true}
                 renderBetweenMarkersAt={(time) => this.renderBetweenMarkersAt(time)}
                 onPressCell={(cellData) => this.onPressCell(cellData)}
+                renderCell={(cellData,columnId,rowId) => this.renderCell(cellData, columnId, rowId)}
             />
         </View>
     }
@@ -120,12 +97,65 @@ class Timetable extends React.Component {
 
     renderBetweenMarkersAt(time) {
         //console.log('Checking if should render between marker at time ' + time)
-        let value = parseFloat(time);
-        return value !== 8 && value % 1 == 0
+        let value = parseFloat(time/2);
+        return value % 1 == 0
     }
 
     onPressCell(cellData) {
         console.log('Pressed slot with ' + cellData)
+    }
+
+    renderCell(cellData, columnId, rowId) {
+        let bookingId = this.bookingId(cellData.id,rowId)
+        console.log('Booking id: ' + bookingId)
+        let booking = this.props.bookings[bookingId];
+        if (booking) {
+            let isMine = booking.owner === this.props.user.id
+            let style = isMine ? this.tableStyles.myBookedCellStyle : this.tableStyles.bookedCellStyle
+            let underlayColor = isMine ? '#49a044' : '#a04444'
+            return <TouchableHighlight
+                style={style}
+                underlayColor={underlayColor}
+                onPress={(event) => this.onPressCell(cellData)}>
+                <Text></Text>
+            </TouchableHighlight>
+        }
+        return <TouchableHighlight
+            underlayColor={'#57CCC9'}
+            style={this.tableStyles.freeCellStyle}
+            onPress={(event) => this.onPressCell(cellData)}>
+            <Text></Text>
+        </TouchableHighlight>
+    }
+
+    bookingId(machineId, rowId) {
+        return this.bookings[`${machineId}:${rowId}`]
+    }
+
+    get bookings() {
+        return Object.keys(this.props.bookings)
+            .map(key => this.props.bookings[key])
+            .map(({from, to, machine, id}) => ({
+                from: moment(from),
+                to: moment(to),
+                machine,
+                id
+            }))
+            .filter(({from, to}) => to.isSameOrAfter(today, 'd') && from.isSameOrBefore(today, 'd'))
+            .reduce((obj, {from, to, machine, id}) => {
+                const fromY = today.isSame(from, 'd') ? this.dateToY(from) : 0
+                const toY = today.isSame(to, 'd') ? this.dateToY(to) : 48
+                range(fromY, toY).forEach((y) => {
+                    let key = `${machine}:${y}`;
+                    console.log('Booking key: ' + key)
+                    obj[key] = id
+                })
+                return obj
+            }, {})
+    }
+
+    dateToY(date) {
+        return Math.floor((date.hours() * 60 + date.minutes()) / 30)
     }
 
     tableStyles = StyleSheet.create({
@@ -161,9 +191,6 @@ class Timetable extends React.Component {
             alignItems: 'center',
             backgroundColor: '#4DC4C1'
         },
-        highlightFreeCellStyle: {
-            backgroundColor: '#57CCC9'
-        },
         bookedCellStyle: {
             flex: 1,
             height: 50,
@@ -173,9 +200,6 @@ class Timetable extends React.Component {
             alignItems: 'center',
             backgroundColor: '#a04444'
         },
-        highlightBookedCellStyle: {
-            backgroundColor: '#a04444'
-        },
         myBookedCellStyle: {
             flex: 1,
             height: 50,
@@ -183,9 +207,6 @@ class Timetable extends React.Component {
             borderColor: '#7DD8D5',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: '#49a044'
-        },
-        highlightMyBookedCellStyle: {
             backgroundColor: '#49a044'
         },
         markerStyle: {
@@ -209,25 +230,43 @@ class Timetable extends React.Component {
 export default class TimetableWrapper extends React.Component {
 
     componentDidMount() {
-        this.props.stateHandler.sdk.listMachines(this.props.laundryId)
+
+        //Retrieve machines
+        this.props.stateHandler.sdk.listMachines(this.laundryId)
+
+        //Retrieve bookings
+        console.log('Retrieving bookings',today)
+        var tomorrow = today.clone().add(1,'day')
+
+        this.props.stateHandler.sdk.listBookingsInTime(this.laundryId, {
+            year: today.year(),
+            month: today.month(),
+            day: today.date()
+        }, {
+            year: tomorrow.year(),
+            month: tomorrow.month(),
+            day: tomorrow.date()
+        })
+    }
+
+    get laundryId() {
+        return this.props.laundry.id
     }
 
     render() {
-        let machines = this.machines;
+        let machines = this.machines
+        console.log('Machines: ' + machines)
         if (!machines) {
             console.log('Rendering empty TimeTable, since no machines available')
             return this.renderEmpty()
         }
-        console.log('Machines length: ' + machines.length)
-        console.log('Machines: ' + machines)
-        return this.laundry && machines.length ? this.renderTables() : this.renderEmpty();
+        return this.renderTables()
     }
 
     renderTables() {
         return <View style={styles.container}>
-            <Timetable currentUser={this.props.currentUser}
-                       users={this.props.users}
-                       laundries={this.props.laundries}
+            <Timetable user={this.props.user}
+                       laundry={this.props.laundry}
                        machines={this.machines}
                        bookings={this.props.bookings}
                        stateHandler={this.props.stateHandler}/>
@@ -249,37 +288,22 @@ export default class TimetableWrapper extends React.Component {
     }
 
     get machines() {
-        if (!this.laundry) return undefined
-        console.log('Laundry is not undefined: ' + this.laundry)
-        let machines = this.laundry.machines.map(id => {
-            console.log('Saw machine: ' + this.props.machines[id])
+        if (!this.props.laundry) return undefined
+        let machines = this.props.laundry.machines.map(id => {
             return this.props.machines[id]
         })
         return machines.filter(machine => machine !== null && machine !== undefined)
     }
 
-    get laundry() {
-        if (this.user) {
-            laundryId = this.user.laundries[0]
-            if (laundryId) return this.props.laundries[laundryId]
-        }
-        return undefined
-    }
-
-    get user() {
-        return this.props.users[this.props.currentUser]
-    }
-
     get isOwner() {
-        if (this.laundry) return this.laundry.owners.indexOf(this.props.currentUser) >= 0
+        if (this.props.laundry) return this.props.laundry.owners.indexOf(this.props.user) >= 0
         return undefined
     }
 }
 
 TimetableWrapper.propTypes = {
-    currentUser: React.PropTypes.string,
-    users: React.PropTypes.object,
-    laundries: React.PropTypes.object,
+    user: React.PropTypes.object.isRequired,
+    laundry: React.PropTypes.object.isRequired,
     machines: React.PropTypes.object,
     bookings: React.PropTypes.object,
     stateHandler: React.PropTypes.object.isRequired
