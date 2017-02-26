@@ -19,7 +19,7 @@ export default class Table extends React.Component {
 
     render() {
         if (!this.props.headersData) return <View><Text>Still loading...</Text></View>
-        console.log('Rendering table')
+        //console.log('Rendering table')
         return <View>
             {this.renderHeaders()}
             {this.renderRows()}
@@ -27,14 +27,14 @@ export default class Table extends React.Component {
     }
 
     renderRows() {
-        console.log('Rendering rows')
+        //console.log('Rendering rows')
         return <ListView
             dataSource={ds.cloneWithRows(this.props.data)}
             renderRow={(rowData) => this.renderRow(rowData)}/>
     }
 
     renderRow(rowData) {
-        console.log('Rendering cells')
+        //console.log('Rendering cells')
         return <View style={this.props.tableStyles.rowStyle}>
             {this.renderBetweenMarker(rowData.time)}
             <ListView
@@ -47,13 +47,13 @@ export default class Table extends React.Component {
     }
 
     renderBetweenMarker(time) {
-        console.log('Render between marker')
+        //console.log('Render between marker')
         if (!this.props.renderBetweenMarkers) return null
         if (!time || !this.props.renderBetweenMarkersAt(time)) {
-            console.log('Render empty between marker')
+            //console.log('Render empty between marker')
             return this.renderEmptyBetweenMarker()
         }
-        console.log('Render between marker with text ' + time)
+        //console.log('Render between marker with text ' + time)
         return <View style={this.props.tableStyles.markerStyle}>
             <Text style={this.props.tableStyles.markerTextStyle}>{time}</Text>
         </View>
@@ -66,7 +66,7 @@ export default class Table extends React.Component {
     }
 
     renderCell(cellData) {
-        console.log('Rendering cell: ' + cellData)
+        //console.log('Rendering cell: ' + cellData)
         var flattenStyle = require('flattenStyle')
         return <TouchableHighlight
             underlayColor={flattenStyle(this.props.underlayCellStyle(cellData)).backgroundColor}
@@ -78,7 +78,7 @@ export default class Table extends React.Component {
     }
 
     renderHeaders() {
-        console.log('Rendering headers')
+        //console.log('Rendering headers')
         return <View style={this.props.tableStyles.rowStyle}>
             {this.renderBetweenMarker()}
             <ListView
@@ -91,8 +91,9 @@ export default class Table extends React.Component {
     }
 
     renderHeader(headerData) {
+        console.log('Header data: ' + headerData)
         return <View style={[this.props.tableStyles.headerStyle]}>
-            <Text>{headerData}</Text>
+            <Text>{headerData.name}</Text>
         </View>
     }
 
@@ -101,7 +102,7 @@ export default class Table extends React.Component {
 Table.propTypes = {
     headersData: React.PropTypes.array,
     data: React.PropTypes.array,
-    tableStyles: StyleSheet,
+    tableStyles: React.PropTypes.object,
     cellStyle: React.PropTypes.func,
     underlayCellStyle: React.PropTypes.func,
     renderBetweenMarkers: React.PropTypes.bool,

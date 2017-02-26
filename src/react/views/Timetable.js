@@ -42,7 +42,7 @@ class Timetable extends React.Component {
     renderTable() {
         return <View>
             <Table
-                headersData={['Washing machine 1', 'Washing machine 2']}
+                headersData={this.props.machines}
                 data={[{time: '8', cells: ['mybooking','free']},
                     {time: '8.5', cells: ['free','free']},
                     {time: '9', cells: ['mybooking','booked']},
@@ -82,16 +82,16 @@ class Timetable extends React.Component {
     }
 
     cellStyle(cellData) {
-        console.log('Determining cell style')
+        //console.log('Determining cell style')
         switch (cellData) {
             case 'free':
-                console.log('Using free cell style')
+                //console.log('Using free cell style')
                 return this.tableStyles.freeCellStyle
             case 'booked':
-                console.log('Using booked cell style')
+                //console.log('Using booked cell style')
                 return this.tableStyles.bookedCellStyle
             case 'mybooking':
-                console.log('Using my booked cell style')
+                //console.log('Using my booked cell style')
                 return this.tableStyles.myBookedCellStyle
             default:
                 console.error('Unknown cell. Using free cell style')
@@ -100,16 +100,16 @@ class Timetable extends React.Component {
     }
 
     underlayCellStyle(cellData) {
-        console.log('Determining underlay cell style')
+        //console.log('Determining underlay cell style')
         switch (cellData) {
             case 'free':
-                console.log('Using free cell style')
+                //console.log('Using free cell style')
                 return this.tableStyles.highlightFreeCellStyle
             case 'booked':
-                console.log('Using booked cell style')
+                //console.log('Using booked cell style')
                 return this.tableStyles.highlightBookedCellStyle
             case 'mybooking':
-                console.log('Using my booked cell style')
+                //console.log('Using my booked cell style')
                 return this.tableStyles.highlightMyBookedCellStyle
             default:
                 console.error('Unknown cell. Using free cell style')
@@ -119,7 +119,7 @@ class Timetable extends React.Component {
     }
 
     renderBetweenMarkersAt(time) {
-        console.log('Checking if should render between marker at time ' + time)
+        //console.log('Checking if should render between marker at time ' + time)
         let value = parseFloat(time);
         return value !== 8 && value % 1 == 0
     }
@@ -127,29 +127,6 @@ class Timetable extends React.Component {
     onPressCell(cellData) {
         console.log('Pressed slot with ' + cellData)
     }
-
-    get user() {
-        return this.props.users[this.props.currentUser]
-    }
-
-    get laundryId() {
-        return this.user.laundries[0]
-    }
-
-    get laundry() {
-        if (this.user) {
-            laundryId = this.user.laundries[0]
-            if (laundryId) return this.props.laundries[laundryId]
-        }
-        return undefined
-    }
-
-    get machines() {
-        if (!this.laundry || !this.machines) return undefined
-        machineId = this.laundry.machines[0]
-        if (machineId) return this.props.machines[machineId]
-    }
-
 
     tableStyles = StyleSheet.create({
         containerStyle: {
@@ -231,9 +208,19 @@ class Timetable extends React.Component {
 
 export default class TimetableWrapper extends React.Component {
 
+    componentDidMount() {
+        this.props.stateHandler.sdk.listMachines(this.props.laundryId)
+    }
+
     render() {
-        if (!this.machines) this.renderEmpty()
-        return this.laundry && this.machines.length ? this.renderTables() : this.renderEmpty();
+        let machines = this.machines;
+        if (!machines) {
+            console.log('Rendering empty TimeTable, since no machines available')
+            return this.renderEmpty()
+        }
+        console.log('Machines length: ' + machines.length)
+        console.log('Machines: ' + machines)
+        return this.laundry && machines.length ? this.renderTables() : this.renderEmpty();
     }
 
     renderTables() {
@@ -241,13 +228,14 @@ export default class TimetableWrapper extends React.Component {
             <Timetable currentUser={this.props.currentUser}
                        users={this.props.users}
                        laundries={this.props.laundries}
-                       machines={this.props.machines}
+                       machines={this.machines}
                        bookings={this.props.bookings}
                        stateHandler={this.props.stateHandler}/>
         </View>
     }
 
     renderEmpty() {
+        console.log('Rendering empty page')
         return <View style={styles.container}>
             <Text>
                 There are no machines registered.
@@ -262,7 +250,12 @@ export default class TimetableWrapper extends React.Component {
 
     get machines() {
         if (!this.laundry) return undefined
-        return this.laundry.machines
+        console.log('Laundry is not undefined: ' + this.laundry)
+        let machines = this.laundry.machines.map(id => {
+            console.log('Saw machine: ' + this.props.machines[id])
+            return this.props.machines[id]
+        })
+        return machines.filter(machine => machine !== null && machine !== undefined)
     }
 
     get laundry() {
