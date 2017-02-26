@@ -71,16 +71,11 @@ class Timetable extends React.Component {
                     {time: '20.5', cells: ['free','free']},
                     {time: '21', cells: ['free','free']},
                     {time: '21.5', cells: ['free','free']}]}
-                containerStyle={this.tableStyles.containerStyle}
-                headerStyle={this.tableStyles.headerStyle}
-                rowStyle={this.tableStyles.rowStyle}
+                tableStyles={this.tableStyles}
                 cellStyle={(cellData) => this.cellStyle(cellData)}
                 underlayCellStyle={(cellData) => this.underlayCellStyle(cellData)}
                 renderBetweenMarkers={true}
                 renderBetweenMarkersAt={(time) => this.renderBetweenMarkersAt(time)}
-                markerTextStyle={this.tableStyles.markerTextStyle}
-                markerStyle={this.tableStyles.markerStyle}
-                emptyMarkerStyle={this.tableStyles.emptyMarkerStyle}
                 onPressCell={(cellData) => this.onPressCell(cellData)}
             />
         </View>

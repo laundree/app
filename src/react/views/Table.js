@@ -35,10 +35,10 @@ export default class Table extends React.Component {
 
     renderRow(rowData) {
         console.log('Rendering cells')
-        return <View style={this.props.rowStyle}>
+        return <View style={this.props.tableStyles.rowStyle}>
             {this.renderBetweenMarker(rowData.time)}
             <ListView
-                contentContainerStyle={this.props.containerStyle}
+                contentContainerStyle={this.props.tableStyles.containerStyle}
                 dataSource={ds.cloneWithRows(rowData.cells)}
                 renderRow={(cellData) => this.renderCell(cellData)}
                 horizontal={true}/>
@@ -54,13 +54,13 @@ export default class Table extends React.Component {
             return this.renderEmptyBetweenMarker()
         }
         console.log('Render between marker with text ' + time)
-        return <View style={this.props.markerStyle}>
-            <Text style={this.props.markerTextStyle}>{time}</Text>
+        return <View style={this.props.tableStyles.markerStyle}>
+            <Text style={this.props.tableStyles.markerTextStyle}>{time}</Text>
         </View>
     }
 
     renderEmptyBetweenMarker() {
-        return <View style={this.props.emptyMarkerStyle}>
+        return <View style={this.props.tableStyles.emptyMarkerStyle}>
             <Text></Text>
         </View>
     }
@@ -79,10 +79,10 @@ export default class Table extends React.Component {
 
     renderHeaders() {
         console.log('Rendering headers')
-        return <View style={this.props.rowStyle}>
+        return <View style={this.props.tableStyles.rowStyle}>
             {this.renderBetweenMarker()}
             <ListView
-                contentContainerStyle={this.props.containerStyle}
+                contentContainerStyle={this.props.tableStyles.containerStyle}
                 dataSource={ds.cloneWithRows(this.props.headersData)}
                 renderRow={(headerData) => this.renderHeader(headerData)}
                 horizontal={true}/>
@@ -91,7 +91,7 @@ export default class Table extends React.Component {
     }
 
     renderHeader(headerData) {
-        return <View style={[this.props.headerStyle]}>
+        return <View style={[this.props.tableStyles.headerStyle]}>
             <Text>{headerData}</Text>
         </View>
     }
@@ -101,15 +101,10 @@ export default class Table extends React.Component {
 Table.propTypes = {
     headersData: React.PropTypes.array,
     data: React.PropTypes.array,
-    containerStyle: View.propTypes.style,
-    headerStyle: View.propTypes.style,
-    rowStyle: View.propTypes.style,
+    tableStyles: StyleSheet,
     cellStyle: React.PropTypes.func,
     underlayCellStyle: React.PropTypes.func,
     renderBetweenMarkers: React.PropTypes.bool,
     renderBetweenMarkersAt: React.PropTypes.func,
-    markerTextStyle: Text.propTypes.style,
-    markerStyle: View.propTypes.style,
-    emptyMarkerStyle: View.propTypes.style,
     onPressCell: React.PropTypes.func.isRequired
 }
