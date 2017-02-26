@@ -10,6 +10,8 @@ import {
   Text,
   Image
 } from 'react-native'
+import FancyTextButton from './input/FancyTextButton'
+import constants from '../../constants'
 
 export default class Settings extends React.Component {
   get user () {
@@ -33,11 +35,13 @@ export default class Settings extends React.Component {
   render () {
     return <View style={styles.container}>
       {this.renderUser()}
-      <Button
-        onPress={() => this.props.stateHandler.logOut()}
-        title='Log out'
-        accessibilityLabel='Learn more about this purple button'
-      />
+      <View style={{alignSelf: 'stretch', padding: 5, paddingTop: 30}}>
+        <FancyTextButton
+          style={{backgroundColor: constants.colorRed}}
+          onPress={() => this.props.stateHandler.logOut()}
+          text='Log out'
+        />
+      </View>
     </View>
   }
 }
@@ -52,7 +56,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   login: {
     textAlign: 'center',

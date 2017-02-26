@@ -88,7 +88,12 @@ class StateHandler extends EventEmitter {
   loginEmailPassword (email, password) {
     return this.sdk.token
       .createTokenFromEmailPassword(`app-${uuid.v4()}`, email, password)
-      .then(({secret, owner: {id}}) => Promise.all([saveUserIdAndToken(id, secret), this._setupAuth(id, secret)]))
+      .then(({secret, owner: {id}}) => this.updateAuth(id, secret))
+      .then(() => this.emit('authChange'))
+  }
+
+  updateAuth (userId, secret) {
+    return Promise.all([saveUserIdAndToken(userId, secret), this._setupAuth(userId, secret)])
       .then(() => this.emit('authChange'))
   }
 

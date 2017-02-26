@@ -6,8 +6,8 @@
 'use strict'
 import React from 'react'
 import {AppRegistry} from 'react-native'
-import MainRouter from './src/react/views/MainRouter'
+import App from './src/react/views/App'
 
-const LaundreeApp = () => <MainRouter/>
+const LaundreeApp = () => <App/>
 
 AppRegistry.registerComponent('LaundreeApp', () => LaundreeApp)
