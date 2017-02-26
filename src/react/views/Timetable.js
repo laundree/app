@@ -14,21 +14,123 @@ import {
     View
 } from 'react-native'
 import moment from 'moment'
+import Table from './Table'
 
 class Timetable extends React.Component {
 
-    constructor() {
-        super()
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+    render() {
+        return <View style={{
+            paddingTop: Navigator.NavigationBar.Styles.General.NavBarHeight,
+            paddingBottom: Navigator.NavigationBar.Styles.General.NavBarHeight,
+            marginTop: 10, marginBottom: 10
+        }}>
+            {this.renderTitle()}
+            {this.renderTable()}
+        </View>
+    }
 
-        this.state = {
-            timeSlots: ds.cloneWithRows([8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5, 13, 13.5, 14, 14.5, 15, 15.5, 16, 16.5, 17, 17.5, 18, 18.5, 19, 19.5, 20, 20.5, 21, 21.5
-            ]),
-            machines: ds.cloneWithRows(['Washing machine', 'Tumble dryer']),
-            offset: null,
-            dates: ds.cloneWithRows([moment(),
-                moment().add(1,'days')])
+    renderTitle() {
+        return <View style={styles.row}>
+            <View style={styles.dateView}>
+                <Text style={styles.dateHeader}>
+                    {moment().format('dddd D[/]M, YYYY')}
+                </Text>
+            </View>
+        </View>
+    }
+
+    renderTable() {
+        return <View>
+            <Table
+                headersData={['Washing machine 1', 'Washing machine 2']}
+                data={[{time: '8', cells: ['mybooking','free']},
+                    {time: '8.5', cells: ['free','free']},
+                    {time: '9', cells: ['mybooking','booked']},
+                    {time: '9.5', cells: ['mybooking','booked']},
+                    {time: '10', cells: ['free','free']},
+                    {time: '10.5', cells: ['free','free']},
+                    {time: '11', cells: ['free','free']},
+                    {time: '11.5', cells: ['free','free']},
+                    {time: '12', cells: ['free','free']},
+                    {time: '12.5', cells: ['free','free']},
+                    {time: '13', cells: ['free','free']},
+                    {time: '13.5', cells: ['free','free']},
+                    {time: '14', cells: ['free','free']},
+                    {time: '14.5', cells: ['free','free']},
+                    {time: '15', cells: ['free','free']},
+                    {time: '15.5', cells: ['free','free']},
+                    {time: '16', cells: ['free','free']},
+                    {time: '16.5', cells: ['free','free']},
+                    {time: '17', cells: ['free','free']},
+                    {time: '17.5', cells: ['free','free']},
+                    {time: '18', cells: ['free','free']},
+                    {time: '18.5', cells: ['free','free']},
+                    {time: '19', cells: ['free','free']},
+                    {time: '19.5', cells: ['free','free']},
+                    {time: '20', cells: ['free','free']},
+                    {time: '20.5', cells: ['free','free']},
+                    {time: '21', cells: ['free','free']},
+                    {time: '21.5', cells: ['free','free']}]}
+                containerStyle={this.tableStyles.containerStyle}
+                headerStyle={this.tableStyles.headerStyle}
+                rowStyle={this.tableStyles.rowStyle}
+                cellStyle={(cellData) => this.cellStyle(cellData)}
+                underlayCellStyle={(cellData) => this.underlayCellStyle(cellData)}
+                renderBetweenMarkers={true}
+                renderBetweenMarkersAt={(time) => this.renderBetweenMarkersAt(time)}
+                markerTextStyle={this.tableStyles.markerTextStyle}
+                markerStyle={this.tableStyles.markerStyle}
+                emptyMarkerStyle={this.tableStyles.emptyMarkerStyle}
+                onPressCell={(cellData) => this.onPressCell(cellData)}
+            />
+        </View>
+    }
+
+    cellStyle(cellData) {
+        console.log('Determining cell style')
+        switch (cellData) {
+            case 'free':
+                console.log('Using free cell style')
+                return this.tableStyles.freeCellStyle
+            case 'booked':
+                console.log('Using booked cell style')
+                return this.tableStyles.bookedCellStyle
+            case 'mybooking':
+                console.log('Using my booked cell style')
+                return this.tableStyles.myBookedCellStyle
+            default:
+                console.error('Unknown cell. Using free cell style')
+                return this.tableStyles.freeCellStyle
         }
+    }
+
+    underlayCellStyle(cellData) {
+        console.log('Determining underlay cell style')
+        switch (cellData) {
+            case 'free':
+                console.log('Using free cell style')
+                return this.tableStyles.highlightFreeCellStyle
+            case 'booked':
+                console.log('Using booked cell style')
+                return this.tableStyles.highlightBookedCellStyle
+            case 'mybooking':
+                console.log('Using my booked cell style')
+                return this.tableStyles.highlightMyBookedCellStyle
+            default:
+                console.error('Unknown cell. Using free cell style')
+                return this.tableStyles.highlightFreeCellStyle
+        }
+
+    }
+
+    renderBetweenMarkersAt(time) {
+        console.log('Checking if should render between marker at time ' + time)
+        let value = parseFloat(time);
+        return value !== 8 && value % 1 == 0
+    }
+
+    onPressCell(cellData) {
+        console.log('Pressed slot with ' + cellData)
     }
 
     get user() {
@@ -53,167 +155,101 @@ class Timetable extends React.Component {
         if (machineId) return this.props.machines[machineId]
     }
 
-    renderItem(rowData, itemData) {
-        let isBooked = false
-        let isMine = false
-        if (isBooked && isMine) {
-            return <TouchableHighlight
-                style={styles.highlightItem}
-                onPress={(event) => this.onPress(event, rowData, itemData, isBooked)}>
-                <View style={[styles.cell, styles.item, styles.ownBookedItem]}>
-                    <Text />
-                </View>
-            </TouchableHighlight>
-        } else if (isBooked) {
-            return <TouchableHighlight
-                style={styles.highlightItem}
-                onPress={(event) => this.onPress(event, rowData, itemData, isBooked)}>
-                <View style={[styles.cell, styles.item, styles.bookedItem]}>
-                    <Text />
-                </View>
-            </TouchableHighlight>
+
+    tableStyles = StyleSheet.create({
+        containerStyle: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: Dimensions.get('window').width,
+            marginLeft: 10,
+            marginRight: 10,
+        },
+        headerStyle: {
+            flex: 1,
+            height: 50,
+            borderWidth: 1,
+            borderColor: '#7DD8D5',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#4DC4C1'
+        },
+        rowStyle: {
+            flexDirection: 'row',
+            width: Dimensions.get('window').width,
+            height: 50
+        },
+        freeCellStyle: {
+            flex: 1,
+            height: 50,
+            borderWidth: 1,
+            borderColor: '#7DD8D5',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#4DC4C1'
+        },
+        highlightFreeCellStyle: {
+            backgroundColor: '#57CCC9'
+        },
+        bookedCellStyle: {
+            flex: 1,
+            height: 50,
+            borderWidth: 1,
+            borderColor: '#7DD8D5',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#a04444'
+        },
+        highlightBookedCellStyle: {
+            backgroundColor: '#a04444'
+        },
+        myBookedCellStyle: {
+            flex: 1,
+            height: 50,
+            borderWidth: 1,
+            borderColor: '#7DD8D5',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#49a044'
+        },
+        highlightMyBookedCellStyle: {
+            backgroundColor: '#49a044'
+        },
+        markerStyle: {
+            width: 20,
+            marginTop: -9,
+            height: 20,
+            backgroundColor: '#4DC4C1',
+        },
+        emptyMarkerStyle: {
+            width: 20,
+            marginTop: -9,
+            height: 20,
+        },
+        markerTextStyle: {
+            textAlign: 'center'
         }
-        return <TouchableHighlight
-            style={styles.highlightItem}
-            onPress={(event) => this.onPress(event, rowData, itemData, isBooked)}>
-            <View style={[styles.cell, styles.item]}>
-                <Text />
-            </View>
-        </TouchableHighlight>
-    }
-
-    renderRow(rowData, rowId) {
-        let showHour = parseFloat(rowData) % 1 === 0 && parseFloat(rowData) !== 8
-        let hourData = showHour ? rowData : ''
-        let style = showHour ? styles.itemHour : styles.emptyHour
-        return <View style={styles.row}>
-            <View style={[styles.hourTest]}>
-                <Text style={[style]}>{hourData}</Text>
-            </View>
-            <ListView
-                contentContainerStyle={styles.itemContainer}
-                dataSource={this.state.machines}
-                renderRow={(itemData) => this.renderItem(rowData, itemData)}
-                horizontal
-            />
-            <View>
-                <Text style={[styles.hour, styles.emptyHour]}></Text>
-            </View>
-            <View>
-                <Text style={[styles.hour, style]}>{hourData}</Text>
-            </View>
-            <ListView
-                contentContainerStyle={styles.itemContainer}
-                dataSource={this.state.machines}
-                renderRow={(itemData) => this.renderItem(rowData, itemData)}
-                horizontal
-            />
-            <View>
-                <Text style={[styles.hour, styles.emptyHour]}></Text>
-            </View>
-        </View>
-    }
-
-    renderHeaderItem(itemData) {
-        return <View style={[styles.cell, styles.header]}>
-            <Text style={styles.headerText}>{itemData}</Text>
-        </View>
-    }
-
-    renderHeader() {
-        return <View style={styles.row}>
-            <Text style={styles.hour}/>
-            <ListView
-                contentContainerStyle={styles.itemContainer}
-                dataSource={this.state.machines}
-                renderRow={(itemData) => this.renderHeaderItem(itemData)}
-                horizontal
-            />
-            <Text style={styles.hour}/>
-            <Text style={styles.hour}/>
-            <ListView
-                contentContainerStyle={styles.itemContainer}
-                dataSource={this.state.machines}
-                renderRow={(itemData) => this.renderHeaderItem(itemData)}
-                horizontal
-            />
-            <Text style={styles.hour}/>
-        </View>
-    }
-
-    renderUser() {
-        if (!this.user) {
-            console.log('User not available')
-            return null
-        }
-        return <Text>
-            {this.user.displayName}
-        </Text>
-    }
-
-    renderDateRow(rowData) {
-        return <View style={styles.dateView}>
-            <Text style={styles.dateHeader}>
-                {rowData.format('dddd D[/]M, YYYY')}
-            </Text>
-        </View>
-    }
-
-    render() {
-        return <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator
-            pagingEnabled={true}
-            style={{paddingTop: Navigator.NavigationBar.Styles.General.NavBarHeight}}>
-            <View style={{marginTop: 10, marginBottom: 10}}>
-                <View style={styles.row}>
-                    <ListView
-                        style={styles.dateListView}
-                        horizontal={true}
-                        dataSource={this.state.dates}
-                        renderRow={(rowData) => this.renderDateRow(rowData)}
-                    />
-                </View>
-                {this.renderHeader()}
-                <ListView
-                    contentContainerStyle={styles.listViewContainer}
-                    dataSource={this.state.timeSlots}
-                    renderRow={(rowData, sectionId, rowId) => this.renderRow(rowData, rowId)}
-                    initialListSize={15}
-                />
-            </View>
-        </ScrollView>
-    }
-
-    onPress(event, rowData, itemData, isBooked) {
-        let booked = isBooked ? 'booked' : 'not booked'
-        console.log('Pressed ' + booked + ' slot with ' + rowData + ', ' + itemData)
-    }
+    })
 
 }
 
 export default class TimetableWrapper extends React.Component {
 
-    get user() {
-        return this.props.users[this.props.currentUser]
+    render() {
+        if (!this.machines) this.renderEmpty()
+        return this.laundry && this.machines.length ? this.renderTables() : this.renderEmpty();
     }
 
-    get laundry() {
-        if (this.user) {
-            laundryId = this.user.laundries[0]
-            if (laundryId) return this.props.laundries[laundryId]
-        }
-        return undefined
-    }
-
-    get machines() {
-        if (!this.laundry) return undefined
-        return this.laundry.machines
-    }
-
-    get isOwner() {
-        if (this.laundry) return this.laundry.owners.indexOf(this.props.currentUser) >= 0
-        return undefined
+    renderTables() {
+        return <View style={styles.container}>
+            <Timetable currentUser={this.props.currentUser}
+                       users={this.props.users}
+                       laundries={this.props.laundries}
+                       machines={this.props.machines}
+                       bookings={this.props.bookings}
+                       stateHandler={this.props.stateHandler}/>
+        </View>
     }
 
     renderEmpty() {
@@ -229,20 +265,26 @@ export default class TimetableWrapper extends React.Component {
         </View>
     }
 
-    renderTables() {
-        return <View style={styles.container}>
-            <Timetable currentUser={this.props.currentUser}
-                       users={this.props.users}
-                       laundries={this.props.laundries}
-                       machines={this.props.machines}
-                       bookings={this.props.bookings}
-                       stateHandler={this.props.stateHandler}/>
-        </View>
+    get machines() {
+        if (!this.laundry) return undefined
+        return this.laundry.machines
     }
 
-    render() {
-        if (!this.machines) this.renderEmpty()
-        return this.laundry && this.machines.length ? this.renderTables() : this.renderEmpty();
+    get laundry() {
+        if (this.user) {
+            laundryId = this.user.laundries[0]
+            if (laundryId) return this.props.laundries[laundryId]
+        }
+        return undefined
+    }
+
+    get user() {
+        return this.props.users[this.props.currentUser]
+    }
+
+    get isOwner() {
+        if (this.laundry) return this.laundry.owners.indexOf(this.props.currentUser) >= 0
+        return undefined
     }
 }
 
@@ -261,13 +303,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#66D3D3'
     },
-    listViewContainer: {
-        width: Dimensions.get('window').width * 2,
-        height: 1400
-    },
-    dateListView: {
-        width: Dimensions.get('window').width * 2
-    },
     dateView: {
         flex: 1,
         width: Dimensions.get('window').width
@@ -278,62 +313,7 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: 'row',
-        width: Dimensions.get('window').width * 2,
-        height: 50
-    },
-    itemContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
         width: Dimensions.get('window').width,
-        height: 50,
-        marginLeft: 10,
-        marginRight: 10
-    },
-    cell: {
-        flex: 1,
-        height: 50,
-        borderWidth: 1,
-        borderColor: '#7DD8D5',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    item: {
-        backgroundColor: '#57CCC9'
-    },
-    highlightItem: {
-        flex: 1
-    },
-    ownBookedItem: {
-        backgroundColor: '#49A044'
-    },
-    bookedItem: {
-        backgroundColor: '#A04444'
-    },
-    header: {
-        backgroundColor: '#4DC4C1'
-    },
-    headerText: {
-        textAlign: 'center'
-
-    },
-    hourTest: {
-        width: 20,
-        marginTop: -9,
-        alignSelf: 'flex-start'
-    },
-    hour: {
-        width: 20,
-        marginTop: -9
-    },
-    itemHour: {
-        backgroundColor: '#4DC4C1',
-        height: 20,
-        textAlign: 'center'
-    },
-    emptyHour: {
-        height: 20,
-        textAlign: 'center'
+        height: 50
     }
 })
