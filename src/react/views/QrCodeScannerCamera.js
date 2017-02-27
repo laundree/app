@@ -4,12 +4,11 @@
 'use strict'
 import React, { Component } from 'react'
 import {
-  StyleSheet,
   View
 } from 'react-native'
 import Camera from 'react-native-camera'
 import url from 'url'
-
+import { qrCodeScannerCamera } from '../../style'
 export default class QrCodeScanner extends Component {
 
   handleData (qrData) {
@@ -26,10 +25,10 @@ export default class QrCodeScanner extends Component {
 
   render () {
     return (
-      <View style={styles.container}>
+      <View style={qrCodeScannerCamera.container}>
         <Camera
           onBarCodeRead={event => this.handleData(event.data)}
-          style={styles.camera}
+          style={qrCodeScannerCamera.camera}
           aspect={Camera.constants.Aspect.fill}
         />
       </View>
@@ -39,15 +38,3 @@ export default class QrCodeScanner extends Component {
 QrCodeScanner.propTypes = {
   stateHandler: React.PropTypes.object.isRequired
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  camera: {
-    flex: 1,
-    alignSelf: 'stretch'
-  }
-})

@@ -2,13 +2,13 @@
  * Created by budde on 25/02/2017.
  */
 import React from 'react'
-import { View, Text, StyleSheet, Navigator, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Navigator, Image, TouchableOpacity } from 'react-native'
 import Timetable from './Timetable'
 import Settings from './../containers/Settings'
 import QrCodeScanner from './QrCodeScanner'
 import QrCodeScannerCamera from './QrCodeScannerCamera'
 import Backable from './Backable'
-import constants from '../../constants'
+import { loggedInApp } from '../../style'
 
 export default class LoggedInApp extends Backable {
 
@@ -60,8 +60,8 @@ export default class LoggedInApp extends Backable {
   }
 
   renderTitle ({title}) {
-    return <View style={styles.navBarContainer}>
-      <Text style={styles.navBarTitle}>{title}</Text>
+    return <View style={loggedInApp.navBarContainer}>
+      <Text style={loggedInApp.navBarTitle}>{title}</Text>
     </View>
   }
 
@@ -83,29 +83,29 @@ export default class LoggedInApp extends Backable {
   renderScene ({id, index}, navigator) {
     this.backAction = index > 0 ? () => navigator.pop() : null
 
-    return <View style={styles.mainContainer}>
+    return <View style={loggedInApp.mainContainer}>
       {this.renderSceneElement(id, navigator)}
     </View>
   }
 
   renderRightButton ({index}, navigator) {
-    if (index > 0) return <View style={styles.navBarContainer}/>
-    return <View style={styles.navBarContainer}>
+    if (index > 0) return <View style={loggedInApp.navBarContainer}/>
+    return <View style={loggedInApp.navBarContainer}>
       <TouchableOpacity onPress={() => navigator.push(this.settingsRoute)}>
         <Image
           source={require('../../../img/gear.png')}
-          style={styles.navBarIcon}/>
+          style={loggedInApp.navBarIcon}/>
       </TouchableOpacity>
     </View>
   }
 
   renderLeftButton (_, navigator) {
-    if (!this.backAction) return <View style={styles.navBarContainer}/>
-    return <View style={styles.navBarContainer}>
+    if (!this.backAction) return <View style={loggedInApp.navBarContainer}/>
+    return <View style={loggedInApp.navBarContainer}>
       <TouchableOpacity onPress={this.backAction}>
         <Image
           source={require('../../../img/back.png')}
-          style={styles.navBarIcon}/>
+          style={loggedInApp.navBarIcon}/>
       </TouchableOpacity>
     </View>
   }
@@ -127,43 +127,11 @@ export default class LoggedInApp extends Backable {
           RightButton: (route, navigator) => this.renderRightButton(route, navigator)
 
         }}
-        style={styles.navigationBar}
+        style={loggedInApp.navigationBar}
       />}
     />
   }
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    backgroundColor: constants.appBackgroundColor,
-    flex: 1,
-    paddingTop: Navigator.NavigationBar.Styles.General.NavBarHeight + constants.statusBarHeight
-
-  },
-  navigationBar: {
-    backgroundColor: constants.colorRed
-  },
-  navBarContainer: {
-    backgroundColor: constants.colorRed,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-    minWidth: 40
-  },
-  navBarTitle: {
-    fontSize: 20,
-    color: '#fff'
-  },
-  navBarIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-    marginLeft: 10
-  },
-  content: {
-    borderWidth: 1
-  }
-})
 
 LoggedInApp.propTypes = {
   currentUser: React.PropTypes.string,

@@ -4,7 +4,6 @@
 
 import React from 'react'
 import {
-  StyleSheet,
   Text,
   View
 } from 'react-native'
@@ -12,7 +11,7 @@ import FancyTextButton from './input/FancyTextButton'
 import FancyTextInput from './input/FancyTextInput'
 import FancyGoogleButton from './input/FancyGoogleButton'
 import FancyFacebookButton from './input/FancyFacebookButton'
-import constants from '../../constants'
+import { login } from '../../style'
 
 class EmailPasswordLoginForm extends React.Component {
   constructor (props) {
@@ -22,17 +21,17 @@ class EmailPasswordLoginForm extends React.Component {
 
   render () {
     return <View>
-      <View style={styles.input}>
+      <View style={login.input}>
         <FancyTextInput
           label={'E-mail address'} keyboardType={'email-address'} value={this.state.email}
           onChangeText={email => this.setState({email: email.trim()})}/>
       </View>
-      <View style={styles.input}>
+      <View style={login.input}>
         <FancyTextInput
           label={'Password'} secureTextEntry value={this.state.password}
           onChangeText={password => this.setState({password})}/>
       </View>
-      <View style={styles.buttonInput}>
+      <View style={login.buttonInput}>
         <FancyTextButton
           disabled={this.disabled}
           onPress={() => this.props.stateHandler.loginEmailPassword(this.state.email, this.state.password)}
@@ -54,18 +53,18 @@ EmailPasswordLoginForm.propTypes = {
 export default class Login extends React.Component {
 
   render () {
-    return <View style={styles.container}>
+    return <View style={login.container}>
       <View style={{alignSelf: 'stretch'}}>
-        <View style={styles.socialLogin}>
-          <View style={styles.socialButton}>
+        <View style={login.socialLogin}>
+          <View style={login.socialButton}>
             <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} text='Login with Facebook'/>
           </View>
-          <View style={styles.socialButton}>
+          <View style={login.socialButton}>
             <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} text='Login with Google'/>
           </View>
         </View>
-        <View style={styles.divider}>
-          <Text style={styles.dividerText}>
+        <View style={login.divider}>
+          <Text style={login.dividerText}>
             OR
           </Text>
         </View>
@@ -80,44 +79,3 @@ Login.propTypes = {
   onOpenGoogleAuth: React.PropTypes.func.isRequired,
   onOpenFacebookAuth: React.PropTypes.func.isRequired
 }
-
-const styles = StyleSheet.create({
-  divider: {
-    alignItems: 'center',
-    paddingTop: 10,
-    paddingBottom: 10
-  },
-  dividerText: {
-    fontWeight: 'bold',
-    color: constants.defaultTextColor
-  },
-  socialLogin: {
-    padding: 5
-  },
-  socialButton: {
-    paddingTop: 30,
-    paddingBottom: 10
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  login: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5
-  },
-  input: {
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingBottom: 5,
-    paddingTop: 10
-  },
-  buttonInput: {
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingBottom: 5,
-    paddingTop: 30
-  }
-})
