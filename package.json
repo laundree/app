@@ -1,22 +1,41 @@
 {
-	"name": "LaundreeApp",
-	"version": "0.0.1",
-	"private": true,
-	"scripts": {
-		"start": "node node_modules/react-native/local-cli/cli.js start",
-		"test": "jest"
-	},
-	"dependencies": {
+  "name": "LaundreeApp",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "eslint ."
+  },
+  "dependencies": {
+    "buffer": "^5.0.5",
+    "events": "^1.1.1",
+    "extend": "^3.0.0",
+    "laundree-sdk": "0.0.22",
 		"react": "15.4.2",
 		"react-native": "0.40.0"
-	},
-	"devDependencies": {
-		"babel-jest": "18.0.0",
-		"babel-preset-react-native": "1.9.1",
-		"jest": "18.1.0",
-		"react-test-renderer": "15.4.2"
-	},
-	"jest": {
-		"preset": "react-native"
-	}
+    "react-native-camera": "^0.4.0",
+    "react-redux": "^5.0.2",
+    "redux": "^3.6.0",
+    "redux-actions": "^1.2.1",
+    "socket.io-client": "^1.7.3",
+    "superagent": "^3.4.4",
+    "url": "^0.11.0",
+    "uuid": "^3.0.1"
+  },
+  "devDependencies": {
+    "babel-jest": "18.0.0",
+    "babel-preset-react-native": "1.9.1",
+    "eslint": "^3.3.1",
+    "eslint-config-standard": "^6.0.0",
+    "eslint-config-standard-jsx": "^3.0.0",
+    "eslint-config-standard-react": "^4.0.0",
+    "eslint-plugin-promise": "^3.0.0",
+    "eslint-plugin-react": "^6.1.2",
+    "eslint-plugin-standard": "^2.0.0",
+    "jest": "18.0.0",
+    "react-test-renderer": "15.4.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
 }
