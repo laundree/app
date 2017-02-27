@@ -5,70 +5,99 @@
 import React from 'react'
 import {
   StyleSheet,
-  TextInput,
   Text,
-  View,
-  Button
+  View
 } from 'react-native'
+import FancyTextButton from './input/FancyTextButton'
+import FancyTextInput from './input/FancyTextInput'
+import FancyGoogleButton from './input/FancyGoogleButton'
+import FancyFacebookButton from './input/FancyFacebookButton'
+import constants from '../../constants'
 
-export default class Login extends React.Component {
-
+class EmailPasswordLoginForm extends React.Component {
   constructor (props) {
     super(props)
     this.state = {email: '', password: ''}
   }
 
   render () {
-    return <View style={styles.container}>
+    return <View>
       <View style={styles.input}>
-        <Text style={styles.label}>
-          E-mail address
-        </Text>
+        <FancyTextInput
+          label={'E-mail address'} keyboardType={'email-address'} value={this.state.email}
+          onChangeText={email => this.setState({email: email.trim()})}/>
       </View>
       <View style={styles.input}>
-        <TextInput
-          style={styles.textInput}
-          keyboardType={'email-address'}
-          onChangeText={email => this.setState({email: email.toLowerCase().trim()})}
-          value={this.state.email}
-        />
+        <FancyTextInput
+          label={'Password'} secureTextEntry value={this.state.password}
+          onChangeText={password => this.setState({password})}/>
       </View>
-      <View style={styles.input}>
-        <Text style={styles.label}>
-          Password
-        </Text>
-      </View>
-      <View style={styles.input}>
-        <TextInput
-          secureTextEntry
-          style={styles.textInput}
-          onChangeText={password => this.setState({password})}
-          value={this.state.password}
-        />
-      </View>
-      <View style={styles.input}>
-        <View style={styles.buttonInput}>
-          <Button
-            onPress={() => this.props.stateHandler.loginEmailPassword(this.state.email, this.state.password)}
-            title='Login'
-            disabled={this.disabled}
-            accessibilityLabel='Learn more about this purple button'
-          />
-        </View>
+      <View style={styles.buttonInput}>
+        <FancyTextButton
+          disabled={this.disabled}
+          onPress={() => this.props.stateHandler.loginEmailPassword(this.state.email, this.state.password)}
+          text='Login'/>
       </View>
     </View>
   }
 
   get disabled () {
-    return !(this.state.email && this.state.password)
+    return Boolean(!(this.state.email && this.state.password))
+  }
+
+}
+
+EmailPasswordLoginForm.propTypes = {
+  stateHandler: React.PropTypes.object.isRequired
+}
+
+export default class Login extends React.Component {
+
+  render () {
+    return <View style={styles.container}>
+      <View style={{alignSelf: 'stretch'}}>
+        <View style={styles.socialLogin}>
+          <View style={styles.socialButton}>
+            <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} text='Login with Facebook'/>
+          </View>
+          <View style={styles.socialButton}>
+            <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} text='Login with Google'/>
+          </View>
+        </View>
+        <View style={styles.divider}>
+          <Text style={styles.dividerText}>
+            OR
+          </Text>
+        </View>
+        <EmailPasswordLoginForm stateHandler={this.props.stateHandler}/>
+      </View>
+    </View>
   }
 }
 
 Login.propTypes = {
-  stateHandler: React.PropTypes.object.isRequired
+  stateHandler: React.PropTypes.object.isRequired,
+  onOpenGoogleAuth: React.PropTypes.func.isRequired,
+  onOpenFacebookAuth: React.PropTypes.func.isRequired
 }
 
 const styles = StyleSheet.create({
+  divider: {
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 10
+  },
+  dividerText: {
+    fontWeight: 'bold',
+    color: constants.defaultTextColor
+  },
+  socialLogin: {
+    padding: 5
+  },
+  socialButton: {
+    paddingTop: 30,
+    paddingBottom: 10
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -79,27 +108,16 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5
   },
-  label: {
-    textAlign: 'left',
-    flex: 1,
-    paddingLeft: 5,
-    marginTop: 20
-  },
   input: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row'
-  },
-  textInput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    margin: 4,
-    padding: 4,
-    flex: 1
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingBottom: 5,
+    paddingTop: 10
   },
   buttonInput: {
-    height: 40,
-    marginTop: 20
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingBottom: 5,
+    paddingTop: 30
   }
 })

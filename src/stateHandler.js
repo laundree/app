@@ -53,36 +53,54 @@ class StateHandler extends EventEmitter {
 
   _disconnectSocket () {
     if (!this._socket) return
+    console.log('Disconnecting socket')
     this._socket.disconnect()
   }
 
   _setupAuth (userId, token) {
+    console.log('Setting up auth', userId, token)
     if (!(userId && token)) {
       this.sdk.updateAuth({})
       this._disconnectSocket()
-      this._authenticated = false
+      this._auth = null
       return
     }
     this.sdk.updateAuth({userId, token})
     this._disconnectSocket()
-    this._socket = io(`http://localhost:3000/redux?userId=${userId}&token=${token}`)
+    const path = `${config.laundree.host}/redux?userId=${userId}&token=${token}`
+    console.log('Connecting socket to path', path)
+    this._socket = io(path)
     this._socket.on('actions', actions => {
       console.log('Dispatching actions ', actions)
       actions.forEach(action => this.store.dispatch(action))
     })
+    this._socket.on('disconnect', () => console.log('Socket disconnected'))
+    this._socket.on('error', err => console.log('Socket errored', err))
+    this._socket.on('connect', () => console.log('Socket connected'))
     this.sdk.setupRedux(this.store, this._socket) // Possible event emitter leak
-    this._authenticated = true
+    this._auth = {userId, token}
   }
 
   get isAuthenticated () {
-    return this._authenticated
+    return Boolean(this._auth)
   }
 
   loginEmailPassword (email, password) {
     return this.sdk.token
       .createTokenFromEmailPassword(`app-${uuid.v4()}`, email, password)
-      .then(({secret, owner: {id}}) => Promise.all([saveUserIdAndToken(id, secret), this._setupAuth(id, secret)]))
+      .then(({secret, owner: {id}}) => this.updateAuth(id, secret))
       .then(() => this.emit('authChange'))
+  }
+
+  updateAuth (userId, secret) {
+    return Promise.all([saveUserIdAndToken(userId, secret), this._setupAuth(userId, secret)])
+      .then(() => this.emit('authChange'))
+  }
+
+  refresh () {
+    if (!this._auth) return this._setupAuth()
+    this._setupAuth(this._auth.userId, this._auth.token)
+      .then(() => this.emit('refresh'))
   }
 
   logOut () {
