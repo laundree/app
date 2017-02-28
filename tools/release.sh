@@ -10,5 +10,4 @@ echo "Would have beeen RELEASING ANDROID VERSION: $VERSION_NAME VERSION CODE: $V
 cp secrets/android/my-release-key.keystore android/app/my-release-key.keystore
 cp secrets/android/service-account-credentials.json android/app/service-account-credentials.json
 
-cd android && ./gradlew assembleRelease
-# && ./gradlew publishApkRelease
+cd android && ./gradlew assembleRelease && ./gradlew publishApkRelease

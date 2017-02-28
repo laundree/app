@@ -88,11 +88,11 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "com.laundree"
+        applicationId "io.laundree"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode "$System.env.VERSION_CODE" as Integer
-        versionName "$System.env.VERSION_NAME"
+        versionCode ((System.getenv("VERSION_CODE") ?: "0") as Integer)
+        versionName ("$System.env.VERSION_NAME" ?: "")
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }

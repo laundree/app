@@ -1,25 +1,14 @@
-language: objective-c
-
-osx_image: xcode8
+language: node_js
+node_js:
+- '7'
 cache:
   directories:
   - node_modules
-before_install:
-- openssl aes-256-cbc -K $encrypted_c038a75ec1b6_key -iv $encrypted_c038a75ec1b6_iv -in ./secrets/android/my-release-key.keystore.enc -out ./secrets/android/my-release-key.keystore -d
-- openssl aes-256-cbc -K $encrypted_c038a75ec1b6_key -iv $encrypted_c038a75ec1b6_iv -in ./secrets/android/release.conf.enc -out ./secrets/android/release.conf -d
-- openssl aes-256-cbc -K $encrypted_c038a75ec1b6_key -iv $encrypted_c038a75ec1b6_iv -in ./secrets/android/service-account-credentials.json.enc -out ./secrets/android/service-account-credentials.json -d
-
 install:
-  - mkdir -p /Users/travis/build/laundree/.nvm
-  - export NVM_DIR="/Users/travis/build/laundree/.nvm"
-  - brew install nvm
-  - source $(brew --prefix nvm)/nvm.sh
-  - nvm install 7
+- npm install -g react-native-cli
 script:
 - npm install
 - npm test
-deploy:
-  provider: script
-  script: tools/release.sh
-  on:
-    tags: true
+before_install:
+- openssl aes-256-cbc -K $encrypted_d5ba94eb55ce_key -iv $encrypted_d5ba94eb55ce_iv -in secrets.tar.enc -out secrets.tar -d
+- tar xvf secrets.tar
