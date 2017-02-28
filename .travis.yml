@@ -4,6 +4,15 @@ node_js:
 cache:
   directories:
   - node_modules
+before_install:
+- openssl aes-256-cbc -K $encrypted_c038a75ec1b6_key -iv $encrypted_c038a75ec1b6_iv -in ./secrets/android/my-release-key.keystore.enc -out ./secrets/android/my-release-key.keystore -d
+- openssl aes-256-cbc -K $encrypted_c038a75ec1b6_key -iv $encrypted_c038a75ec1b6_iv -in ./secrets/android/release.conf.enc -out ./secrets/android/release.conf -d
+- openssl aes-256-cbc -K $encrypted_c038a75ec1b6_key -iv $encrypted_c038a75ec1b6_iv -in ./secrets/android/service-account-credentials.json.enc -out ./secrets/android/service-account-credentials.json -d
 script:
 - npm install
 - npm test
+deploy:
+  provider: script
+  script: tools/release.sh
+  on:
+    tags: true

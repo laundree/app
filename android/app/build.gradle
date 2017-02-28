@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.github.triplet.play'
 
 import com.android.build.OutputFile
 
@@ -90,11 +91,22 @@ android {
         applicationId "com.laundree"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode "$System.env.VERSION_CODE" as Integer
+        versionName "$System.env.VERSION_NAME"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+    }
+    signingConfigs {
+        release {
+            storeFile file("$System.env.RELEASE_STORE_FILE")
+            storePassword "$System.env.RELEASE_STORE_PASSWORD"
+            keyAlias "$System.env.RELEASE_KEY_ALIAS"
+            keyPassword "$System.env.RELEASE_KEY_PASSWORD"
+        }
+    }
+    play {
+        jsonFile = file('service-account-credentials.json')
     }
     splits {
         abi {
@@ -108,6 +120,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
