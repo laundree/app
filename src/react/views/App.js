@@ -6,9 +6,9 @@ import React from 'react'
 import LoginApp from './LoginApp'
 import fetchStateHandler from '../../stateHandler'
 import LoggedInApp from '../containers/LoggedInApp'
-import { View, StyleSheet } from 'react-native'
+import { View } from 'react-native'
 import { Provider } from 'react-redux'
-import constants from '../../constants'
+import { app } from '../../style'
 
 export default class App extends React.Component {
 
@@ -39,14 +39,6 @@ export default class App extends React.Component {
   }
 
   render () {
-    return <View style={styles.mainContainer}>{this.renderContent()}</View>
+    return <View style={app.mainContainer}>{this.renderContent()}</View>
   }
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    backgroundColor: constants.appBackgroundColor,
-    flex: 1
-  }
-})
-

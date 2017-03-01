@@ -4,11 +4,10 @@
 import React from 'react'
 import {
   Navigator,
-  View,
-  StyleSheet
+  View
 } from 'react-native'
 import Login from './Login'
-import constants from '../../constants'
+import { loginApp } from '../../style'
 import FacebookAuthWebView from './FacebookAuthWebView'
 import GoogleAuthWebView from './GoogleAuthWebView'
 import Backable from './Backable'
@@ -53,18 +52,11 @@ export default class LoginApp extends Backable {
     return <Navigator
       initialRoute={{index: 0}}
       configureScene={(route, routeStack) => Navigator.SceneConfigs.FloatFromBottom}
-      renderScene={(route, navigator) => <View style={styles.mainContainer}>
+      renderScene={(route, navigator) => <View style={loginApp.mainContainer}>
         {this.renderScene(route, navigator)}
       </View>}/>
   }
 }
-const styles = StyleSheet.create({
-  mainContainer: {
-    paddingTop: constants.statusBarHeight,
-    backgroundColor: constants.appBackgroundColor,
-    flex: 1
-  }
-})
 
 LoginApp.propTypes = {
   stateHandler: React.PropTypes.object

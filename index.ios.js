@@ -8,6 +8,6 @@ import React from 'react'
 import {AppRegistry} from 'react-native'
 import App from './src/react/views/App'
 
-const LaundreeApp = () => <App/>
+const Laundree = () => <App/>
 
-AppRegistry.registerComponent('LaundreeApp', () => LaundreeApp)
+AppRegistry.registerComponent('Laundree', () => Laundree)

@@ -2,15 +2,15 @@
  * Created by budde on 25/02/2017.
  */
 import React from 'react'
-import { View, TextInput, Text, StyleSheet } from 'react-native'
-import constants from '../../../constants'
+import { View, TextInput, Text } from 'react-native'
+import { fancyTextInput } from '../../../style'
 
-const FancyTextInput = ({label, value, onChangeText, keyboardType, secureTextEntry}) => <View style={styles.container}>
-  <Text style={styles.label}>
+const FancyTextInput = ({label, value, onChangeText, keyboardType, secureTextEntry}) => <View style={fancyTextInput.container}>
+  <Text style={fancyTextInput.label}>
     {label}
   </Text>
   <TextInput
-    style={styles.textInput}
+    style={fancyTextInput.textInput}
     keyboardType={keyboardType}
     onChangeText={onChangeText}
     secureTextEntry={secureTextEntry}
@@ -25,21 +25,5 @@ FancyTextInput.propTypes = {
   onChangeText: TextInput.propTypes.onChangeText,
   value: TextInput.propTypes.value
 }
-const styles = StyleSheet.create({
-  label: {
-    height: 20,
-    color: constants.defaultTextColor
-  },
-  textInput: {
-    height: 40,
-    borderRadius: 3,
-    paddingLeft: 5,
-    paddingRight: 5,
-    backgroundColor: '#fff'
-  },
-  container: {
-    alignSelf: 'stretch'
-  }
-})
 
 export default FancyTextInput

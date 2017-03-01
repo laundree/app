@@ -1,4 +1,4 @@
-package com.laundreeapp;
+package com.laundree;
 
 import android.app.Application;
 import android.util.Log;

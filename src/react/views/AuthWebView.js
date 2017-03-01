@@ -4,12 +4,11 @@
 import React from 'react'
 import {
   WebView,
-  View,
-  StyleSheet
+  View
 } from 'react-native'
 import FancyTextButton from './input/FancyTextButton'
-import constants from '../../constants'
 import config from '../../config'
+import { authWebView } from '../../style'
 import url from 'url'
 
 class AuthWebView extends React.Component {
@@ -27,13 +26,26 @@ class AuthWebView extends React.Component {
   }
 
   onLoadUrl (url) {
+    console.log('Loading url ', url, this.isBack(url), this.state.onMessage)
     if (!this.isBack(url)) return
-    if (this.state.onMessage) return
     this.startSendTokenRequest()
-    this.setState({onMessage: evt => this.handleMessage(evt.nativeEvent.data)}, () => this.ref.reload())
+  }
+
+  get injectedJavaScript () {
+    return `(function() {
+  var originalPostMessage = window.postMessage;
+  var patchedPostMessage = function(message, targetOrigin, transfer) { 
+    originalPostMessage(message, targetOrigin, transfer);
+  };
+  patchedPostMessage.toString = function() { 
+    return String(Object.hasOwnProperty).replace('hasOwnProperty', 'postMessage'); 
+  };  
+  window.postMessage = patchedPostMessage;
+})();`
   }
 
   handleMessage (message) {
+    console.log('Handling message', message)
     if (this._messageHandled) return
     console.log('Handling message', message)
     this._messageHandled = true
@@ -51,6 +63,7 @@ class AuthWebView extends React.Component {
   }
 
   startSendTokenRequest () {
+    console.log('Starting send token request')
     this.sendTokenRequest()
     this.interval = setInterval(() => this.sendTokenRequest(), 100)
   }
@@ -66,18 +79,20 @@ class AuthWebView extends React.Component {
 
   sendTokenRequest () {
     if (!this.ref) return
+    console.log('Sending token request')
     this.ref.postMessage('token')
   }
 
   render () {
-    return <View style={style.view}>
+    return <View style={authWebView.view}>
       <WebView
+        injectedJavaScript={this.injectedJavaScript}
         ref={ref => { this.ref = ref }}
-        onMessage={this.state.onMessage}
+        onMessage={evt => this.handleMessage(evt.nativeEvent.data)}
         source={this.props.source}
-        style={style.webView}
+        style={authWebView.webView}
         onLoadStart={evt => this.onLoadUrl(evt.nativeEvent.url)}/>
-      <FancyTextButton onPress={this.props.onCancel} text='Cancel login' style={style.button}/>
+      <FancyTextButton onPress={this.props.onCancel} text='Cancel login' style={authWebView.button}/>
     </View>
   }
 }
@@ -88,17 +103,5 @@ AuthWebView.propTypes = {
   onAuthFailed: React.PropTypes.func.isRequired,
   onSuccess: React.PropTypes.func.isRequired
 }
-
-const style = StyleSheet.create({
-  webView: {
-    backgroundColor: constants.appBackgroundColor
-  },
-  view: {
-    flex: 1
-  },
-  button: {
-    backgroundColor: constants.colorRed
-  }
-})
 
 export default AuthWebView
