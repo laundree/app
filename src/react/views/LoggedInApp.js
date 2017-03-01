@@ -3,7 +3,7 @@
  */
 import React from 'react'
 import { View, Text, Navigator, Image, TouchableOpacity } from 'react-native'
-import Timetable from './Timetable'
+import Timetable from '../containers/Timetable'
 import Settings from './../containers/Settings'
 import QrCodeScanner from './QrCodeScanner'
 import QrCodeScannerCamera from './QrCodeScannerCamera'
@@ -72,12 +72,23 @@ export default class LoggedInApp extends Backable {
       case 'settings':
         return <Settings stateHandler={this.props.stateHandler}/>
       case 'timetable':
-        return <Timetable/>
+        return <Timetable stateHandler={this.props.stateHandler}
+          user={this.user}
+          laundry={this.laundry}/>
       case 'qr-scanner':
         return <QrCodeScannerCamera stateHandler={this.props.stateHandler}/>
       default:
         return null
     }
+  }
+
+  get user () {
+    return this.props.users[this.props.currentUser]
+  }
+
+  get laundry () {
+    console.log('Laundries in LoggedInApp: ' + this.props.laundries)
+    return this.props.laundries[this.user.laundries[0]]
   }
 
   renderScene ({id, index}, navigator) {
@@ -136,5 +147,6 @@ export default class LoggedInApp extends Backable {
 LoggedInApp.propTypes = {
   currentUser: React.PropTypes.string,
   users: React.PropTypes.object,
+  laundries: React.PropTypes.object,
   stateHandler: React.PropTypes.object.isRequired
 }
