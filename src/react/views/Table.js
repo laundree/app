@@ -48,7 +48,7 @@ export default class Table extends React.Component {
       renderRow={(rowData, sectionId, rowId) => this.renderRow(rowData, rowId)}/>
   }
 
-  renderRow (rowData, rowId,) {
+  renderRow (rowData, rowId) {
     console.log('Rendering cells', rowData, rowId)
     return <View style={this.props.tableStyles.rowStyle}>
       {this.props.renderBetweenMarker(rowId)}

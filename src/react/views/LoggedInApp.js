@@ -73,8 +73,8 @@ export default class LoggedInApp extends Backable {
         return <Settings stateHandler={this.props.stateHandler}/>
       case 'timetable':
         return <Timetable stateHandler={this.props.stateHandler}
-                          user={this.user}
-                          laundry={this.laundry}/>
+          user={this.user}
+          laundry={this.laundry}/>
       case 'qr-scanner':
         return <QrCodeScannerCamera stateHandler={this.props.stateHandler}/>
       default:

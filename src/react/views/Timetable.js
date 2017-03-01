@@ -5,9 +5,7 @@
 import React from 'react'
 import {
   Dimensions,
-  ListView,
   Navigator,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -23,7 +21,8 @@ class Timetable extends React.Component {
   render () {
     return <View style={{
       paddingBottom: Navigator.NavigationBar.Styles.General.NavBarHeight,
-      marginTop: 10, marginBottom: 10
+      marginTop: 10,
+      marginBottom: 10
     }}>
       {this.renderTitle()}
       {this.renderTable()}
@@ -31,9 +30,8 @@ class Timetable extends React.Component {
   }
 
   renderTitle () {
-    let rightArrow = this.props.date.isSame(moment(), 'd') ?
-      <Text style={styles.dateNavigator}></Text> :
-      <TouchableOpacity
+    let rightArrow = this.props.date.isSame(moment(), 'd')
+      ? <Text style={styles.dateNavigator}/> : <TouchableOpacity
         style={styles.dateNavigator}
         onPress={(event) => this.onPressLeft(event)}>
         <Text style={styles.arrowHeader}>{'<'}</Text>
@@ -71,7 +69,7 @@ class Timetable extends React.Component {
         data={this.times}
         tableStyles={this.tableStyles}
         renderBetweenMarker={(rowId) => this.renderBetweenMarker(rowId)}
-        renderBetweenMarkers={true}
+        renderBetweenMarkers
         renderCell={(cellData, columnId, rowId) => this.renderCell(cellData, columnId, rowId)}
       />
     </View>
@@ -95,7 +93,7 @@ class Timetable extends React.Component {
   }
 
   renderBetweenMarkersAt (rowId) {
-    let hour = this.hourAtRowId(rowId);
+    let hour = this.hourAtRowId(rowId)
     return hour % 1 === 0 && parseFloat(rowId) !== 0
   }
 
@@ -158,9 +156,9 @@ class Timetable extends React.Component {
   renderCell (cellData, columnId, rowId) {
     let hour = this.hourAtRowId(rowId)
     let bookingId = this.bookingId(cellData.id, hour * 2)
-    let booking = this.props.bookings[bookingId];
-    let style = booking ? this.isBookingOwner(bookingId) ?
-        [this.tableStyles.myBookedCellStyle] : [this.tableStyles.bookedCellStyle]
+    let booking = this.props.bookings[bookingId]
+    let style = booking ? this.isBookingOwner(bookingId)
+      ? [this.tableStyles.myBookedCellStyle] : [this.tableStyles.bookedCellStyle]
       : [this.tableStyles.freeCellStyle]
     let cellTime = this.props.date.clone().add(this.hourAtRowId(rowId), 'hour')
     let now = moment().add(10, 'minutes')
@@ -169,19 +167,19 @@ class Timetable extends React.Component {
     if ((cellTime.isSameOrBefore(now, 'minutes') && !cellTime.isSameOrAfter(now, 'minutes')) || isMachineBroken) {
       style.push(this.tableStyles.freeCellStyleGrey)
       return <View style={style}>
-        <Text></Text>
+        <Text/>
       </View>
     }
 
     return <TouchableOpacity
       style={style}
       onPress={(event) => this.onPressCell(cellData, hour)}>
-      <Text></Text>
+      <Text/>
     </TouchableOpacity>
   }
 
   isBookingOwner (bookingId) {
-    let booking = this.props.bookings[bookingId];
+    let booking = this.props.bookings[bookingId]
     if (!booking) return false
     return booking.owner === this.props.user.id
   }
@@ -199,13 +197,12 @@ class Timetable extends React.Component {
         machine,
         id
       }))
-      .filter(({from, to}) => to.isSameOrAfter(this.props.date, 'd')
-      && from.isSameOrBefore(this.props.date, 'd'))
+      .filter(({from, to}) => to.isSameOrAfter(this.props.date, 'd') && from.isSameOrBefore(this.props.date, 'd'))
       .reduce((obj, {from, to, machine, id}) => {
         const fromY = this.props.date.isSame(from, 'd') ? this.dateToY(from) : 0
         const toY = this.props.date.isSame(to, 'd') ? this.dateToY(to) : 48
         range(fromY, toY).forEach((y) => {
-          let key = `${machine}:${y}`;
+          let key = `${machine}:${y}`
           obj[key] = id
         })
         return obj
@@ -216,75 +213,77 @@ class Timetable extends React.Component {
     return Math.floor((date.hours() * 60 + date.minutes()) / 30)
   }
 
-  tableStyles = StyleSheet.create({
-    containerStyle: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: Dimensions.get('window').width,
-      marginLeft: 10,
-      marginRight: 10,
-    },
-    headerStyle: {
-      flex: 1,
-      height: 50,
-      borderWidth: 1,
-      borderColor: '#7DD8D5',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#4DC4C1'
-    },
-    rowStyle: {
-      flexDirection: 'row',
-      width: Dimensions.get('window').width,
-      height: 50
-    },
-    freeCellStyle: {
-      flex: 1,
-      height: 50,
-      borderWidth: 1,
-      borderColor: '#7DD8D5',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#4DC4C1'
-    },
-    freeCellStyleGrey: {
-      backgroundColor: '#4B9997',
-      borderColor: '#5CA09E'
-    },
-    bookedCellStyle: {
-      flex: 1,
-      height: 50,
-      borderWidth: 1,
-      borderColor: '#a04444',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#a04444'
-    },
-    myBookedCellStyle: {
-      flex: 1,
-      height: 50,
-      borderWidth: 1,
-      borderColor: '#49a044',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#49a044'
-    },
-    markerStyle: {
-      width: 20,
-      marginTop: -9,
-      height: 20
-    },
-    emptyMarkerStyle: {
-      width: 20,
-      marginTop: -9,
-      height: 20,
-    },
-    markerTextStyle: {
-      textAlign: 'center'
-    }
-  })
+  tableStyles () {
+    return StyleSheet.create({
+      containerStyle: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: Dimensions.get('window').width,
+        marginLeft: 10,
+        marginRight: 10
+      },
+      headerStyle: {
+        flex: 1,
+        height: 50,
+        borderWidth: 1,
+        borderColor: '#7DD8D5',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#4DC4C1'
+      },
+      rowStyle: {
+        flexDirection: 'row',
+        width: Dimensions.get('window').width,
+        height: 50
+      },
+      freeCellStyle: {
+        flex: 1,
+        height: 50,
+        borderWidth: 1,
+        borderColor: '#7DD8D5',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#4DC4C1'
+      },
+      freeCellStyleGrey: {
+        backgroundColor: '#4B9997',
+        borderColor: '#5CA09E'
+      },
+      bookedCellStyle: {
+        flex: 1,
+        height: 50,
+        borderWidth: 1,
+        borderColor: '#a04444',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#a04444'
+      },
+      myBookedCellStyle: {
+        flex: 1,
+        height: 50,
+        borderWidth: 1,
+        borderColor: '#49a044',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#49a044'
+      },
+      markerStyle: {
+        width: 20,
+        marginTop: -9,
+        height: 20
+      },
+      emptyMarkerStyle: {
+        width: 20,
+        marginTop: -9,
+        height: 20
+      },
+      markerTextStyle: {
+        textAlign: 'center'
+      }
+    })
+  }
 
 }
 
@@ -302,11 +301,11 @@ export default class TimetableWrapper extends React.Component {
   }
 
   fetchData () {
-    //Retrieve machines
+    // Retrieve machines
     this.props.stateHandler.sdk.listMachines(this.laundryId)
 
-    //Retrieve bookings
-    var tomorrow = this.state.date.clone().add(1, 'day')
+    // Retrieve bookings
+    let tomorrow = this.state.date.clone().add(1, 'day')
 
     this.props.stateHandler.sdk.listBookingsInTime(this.laundryId, {
       year: this.state.date.year(),
@@ -333,12 +332,12 @@ export default class TimetableWrapper extends React.Component {
   renderTables () {
     return <View style={styles.container}>
       <Timetable date={this.state.date.clone()}
-                 onChangeDate={(newDate) => this.onChangeDate(newDate)}
-                 user={this.props.user}
-                 laundry={this.props.laundry}
-                 machines={this.props.machines}
-                 bookings={this.props.bookings}
-                 stateHandler={this.props.stateHandler}/>
+        onChangeDate={(newDate) => this.onChangeDate(newDate)}
+        user={this.props.user}
+        laundry={this.props.laundry}
+        machines={this.props.machines}
+        bookings={this.props.bookings}
+        stateHandler={this.props.stateHandler}/>
     </View>
   }
 
@@ -379,7 +378,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#66D3D3',
+    backgroundColor: '#66D3D3'
   },
   dateView: {
     flex: 4,
@@ -398,7 +397,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width / 2
   },
   dateNavigator: {
-    flex: 2,
+    flex: 2
   },
   row: {
     flexDirection: 'row',
