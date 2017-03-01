@@ -31,7 +31,7 @@ class Timetable extends React.Component {
   }
 
   renderTitle () {
-    let rightArrow = this.props.date.isSame(moment(),'d') ?
+    let rightArrow = this.props.date.isSame(moment(), 'd') ?
       <Text style={styles.dateNavigator}></Text> :
       <TouchableOpacity
         style={styles.dateNavigator}
@@ -113,48 +113,60 @@ class Timetable extends React.Component {
     </View>
   }
 
-  hourAtRowId(rowId) {
-    let hour = (parseInt(rowId)+parseInt(this.times[0]))/2
+  hourAtRowId (rowId) {
+    let hour = (parseInt(rowId) + parseInt(this.times[0])) / 2
     return hour
   }
 
   onPressCell ({id}, hour) {
-    let bookingId = this.bookingId(id, hour*2)
+    let bookingId = this.bookingId(id, hour * 2)
     if (bookingId && this.isBookingOwner(bookingId)) this.deleteBooking(bookingId)
     else if (!bookingId) this.createBooking(id, hour)
   }
 
-  deleteBooking(bookingId) {
+  deleteBooking (bookingId) {
     console.log('Deleting booking: ' + bookingId)
     this.props.stateHandler.sdk
       .booking(bookingId)
       .del()
   }
 
-  createBooking(id, hour) {
+  createBooking (id, hour) {
     console.log('Creating booking at time ' + hour)
     const fromHh = hour * 2
     const toHh = fromHh + 1
     const fromDate = this.props.date.clone().minute((fromHh % 2) && 30).hour((fromHh - (fromHh % 2)) / 2)
     const toDate = this.props.date.clone().minute((toHh % 2) && 30).hour((toHh - (toHh % 2)) / 2)
     this.props.stateHandler.sdk.machine(id).createBooking(
-      {year: fromDate.year(), month: fromDate.month(), day: fromDate.date(), hour: fromDate.hour(), minute: fromDate.minute()},
-      {year: toDate.year(), month: toDate.month(), day: toDate.date(), hour: toDate.hour(), minute: toDate.minute()}).catch(err => console.log(err))
+      {
+        year: fromDate.year(),
+        month: fromDate.month(),
+        day: fromDate.date(),
+        hour: fromDate.hour(),
+        minute: fromDate.minute()
+      },
+      {
+        year: toDate.year(),
+        month: toDate.month(),
+        day: toDate.date(),
+        hour: toDate.hour(),
+        minute: toDate.minute()
+      }).catch(err => console.log(err))
     console.log(hour, fromDate.toISOString(), toDate.toISOString(), (fromHh - (fromHh % 2)) / 2)
   }
 
   renderCell (cellData, columnId, rowId) {
     let hour = this.hourAtRowId(rowId)
-    let bookingId = this.bookingId(cellData.id, hour*2)
+    let bookingId = this.bookingId(cellData.id, hour * 2)
     let booking = this.props.bookings[bookingId];
     let style = booking ? this.isBookingOwner(bookingId) ?
         [this.tableStyles.myBookedCellStyle] : [this.tableStyles.bookedCellStyle]
       : [this.tableStyles.freeCellStyle]
-    let cellTime = this.props.date.clone().add(this.hourAtRowId(rowId),'hour')
-    let now = moment().add(10,'minutes')
+    let cellTime = this.props.date.clone().add(this.hourAtRowId(rowId), 'hour')
+    let now = moment().add(10, 'minutes')
     let isMachineBroken = this.props.machines[cellData.id].broken
 
-    if ((cellTime.isSameOrBefore(now,'minutes') && !cellTime.isSameOrAfter(now, 'minutes')) || isMachineBroken) {
+    if ((cellTime.isSameOrBefore(now, 'minutes') && !cellTime.isSameOrAfter(now, 'minutes')) || isMachineBroken) {
       style.push(this.tableStyles.freeCellStyleGrey)
       return <View style={style}>
         <Text></Text>
@@ -168,7 +180,7 @@ class Timetable extends React.Component {
     </TouchableOpacity>
   }
 
-  isBookingOwner(bookingId) {
+  isBookingOwner (bookingId) {
     let booking = this.props.bookings[bookingId];
     if (!booking) return false
     return booking.owner === this.props.user.id
@@ -278,18 +290,18 @@ class Timetable extends React.Component {
 
 export default class TimetableWrapper extends React.Component {
 
-  constructor() {
+  constructor () {
     super()
     this.state = {
       date: moment().startOf('day')
     }
   }
 
-  componentWillMount() {
+  componentWillMount () {
     this.fetchData()
   }
 
-  fetchData() {
+  fetchData () {
     //Retrieve machines
     this.props.stateHandler.sdk.listMachines(this.laundryId)
 
@@ -383,7 +395,7 @@ const styles = StyleSheet.create({
   dateHeader: {
     fontSize: 20,
     textAlign: 'center',
-    width: Dimensions.get('window').width/2
+    width: Dimensions.get('window').width / 2
   },
   dateNavigator: {
     flex: 2,

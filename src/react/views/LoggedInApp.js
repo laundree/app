@@ -82,12 +82,12 @@ export default class LoggedInApp extends Backable {
     }
   }
 
-  get user() {
-      return this.props.users[this.props.currentUser]
+  get user () {
+    return this.props.users[this.props.currentUser]
   }
 
-  get laundry() {
-      console.log('Laundries in LoggedInApp: ' + this.props.laundries)
+  get laundry () {
+    console.log('Laundries in LoggedInApp: ' + this.props.laundries)
     return this.props.laundries[this.user.laundries[0]]
   }
 
