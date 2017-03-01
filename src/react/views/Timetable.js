@@ -287,6 +287,16 @@ class Timetable extends React.Component {
 
 }
 
+Timetable.propTypes = {
+  date: React.PropTypes.object.isRequired,
+  onChangeDate: React.PropTypes.func.isRequired,
+  laundry: React.PropTypes.object.isRequired,
+  machines: React.PropTypes.object,
+  stateHandler: React.PropTypes.object.isRequired,
+  bookings: React.PropTypes.object,
+  user: React.PropTypes.object.isRequired
+}
+
 export default class TimetableWrapper extends React.Component {
 
   constructor () {
