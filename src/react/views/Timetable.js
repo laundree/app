@@ -55,19 +55,13 @@ class Timetable extends React.Component {
   }
 
   onPressLeft () {
-    console.log('Pressed left date navigation')
     let newDate = this.props.date.clone().subtract(1, 'day')
     this.props.onChangeDate(newDate)
   }
 
   onPressRight () {
-    console.log('Pressed right date navigation')
     let newDate = this.props.date.clone().add(1, 'day')
     this.props.onChangeDate(newDate)
-  }
-
-  onPressDate () {
-    console.log('Pressed date')
   }
 
   renderTable () {
@@ -76,11 +70,8 @@ class Timetable extends React.Component {
         headersData={this.machines}
         data={this.times}
         tableStyles={this.tableStyles}
-        cellStyle={(cellData) => this.cellStyle(cellData)}
-        underlayCellStyle={(cellData) => this.underlayCellStyle(cellData)}
         renderBetweenMarker={(rowId) => this.renderBetweenMarker(rowId)}
         renderBetweenMarkers={true}
-        onPressCell={(cellData) => this.onPressCell(cellData)}
         renderCell={(cellData, columnId, rowId) => this.renderCell(cellData, columnId, rowId)}
       />
     </View>
@@ -101,43 +92,6 @@ class Timetable extends React.Component {
     const from = Math.floor(fromHour * 2 + fromMinute / 30)
     const to = Math.floor(toHour * 2 + toMinute / 30)
     return range(from, to)
-  }
-
-  cellStyle (cellData) {
-    //console.log('Determining cell style')
-    switch (cellData) {
-      case 'free':
-        //console.log('Using free cell style')
-        return this.tableStyles.freeCellStyle
-      case 'booked':
-        //console.log('Using booked cell style')
-        return this.tableStyles.bookedCellStyle
-      case 'mybooking':
-        //console.log('Using my booked cell style')
-        return this.tableStyles.myBookedCellStyle
-      default:
-        console.error('Unknown cell. Using free cell style')
-        return this.tableStyles.freeCellStyle
-    }
-  }
-
-  underlayCellStyle (cellData) {
-    //console.log('Determining underlay cell style')
-    switch (cellData) {
-      case 'free':
-        //console.log('Using free cell style')
-        return this.tableStyles.highlightFreeCellStyle
-      case 'booked':
-        //console.log('Using booked cell style')
-        return this.tableStyles.highlightBookedCellStyle
-      case 'mybooking':
-        //console.log('Using my booked cell style')
-        return this.tableStyles.highlightMyBookedCellStyle
-      default:
-        console.error('Unknown cell. Using free cell style')
-        return this.tableStyles.highlightFreeCellStyle
-    }
-
   }
 
   renderBetweenMarkersAt (rowId) {
@@ -165,6 +119,20 @@ class Timetable extends React.Component {
   }
 
   onPressCell ({id}, hour) {
+    let bookingId = this.bookingId(id, hour*2)
+    if (bookingId && this.isBookingOwner(bookingId)) this.deleteBooking(bookingId)
+    else if (!bookingId) this.createBooking(id, hour)
+  }
+
+  deleteBooking(bookingId) {
+    console.log('Deleting booking: ' + bookingId)
+    this.props.stateHandler.sdk
+      .booking(bookingId)
+      .del()
+  }
+
+  createBooking(id, hour) {
+    console.log('Creating booking at time ' + hour)
     const fromHh = hour * 2
     const toHh = fromHh + 1
     const fromDate = this.props.date.clone().minute((fromHh % 2) && 30).hour((fromHh - (fromHh % 2)) / 2)
@@ -178,26 +146,32 @@ class Timetable extends React.Component {
   renderCell (cellData, columnId, rowId) {
     let hour = this.hourAtRowId(rowId)
     let bookingId = this.bookingId(cellData.id, hour*2)
-    console.log('Booking id: ' + bookingId)
     let booking = this.props.bookings[bookingId];
-    let style = booking ? booking.owner === this.props.user.id ?
+    let style = booking ? this.isBookingOwner(bookingId) ?
         [this.tableStyles.myBookedCellStyle] : [this.tableStyles.bookedCellStyle]
       : [this.tableStyles.freeCellStyle]
-    let cellTime = this.props.date.clone().add(parseFloat(rowId)/2,'hour')
+    let cellTime = this.props.date.clone().add(this.hourAtRowId(rowId),'hour')
     let now = moment().add(10,'minutes')
     let isMachineBroken = this.props.machines[cellData.id].broken
+
     if ((cellTime.isSameOrBefore(now,'minutes') && !cellTime.isSameOrAfter(now, 'minutes')) || isMachineBroken) {
-      console.log('Checking dates', cellTime.format(), now.format())
       style.push(this.tableStyles.freeCellStyleGrey)
       return <View style={style}>
         <Text></Text>
       </View>
     }
+
     return <TouchableOpacity
       style={style}
       onPress={(event) => this.onPressCell(cellData, hour)}>
       <Text></Text>
     </TouchableOpacity>
+  }
+
+  isBookingOwner(bookingId) {
+    let booking = this.props.bookings[bookingId];
+    if (!booking) return false
+    return booking.owner === this.props.user.id
   }
 
   bookingId (machineId, rowId) {
@@ -220,7 +194,6 @@ class Timetable extends React.Component {
         const toY = this.props.date.isSame(to, 'd') ? this.dateToY(to) : 48
         range(fromY, toY).forEach((y) => {
           let key = `${machine}:${y}`;
-          console.log('Booking key: ' + key)
           obj[key] = id
         })
         return obj
@@ -321,7 +294,6 @@ export default class TimetableWrapper extends React.Component {
     this.props.stateHandler.sdk.listMachines(this.laundryId)
 
     //Retrieve bookings
-    console.log('Retrieving bookings', this.state.date)
     var tomorrow = this.state.date.clone().add(1, 'day')
 
     this.props.stateHandler.sdk.listBookingsInTime(this.laundryId, {
@@ -341,7 +313,6 @@ export default class TimetableWrapper extends React.Component {
 
   render () {
     if (!this.props.machines) {
-      console.log('Rendering empty TimeTable, since no machines available')
       return this.renderEmpty()
     }
     return this.renderTables()
@@ -366,12 +337,11 @@ export default class TimetableWrapper extends React.Component {
   }
 
   renderEmpty () {
-    console.log('Rendering empty page')
     return <View style={styles.container}>
       <Text>
         There are no machines registered.
       </Text>
-      {this.isOwner ? <Text>
+      {this.isLaundryOwner ? <Text>
           Go to the website and register machines.
         </Text> : <Text>
           Ask your administrator to register machines.
@@ -379,7 +349,7 @@ export default class TimetableWrapper extends React.Component {
     </View>
   }
 
-  get isOwner () {
+  get isLaundryOwner () {
     if (this.props.laundry) return this.props.laundry.owners.indexOf(this.props.user) >= 0
     return undefined
   }

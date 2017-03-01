@@ -67,9 +67,6 @@ Table.propTypes = {
   headersData: React.PropTypes.array,
   data: React.PropTypes.array,
   tableStyles: React.PropTypes.object,
-  cellStyle: React.PropTypes.func,
-  underlayCellStyle: React.PropTypes.func,
   renderBetweenMarker: React.PropTypes.func,
-  onPressCell: React.PropTypes.func.isRequired,
   renderCell: React.PropTypes.func.isRequired
 }
