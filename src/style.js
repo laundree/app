@@ -1,7 +1,7 @@
 /**
  * Created by budde on 27/02/2017.
  */
-import { StyleSheet, Platform, Navigator } from 'react-native'
+import { StyleSheet, Platform, Navigator, Dimensions } from 'react-native'
 
 const constants = {
   colorRed: '#e55564',
@@ -237,5 +237,107 @@ export const settings = StyleSheet.create({
   },
   textButton: {
     backgroundColor: constants.colorRed
+  }
+})
+
+export const timetableTable = StyleSheet.create({
+  containerStyle: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: Dimensions.get('window').width,
+    marginLeft: 10,
+    marginRight: 10
+  },
+  headerStyle: {
+    flex: 1,
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#7DD8D5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#4DC4C1'
+  },
+  rowStyle: {
+    flexDirection: 'row',
+    width: Dimensions.get('window').width,
+    height: 50
+  },
+  freeCellStyle: {
+    flex: 1,
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#7DD8D5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#4DC4C1'
+  },
+  freeCellStyleGrey: {
+    backgroundColor: '#4B9997',
+    borderColor: '#5CA09E'
+  },
+  bookedCellStyle: {
+    flex: 1,
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#a04444',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#a04444'
+  },
+  myBookedCellStyle: {
+    flex: 1,
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#49a044',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#49a044'
+  },
+  markerStyle: {
+    width: 20,
+    marginTop: -9,
+    height: 20
+  },
+  emptyMarkerStyle: {
+    width: 20,
+    marginTop: -9,
+    height: 20
+  },
+  markerTextStyle: {
+    textAlign: 'center'
+  }
+})
+
+export const timetable = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#66D3D3'
+  },
+  dateView: {
+    flex: 4,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: Dimensions.get('window').width
+  },
+  arrowHeader: {
+    fontSize: 20,
+    textAlign: 'center'
+  },
+  dateHeader: {
+    fontSize: 20,
+    textAlign: 'center',
+    width: Dimensions.get('window').width / 2
+  },
+  dateNavigator: {
+    flex: 2
+  },
+  row: {
+    flexDirection: 'row',
+    width: Dimensions.get('window').width,
+    height: 50
   }
 })
