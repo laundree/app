@@ -1,4 +1,4 @@
-package com.laundree;
+package io.laundree;
 
 import com.facebook.react.ReactActivity;
 
