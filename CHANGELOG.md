@@ -5,6 +5,7 @@
 ### Fixed
 
  - Settings page opened only once
+ - Removed warning for empty sections
 
 ## [0.0.3]
 
