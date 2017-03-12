@@ -68,7 +68,7 @@ class Timetable extends React.Component {
         tableStyles={timetableTable}
         renderBetweenMarker={(rowId) => this.renderBetweenMarker(rowId)}
         renderBetweenMarkers
-        renderCell={(cellData, columnId, rowId) => this.renderCell(cellData, columnId, rowId)}
+        renderCell={(cellData, rowId) => this.renderCell(cellData, rowId)}
       />
     </View>
   }
@@ -151,7 +151,7 @@ class Timetable extends React.Component {
     console.log(hour, fromDate.toISOString(), toDate.toISOString(), (fromHh - (fromHh % 2)) / 2)
   }
 
-  renderCell (cellData, columnId, rowId) {
+  renderCell (cellData, rowId) {
     let hour = this.hourAtRowId(rowId)
     let bookingId = this.bookingId(cellData.id, hour * 2)
     let booking = this.props.bookings[bookingId]

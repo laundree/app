@@ -30,6 +30,7 @@ export default class Table extends React.Component {
         contentContainerStyle={this.props.tableStyles.containerStyle}
         dataSource={ds.cloneWithRows(this.props.headersData)}
         renderRow={(headerData) => this.renderHeader(headerData)}
+        enableEmptySections
         horizontal/>
       {this.props.renderBetweenMarker()}
     </View>
@@ -45,7 +46,8 @@ export default class Table extends React.Component {
     // console.log('Rendering rows')
     return <ListView
       dataSource={ds.cloneWithRows(this.props.data)}
-      renderRow={(rowData, sectionId, rowId) => this.renderRow(rowData, rowId)}/>
+      renderRow={(rowData, sectionId, rowId) => this.renderRow(rowData, rowId)}
+      enableEmptySections/>
   }
 
   renderRow (rowData, rowId) {
@@ -55,7 +57,8 @@ export default class Table extends React.Component {
       <ListView
         contentContainerStyle={this.props.tableStyles.containerStyle}
         dataSource={ds.cloneWithRows(this.props.headersData)}
-        renderRow={(cellData, sectionId, columnId) => this.props.renderCell(cellData, columnId, rowId)}
+        renderRow={(cellData) => this.props.renderCell(cellData, rowId)}
+        enableEmptySections
         horizontal/>
       {this.props.renderBetweenMarker()}
     </View>
