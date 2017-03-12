@@ -99,10 +99,17 @@ export default class LoggedInApp extends Backable {
     </View>
   }
 
+  onPressSettings (navigator) {
+    // Checking if the settings button has not already been clicked
+    if (navigator.getCurrentRoutes().length < 2) {
+      navigator.push(this.settingsRoute)
+    }
+  }
+
   renderRightButton ({index}, navigator) {
     if (index > 0) return <View style={loggedInApp.navBarContainer}/>
     return <View style={loggedInApp.navBarContainer}>
-      <TouchableOpacity onPress={() => navigator.push(this.settingsRoute)}>
+      <TouchableOpacity onPress={() => this.onPressSettings(navigator)}>
         <Image
           source={require('../../../img/gear.png')}
           style={loggedInApp.navBarIcon}/>

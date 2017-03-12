@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+ - Settings page opened only once
+
 ## [0.0.3]
 
 ### Configure
