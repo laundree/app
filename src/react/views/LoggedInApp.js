@@ -14,7 +14,7 @@ export default class LoggedInApp extends Backable {
 
   findInitialRoute (u = null) {
     const user = u || this.props.users[this.props.currentUser]
-    if (!user) return {title: 'Loading', element: null, index: 0}
+    if (!user) return this.loadingRoute
     return user.laundries.length ? this.timetableRoute : this.qrRoute
   }
 
@@ -22,14 +22,24 @@ export default class LoggedInApp extends Backable {
     this.navigator.replace(this.findInitialRoute(users[currentUser]))
   }
 
-  componentWillReceiveProps ({currentUser, users}) {
+  componentWillReceiveProps ({currentUser, users, laundries}) {
     if (!this.props.currentUser && currentUser) return this.refresh(users, currentUser)
-    if (!currentUser || this.props.users[this.props.currentUser].laundries.length === users[currentUser].laundries.length) {
-      return
+    if (!currentUser) return
+    if (this.props.users[this.props.currentUser].laundries.length !== users[currentUser].laundries.length) {
+      this.props.stateHandler.refresh()
+      this.navigator.replace(this.loadingRoute)
     }
+    if (this.findLaundries().length === this.findLaundries(users[currentUser], laundries).length) return
     this.refresh(users, currentUser)
   }
 
+  findLaundries (user = this.user, laundries = this.props.laundries) {
+    return user.laundries.map(id => laundries[id]).filter(l => l)
+  }
+
+  get loadingRoute () {
+    return {title: 'Loading', element: null, index: 0}
+  }
   get timetableRoute () {
     return {title: 'Timetable', id: 'timetable', index: 0}
   }
@@ -88,6 +98,8 @@ export default class LoggedInApp extends Backable {
 
   get laundry () {
     console.log('Laundries in LoggedInApp: ' + this.props.laundries)
+    console.log(this.user.laundries[0])
+    console.log(this.props.laundries[this.user.laundries[0]])
     return this.props.laundries[this.user.laundries[0]]
   }
 

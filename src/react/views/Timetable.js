@@ -233,7 +233,7 @@ export default class TimetableWrapper extends React.Component {
   }
 
   componentWillMount () {
-    this.fetchData()
+    if (this.props.laundry) this.fetchData()
   }
 
   fetchData () {
@@ -259,7 +259,7 @@ export default class TimetableWrapper extends React.Component {
   }
 
   render () {
-    if (!this.props.machines) {
+    if (!this.props.machines || !this.props.laundry) {
       return this.renderEmpty()
     }
     return this.renderTables()
