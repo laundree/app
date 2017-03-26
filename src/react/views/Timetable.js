@@ -35,11 +35,12 @@ class Timetable extends React.Component {
       return null
     }
     return <DatePicker
-      date={this.props.date.toDate()}
+      timezone={this.props.laundry.timezone}
+      date={this.props.date}
       onCancel={() => this.setState({showPicker: false})}
       onChange={date => {
         this.setState({showPicker: false})
-        this.props.onChangeDate(moment.tz(date, this.props.laundry.timezone))
+        this.props.onChangeDate(date)
       }}/>
   }
 

@@ -7,6 +7,7 @@ import { timetableTable } from '../../style'
 import React from 'react'
 import {
   ListView,
+  ScrollView,
   Text,
   View,
   TouchableOpacity,
@@ -39,7 +40,7 @@ export default class Table extends React.Component {
     this.ds = new ListView.DataSource({rowHasChanged: compareRows})
     this.state = {
       showModal: false,
-      rowData: this.ds.cloneWithRows(this.generateRows(props))
+      rowData: this.generateRows(props)
     }
   }
 
@@ -97,15 +98,17 @@ export default class Table extends React.Component {
   }
 
   updateData (props = this.props) {
-    return this.setState({rowData: this.ds.cloneWithRows(this.generateRows(props))})
+    return this.setState({rowData: this.generateRows(props)})
   }
 
   componentDidMount () {
     this.timer = setInterval(() => this.updateData(), 60 * 1000)
-    if (!this.listView) {
+    if (!this.scrollView) {
       return
     }
-    this.listView.scrollTo({y: Math.max(0, this.calculateScrollTo())})
+    setTimeout(() => {
+      this.scrollView.scrollTo({y: this.calculateScrollTo(), animated: false})
+    }, 0)
   }
 
   calculateScrollTo () {
@@ -161,7 +164,9 @@ export default class Table extends React.Component {
     return <View style={timetableTable.row}>
       {this.props.laundry.machines.map(id => (
         <View style={[timetableTable.cell, timetableTable.headerCell]} key={id}>
-          <Text style={timetableTable.headerText} numberOfLines={1} ellipsizeMode={Platform.OS === 'ios' ? 'clip' : 'tail'}>
+          <Text
+            style={timetableTable.headerText} numberOfLines={1}
+            ellipsizeMode={Platform.OS === 'ios' ? 'clip' : 'tail'}>
             {(this.props.machines[id] && this.props.machines[id].name) || ''}
           </Text>
         </View>
@@ -170,11 +175,9 @@ export default class Table extends React.Component {
   }
 
   renderRows () {
-    return <ListView
-      ref={r => (this.listView = r)}
-      dataSource={this.state.rowData}
-      renderRow={row => this.renderRow(row)}
-      enableEmptySections/>
+    return <ScrollView ref={r => (this.scrollView = r)}>
+      {this.state.rowData.map(data => this.renderRow(data))}
+    </ScrollView>
   }
 
   renderRow ({time, index, cols}) {
@@ -184,7 +187,7 @@ export default class Table extends React.Component {
       </View>
       : null
 
-    return <View>
+    return <View key={index}>
       {marker}
       <View style={timetableTable.row}>
         {cols.map((data, i) => (
@@ -277,12 +280,14 @@ export default class Table extends React.Component {
     return Math.floor(fromHour * 2 + fromMinute / 30)
   }
 
-  generateTimes (props) {
-    if (!props.laundry.rules.timeLimit) return range(48)
+  calculateTimesEnd (props = this.props) {
+    if (!props.laundry.rules.timeLimit) return 0
     const {hour: toHour, minute: toMinute} = props.laundry.rules.timeLimit.to
-    const from = this.calculateTimesOffset(props)
-    const to = Math.floor(toHour * 2 + toMinute / 30)
-    return range(from, to)
+    return Math.floor(toHour * 2 + toMinute / 30)
+  }
+
+  generateTimes (props) {
+    return range(this.calculateTimesOffset(props), this.calculateTimesEnd(props))
   }
 
 }

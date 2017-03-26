@@ -12,6 +12,7 @@
 
 ### Added
 
+ - Date-picker for timetable
  - Modal for confirmation
  - Scroll to active time
 

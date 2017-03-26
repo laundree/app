@@ -362,12 +362,12 @@ export const timetableTable = StyleSheet.create({
     zIndex: 10,
     backgroundColor: '#1b8889',
     alignItems: 'center',
+    justifyContent: 'center',
     borderTopRightRadius: 3,
     borderBottomRightRadius: 3
   },
   markerText: {
     fontSize: 10,
-    lineHeight: 20,
     color: '#ffffff'
   }
 })
