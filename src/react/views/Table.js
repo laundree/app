@@ -9,7 +9,8 @@ import {
   ListView,
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform
 } from 'react-native'
 import { range } from '../../utils/array'
 import moment from 'moment-timezone'
@@ -160,7 +161,7 @@ export default class Table extends React.Component {
     return <View style={timetableTable.row}>
       {this.props.laundry.machines.map(id => (
         <View style={[timetableTable.cell, timetableTable.headerCell]} key={id}>
-          <Text style={timetableTable.headerText} numberOfLines={1} ellipsizeMode={'clip'}>
+          <Text style={timetableTable.headerText} numberOfLines={1} ellipsizeMode={Platform.OS === 'ios' ? 'clip' : 'tail'}>
             {(this.props.machines[id] && this.props.machines[id].name) || ''}
           </Text>
         </View>

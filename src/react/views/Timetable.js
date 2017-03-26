@@ -11,14 +11,36 @@ import {
 import moment from 'moment-timezone'
 import Table from './Table'
 import { timetable } from '../../style'
+import DatePicker from './DatePicker'
 
 class Timetable extends React.Component {
 
+  constructor (props) {
+    super(props)
+    this.state = {
+      showPicker: false
+    }
+  }
+
   render () {
     return <View style={timetable.container}>
+      {this.renderPicker()}
       {this.renderTitle()}
       {this.renderTable()}
     </View>
+  }
+
+  renderPicker () {
+    if (!this.state.showPicker) {
+      return null
+    }
+    return <DatePicker
+      date={this.props.date.toDate()}
+      onCancel={() => this.setState({showPicker: false})}
+      onChange={date => {
+        this.setState({showPicker: false})
+        this.props.onChangeDate(moment.tz(date, this.props.laundry.timezone))
+      }}/>
   }
 
   renderTitle () {
@@ -33,11 +55,13 @@ class Timetable extends React.Component {
     return <View style={timetable.titleContainer}>
       <View style={timetable.dateView}>
         {rightArrow}
-        <Text style={timetable.dateHeader}>
-          {this.props.date.isSame(moment(), 'd') ? 'Today'
-            : this.props.date.isSame(moment().add(1, 'day'), 'd') ? 'Tomorrow'
-              : this.props.date.format('dddd D[/]M')}
-        </Text>
+        <TouchableOpacity onPress={() => this.setState({showPicker: true})}>
+          <Text style={timetable.dateHeader}>
+            {this.props.date.isSame(moment(), 'd') ? 'Today'
+              : this.props.date.isSame(moment().add(1, 'day'), 'd') ? 'Tomorrow'
+                : this.props.date.format('dddd D[/]M')}
+          </Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={timetable.dateNavigator}
           onPress={(event) => this.onPressRight(event)}>
@@ -125,7 +149,7 @@ export default class TimetableWrapper extends React.Component {
     return <View style={timetable.container}>
       <Timetable
         date={this.state.date.clone()}
-        onChangeDate={(newDate) => this.onChangeDate(newDate)}
+        onChangeDate={newDate => this.onChangeDate(newDate)}
         user={this.props.user}
         laundry={this.props.laundry}
         machines={this.props.machines}
