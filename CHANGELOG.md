@@ -8,6 +8,12 @@
  - Removed warning for empty sections
  - Today and Tomorrow displayed instead of date
  - App does not crash at first connection to laundry
+ - Var. IOS bugs
+
+### Added
+
+ - Modal for confirmation
+ - Scroll to active time
 
 ### Changed
 

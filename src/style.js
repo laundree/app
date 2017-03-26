@@ -8,7 +8,7 @@ const constants = {
   appBackgroundColor: '#66d3d3',
   defaultTextColor: '#03414C',
   statusBarHeight: Platform.OS === 'ios' ? 20 : 0,
-  inputHeight: 60
+  inputHeight: 40
 }
 
 export const fancyButton = StyleSheet.create({
@@ -314,80 +314,67 @@ export const settings = StyleSheet.create({
 })
 
 export const timetableTable = StyleSheet.create({
-  containerStyle: {
-    flex: 1,
+  container: {
+    flex: 1
+  },
+  headerCell: {
+    backgroundColor: '#44B7B4',
+    height: 30
+  },
+  headerText: {
+    color: '#ffffff',
+    fontSize: 12
+  },
+  row: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: Dimensions.get('window').width,
     marginLeft: 10,
     marginRight: 10
   },
-  headerStyle: {
+  cell: {
     flex: 1,
     height: 50,
     borderWidth: 1,
-    borderColor: '#7DD8D5',
     justifyContent: 'center',
     alignItems: 'center',
+    borderColor: '#66D3D3',
     backgroundColor: '#4DC4C1'
   },
-  rowStyle: {
-    flexDirection: 'row',
-    width: Dimensions.get('window').width,
-    height: 50
+  cellContainer: {
+    flex: 1
   },
-  freeCellStyle: {
-    flex: 1,
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#7DD8D5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#4DC4C1'
-  },
-  freeCellStyleGrey: {
+  unavailableCell: {
     backgroundColor: '#4B9997',
     borderColor: '#5CA09E'
   },
-  bookedCellStyle: {
-    flex: 1,
-    height: 50,
-    borderWidth: 1,
+  bookedCell: {
     borderColor: '#a04444',
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#a04444'
   },
-  myBookedCellStyle: {
-    flex: 1,
-    height: 50,
-    borderWidth: 1,
+  myBookedCell: {
     borderColor: '#49a044',
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#49a044'
   },
-  markerStyle: {
+  marker: {
     width: 20,
-    marginTop: -9,
-    height: 20
+    top: -9,
+    height: 20,
+    position: 'absolute',
+    zIndex: 10,
+    backgroundColor: '#1b8889',
+    alignItems: 'center',
+    borderTopRightRadius: 3,
+    borderBottomRightRadius: 3
   },
-  emptyMarkerStyle: {
-    width: 20,
-    marginTop: -9,
-    height: 20
-  },
-  markerTextStyle: {
-    textAlign: 'center'
+  markerText: {
+    fontSize: 10,
+    lineHeight: 20,
+    color: '#ffffff'
   }
 })
 
 export const timetable = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#66D3D3'
+    flex: 1
   },
   dateView: {
     flex: 4,
@@ -402,15 +389,43 @@ export const timetable = StyleSheet.create({
   },
   dateHeader: {
     fontSize: 20,
-    textAlign: 'center',
-    width: Dimensions.get('window').width / 2
+    textAlign: 'center'
   },
   dateNavigator: {
     flex: 2
   },
-  row: {
-    flexDirection: 'row',
-    width: Dimensions.get('window').width,
+  titleContainer: {
     height: 50
+  }
+})
+
+export const modal = StyleSheet.create({
+  base: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255,255,255,0.5)'
+  },
+  window: {
+    flex: 1,
+    margin: 15,
+    padding: 20,
+    backgroundColor: '#ffffff'
+  },
+  title: {
+    alignItems: 'center'
+  },
+  titleText: {
+    color: constants.defaultTextColor
+  },
+  buttonContainer: {
+    marginTop: 20
+  },
+  button: {
+    marginTop: 10
+  },
+  redButton: {
+    backgroundColor: constants.colorRed
   }
 })
