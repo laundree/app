@@ -17,7 +17,7 @@
 
 ### Changed
 
- - Redesigned login page
+ - Redesign machine name
 
 ## [0.0.3]
 
