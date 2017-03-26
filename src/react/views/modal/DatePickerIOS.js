@@ -24,6 +24,12 @@ class Picker extends React.Component {
       <DatePickerIOS
         minimumDate={new Date()}
         mode='date' date={this.state.date} onDateChange={date => this.setState({date})}/>
+      <View style={modal.button}>
+        <FancyTextButton
+          disabled={new Date(this.state.date).setHours(0, 0, 0, 0) === new Date().setHours(0, 0, 0, 0)}
+          text='Today' onPress={() => this.setState({date: new Date()})}/>
+      </View>
+
       <View style={modal.buttonContainer}>
         <View style={modal.button}>
           <FancyTextButton
