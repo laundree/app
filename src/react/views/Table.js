@@ -6,7 +6,6 @@ import { timetableTable } from '../../style'
 
 import React from 'react'
 import {
-  ListView,
   ScrollView,
   Text,
   View,
@@ -17,27 +16,9 @@ import { range } from '../../utils/array'
 import moment from 'moment-timezone'
 import Confirm from './modal/Confirm'
 
-function compareRows (r1, r2) {
-  return (
-    r1.time !== r2.time ||
-    r1.index !== r2.index ||
-    r1.cols.length !== r2.cols.length ||
-    r1.cols.find(({disabled, booking, own, machineId}, i) => {
-      const col = r2.cols[i]
-      return (
-        machineId !== col.machineId ||
-        disabled !== col.disabled ||
-        booking !== col.booking ||
-        own !== col.own
-      )
-    })
-  )
-}
-
 export default class Table extends React.Component {
   constructor (props) {
     super(props)
-    this.ds = new ListView.DataSource({rowHasChanged: compareRows})
     this.state = {
       showModal: false,
       rowData: this.generateRows(props)
