@@ -7,6 +7,10 @@
  - Settings page opened only once
  - Removed warning for empty sections
 
+### Changed
+
+ - Redesigned login page
+
 ## [0.0.3]
 
 ### Configure

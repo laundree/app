@@ -67,6 +67,31 @@ export const fancyImageTextButton = StyleSheet.create({
   }
 })
 
+export const fancyImageButton = StyleSheet.create({
+  button: {
+    backgroundColor: '#7d3362'
+  },
+  view: {
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  image: {
+    height: 20,
+    width: 20,
+    margin: 10,
+    marginRight: 15,
+    marginLeft: 15
+  },
+  enabled: {
+    color: '#fff'
+  },
+  disabled: {
+    color: '#e2e2e2'
+  }
+})
+
 export const fancyTextButton = StyleSheet.create({
   text: {
     color: '#fff'
@@ -150,19 +175,33 @@ export const loggedInApp = StyleSheet.create({
 export const login = StyleSheet.create({
   divider: {
     alignItems: 'center',
-    paddingTop: 10,
-    paddingBottom: 10
+    paddingTop: 5,
+    paddingBottom: 5
   },
   dividerText: {
     fontWeight: 'bold',
     color: constants.defaultTextColor
   },
+  header: {
+    alignItems: 'center',
+    paddingBottom: 5
+  },
+  headerText: {
+    color: constants.defaultTextColor,
+    fontSize: 20
+  },
   socialLogin: {
-    padding: 5
+    padding: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   socialButton: {
-    paddingTop: 30,
-    paddingBottom: 10
+    width: constants.inputHeight,
+    paddingTop: 10,
+    paddingBottom: 5,
+    marginLeft: 30,
+    marginRight: 30
   },
   container: {
     flex: 1,
@@ -175,24 +214,58 @@ export const login = StyleSheet.create({
     marginBottom: 5
   },
   input: {
-    paddingLeft: 5,
-    paddingRight: 5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 5,
+    paddingTop: 10,
+    width: Dimensions.get('window').width
+  },
+  buttonInput: {
+    paddingLeft: 200,
+    paddingRight: 20,
     paddingBottom: 5,
     paddingTop: 10
   },
-  buttonInput: {
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingBottom: 5,
-    paddingTop: 30
+  infoContainer: {
+    paddingTop: 10,
+    paddingLeft: 10,
+    paddingRight: 5
+  },
+  infoTitle: {
+    fontSize: 14,
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
+  infoText: {
+    fontSize: 14,
+    textAlign: 'center'
+  },
+  infoLink: {
+    fontSize: 14,
+    textDecorationLine: 'underline',
+    textAlign: 'center'
   }
 })
 
 export const loginApp = StyleSheet.create({
   mainContainer: {
-    paddingTop: constants.statusBarHeight,
+    paddingTop: Navigator.NavigationBar.Styles.General.NavBarHeight + constants.statusBarHeight,
     backgroundColor: constants.appBackgroundColor,
     flex: 1
+  },
+  navigationBar: {
+    backgroundColor: constants.colorRed
+  },
+  navBarContainer: {
+    backgroundColor: constants.colorRed,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    minWidth: 40
+  },
+  navBarTitle: {
+    fontSize: 20,
+    color: '#fff'
   }
 })
 
