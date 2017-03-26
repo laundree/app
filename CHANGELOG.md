@@ -6,6 +6,7 @@
 
  - Settings page opened only once
  - Removed warning for empty sections
+ - Today and Tomorrow displayed instead of date
  - App does not crash at first connection to laundry
 
 ### Changed

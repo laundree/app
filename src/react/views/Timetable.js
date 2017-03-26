@@ -39,7 +39,9 @@ class Timetable extends React.Component {
       <View style={timetable.dateView}>
         {rightArrow}
         <Text style={timetable.dateHeader}>
-          {this.props.date.format('dddd D[/]M')}
+          {this.props.date.isSame(moment(), 'd') ? 'Today'
+            : this.props.date.isSame(moment().add(1, 'day'), 'd') ? 'Tomorrow'
+              : this.props.date.format('dddd D[/]M')}
         </Text>
         <TouchableOpacity
           style={timetable.dateNavigator}
