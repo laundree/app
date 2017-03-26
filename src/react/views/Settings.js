@@ -21,12 +21,17 @@ export default class Settings extends React.Component {
     const {displayName, photo} = this.user
     console.log('User', photo)
     return <View>
+      <Text>Basic user-info</Text>
       <Image
         style={{width: 50, height: 50}}
         source={{uri: photo}}/>
       <Text>
         {displayName}
       </Text>
+      <Text>E-mail address</Text>
+      <Text>blabla@blabla.bla</Text>
+      <Text>Laundries</Text>
+      <Text>Laundry 1</Text>
     </View>
   }
 
