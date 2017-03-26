@@ -4,7 +4,9 @@
 
 import React from 'react'
 import {
+  Linking,
   Text,
+  TouchableOpacity,
   View
 } from 'react-native'
 import FancyTextButton from './input/FancyTextButton'
@@ -54,24 +56,53 @@ export default class Login extends React.Component {
 
   render () {
     return <View style={login.container}>
-      <View style={{alignSelf: 'stretch'}}>
-        <View style={login.socialLogin}>
-          <View style={login.socialButton}>
-            <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} text='Login with Facebook'/>
-          </View>
-          <View style={login.socialButton}>
-            <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} text='Login with Google'/>
-          </View>
+      <View style={login.header}>
+        <Text style={login.headerText}>Log in with</Text>
+      </View>
+      <View style={login.socialLogin}>
+        <View style={login.socialButton}>
+          <FancyFacebookButton onPress={this.props.onOpenFacebookAuth}/>
         </View>
-        <View style={login.divider}>
-          <Text style={login.dividerText}>
-            OR
+        <View style={login.socialButton}>
+          <FancyGoogleButton onPress={this.props.onOpenGoogleAuth}/>
+        </View>
+      </View>
+      <View style={login.divider}>
+        <Text style={login.dividerText}>
+          - OR -
+        </Text>
+      </View>
+      <EmailPasswordLoginForm stateHandler={this.props.stateHandler}/>
+      <View style={login.infoContainer}>
+        <Text style={login.infoTitle}>
+          Notice:
+        </Text>
+        <Text style={login.infoText}>
+          By logging in without an account you
+        </Text>
+        <Text style={login.infoText}>
+          are registered and accept our
+        </Text>
+        <TouchableOpacity
+          onPress={(event) => this.onPressTerms(event)}>
+          <Text style={login.infoLink}>
+            Terms and Conditions and Privacy Policy
           </Text>
-        </View>
-        <EmailPasswordLoginForm stateHandler={this.props.stateHandler}/>
+        </TouchableOpacity>
       </View>
     </View>
   }
+
+  onPressTerms (event) {
+    Linking.canOpenURL('https://laundree.io/privacy').then(supported => {
+      if (supported) {
+        Linking.openURL('https://laundree.io/privacy')
+      } else {
+        console.log('Don\'t know how to open URI: ' + 'https://laundree.io/privacy')
+      }
+    })
+  }
+
 }
 
 Login.propTypes = {

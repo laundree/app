@@ -54,7 +54,16 @@ export default class LoginApp extends Backable {
       configureScene={(route, routeStack) => Navigator.SceneConfigs.FloatFromBottom}
       renderScene={(route, navigator) => <View style={loginApp.mainContainer}>
         {this.renderScene(route, navigator)}
-      </View>}/>
+      </View>}
+      navigationBar={<Navigator.NavigationBar
+        routeMapper={{
+          LeftButton: (route, navigator) => null,
+          Title: route => null,
+          RightButton: (route, navigator) => null
+        }}
+        style={loginApp.navigationBar}
+      />}
+    />
   }
 }
 

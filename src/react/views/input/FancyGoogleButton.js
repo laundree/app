@@ -2,11 +2,10 @@
  * Created by budde on 25/02/2017.
  */
 import React from 'react'
-import FancyImageTextButton from './FancyImageTextButton'
+import FancyImageButton from './FancyImageButton'
 import { fancyGoogleButton } from '../../../style'
 
-const FancyGoogleButton = ({text, onPress, disabled}) => <FancyImageTextButton
-  text={text}
+const FancyGoogleButton = ({onPress, disabled}) => <FancyImageButton
   style={fancyGoogleButton.button}
   onPress={onPress}
   disabled={disabled}
@@ -15,7 +14,6 @@ const FancyGoogleButton = ({text, onPress, disabled}) => <FancyImageTextButton
 export default FancyGoogleButton
 
 FancyGoogleButton.propTypes = {
-  text: FancyImageTextButton.propTypes.text,
   onPress: React.PropTypes.func.isRequired,
   disabled: React.PropTypes.bool
 }

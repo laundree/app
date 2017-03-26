@@ -8,6 +8,10 @@
  - Removed warning for empty sections
  - App does not crash at first connection to laundry
 
+### Changed
+
+ - Redesigned login page
+
 ## [0.0.3]
 
 ### Configure

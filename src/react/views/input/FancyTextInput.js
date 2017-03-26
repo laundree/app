@@ -2,14 +2,12 @@
  * Created by budde on 25/02/2017.
  */
 import React from 'react'
-import { View, TextInput, Text } from 'react-native'
+import { View, TextInput } from 'react-native'
 import { fancyTextInput } from '../../../style'
 
 const FancyTextInput = ({label, value, onChangeText, keyboardType, secureTextEntry}) => <View style={fancyTextInput.container}>
-  <Text style={fancyTextInput.label}>
-    {label}
-  </Text>
   <TextInput
+    placeholder={label}
     style={fancyTextInput.textInput}
     keyboardType={keyboardType}
     onChangeText={onChangeText}
