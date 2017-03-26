@@ -74,7 +74,6 @@ class Timetable extends React.Component {
   }
 
   get machines () {
-    if (!this.props.laundry) return undefined
     let machines = this.props.laundry.machines.map(id => {
       return this.props.machines[id]
     })
@@ -297,8 +296,7 @@ export default class TimetableWrapper extends React.Component {
   }
 
   get isLaundryOwner () {
-    if (this.props.laundry) return this.props.laundry.owners.indexOf(this.props.user) >= 0
-    return undefined
+    return this.props.laundry.owners.indexOf(this.props.user) >= 0
   }
 }
 

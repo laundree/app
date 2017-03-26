@@ -100,7 +100,7 @@ class StateHandler extends EventEmitter {
   refresh () {
     if (!this._auth) return this._setupAuth()
     this._setupAuth(this._auth.userId, this._auth.token)
-      .then(() => this.emit('refresh'))
+    this.emit('refresh')
   }
 
   logOut () {

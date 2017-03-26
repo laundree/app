@@ -51,7 +51,6 @@ export default class Table extends React.Component {
   }
 
   renderRow (rowData, rowId) {
-    console.log('Rendering cells', rowData, rowId)
     return <View style={this.props.tableStyles.rowStyle}>
       {this.props.renderBetweenMarker(rowId)}
       <ListView
