@@ -80,7 +80,8 @@ export default class LoggedInApp extends Backable {
       case 'qr':
         return <QrCodeScanner onShowScanner={() => navigator.push(this.qrScannerRoute)}/>
       case 'settings':
-        return <Settings stateHandler={this.props.stateHandler}/>
+        return <Settings stateHandler={this.props.stateHandler}
+          laundry={this.laundry}/>
       case 'timetable':
         return <Timetable stateHandler={this.props.stateHandler}
           user={this.user}
