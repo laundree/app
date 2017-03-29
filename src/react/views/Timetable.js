@@ -114,13 +114,12 @@ export default class TimetableWrapper extends React.Component {
   }
 
   componentWillMount () {
+    // Retrieve machines
+    this.props.stateHandler.sdk.listMachines(this.laundryId)
     this.fetchData()
   }
 
   fetchData () {
-    // Retrieve machines
-    this.props.stateHandler.sdk.listMachines(this.laundryId)
-
     // Retrieve bookings
     let tomorrow = this.state.date.clone().add(1, 'day')
 
@@ -162,7 +161,7 @@ export default class TimetableWrapper extends React.Component {
   onChangeDate (newDate) {
     this.setState({
       date: newDate
-    }, this.fetchData)
+    }, () => this.fetchData())
   }
 
   renderEmpty () {
@@ -171,10 +170,10 @@ export default class TimetableWrapper extends React.Component {
         There are no machines registered.
       </Text>
       {this.isLaundryOwner ? <Text>
-          Go to the website and register machines.
-        </Text> : <Text>
-          Ask your administrator to register machines.
-        </Text>}
+        Go to the website and register machines.
+      </Text> : <Text>
+        Ask your administrator to register machines.
+      </Text>}
     </View>
   }
 
