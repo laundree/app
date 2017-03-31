@@ -6,27 +6,63 @@ import React from 'react'
 import {
   Text,
   TouchableOpacity,
-  View
+  ListView,
+  View,
+  Dimensions,
+  ScrollView
 } from 'react-native'
 import moment from 'moment-timezone'
 import Table from './Table'
 import { timetable } from '../../style'
 import DatePicker from './DatePicker'
+import { range } from '../../utils/array'
 
 class Timetable extends React.Component {
 
   constructor (props) {
     super(props)
+    this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.isSame(r2, 'd')})
+
     this.state = {
-      showPicker: false
+      showPicker: false,
+      maxPage: 1,
+      page: 0,
+      now: moment.tz(props.laundry.timezone)
     }
+    this.state.data = this.ds.cloneWithRows(this.generateDays(1))
+  }
+
+  generateDays (num) {
+    return range(0, num + 1).map(i => this.state.now.clone().add(i, 'd'))
+  }
+
+  handleScroll (pageNum) {
+    console.log(pageNum)
+    this.setState(({page, maxPage}) => {
+      if (pageNum === page) return {}
+      if (pageNum < maxPage) return {page: pageNum}
+      return {page: pageNum, maxPage: pageNum + 1, data: this.ds.cloneWithRows(this.generateDays(pageNum + 1))}
+    })
   }
 
   render () {
     return <View style={timetable.container}>
       {this.renderPicker()}
-      {this.renderTitle()}
-      {this.renderTable()}
+      <ScrollView>
+        <ListView
+          onScroll={evt => this.handleScroll(Math.round(evt.nativeEvent.contentOffset.x / Dimensions.get('window').width))}
+          style={{flex: 1}}
+          showsHorizontalScrollIndicator={false}
+          horizontal
+          pagingEnabled
+          dataSource={this.state.data}
+          renderRow={d => (
+            <View style={{width: Dimensions.get('window').width, flex: 1}}>
+              {this.renderTable(d)}
+            </View>
+          )}
+        />
+      </ScrollView>
     </View>
   }
 
@@ -44,8 +80,8 @@ class Timetable extends React.Component {
       }}/>
   }
 
-  renderTitle () {
-    const rightArrow = this.props.date.isSame(moment(), 'd')
+  renderTitle (d) {
+    const rightArrow = d.isSame(moment(), 'd')
       ? <Text style={timetable.dateNavigator}/>
       : <TouchableOpacity
         style={timetable.dateNavigator}
@@ -58,9 +94,9 @@ class Timetable extends React.Component {
         {rightArrow}
         <TouchableOpacity onPress={() => this.setState({showPicker: true})}>
           <Text style={timetable.dateHeader}>
-            {this.props.date.isSame(moment(), 'd') ? 'Today'
-              : this.props.date.isSame(moment().add(1, 'day'), 'd') ? 'Tomorrow'
-                : this.props.date.format('dddd D[/]M')}
+            {d.isSame(moment(), 'd') ? 'Today'
+              : d.isSame(moment().add(1, 'day'), 'd') ? 'Tomorrow'
+                : d.format('dddd D[/]M')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -82,14 +118,14 @@ class Timetable extends React.Component {
     this.props.onChangeDate(newDate)
   }
 
-  renderTable () {
+  renderTable (d) {
     return <Table
       stateHandler={this.props.stateHandler}
       currentUser={this.props.user}
       bookings={this.props.bookings}
       laundry={this.props.laundry}
       machines={this.props.machines}
-      date={this.props.date}
+      date={d}
     />
   }
 }

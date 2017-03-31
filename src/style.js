@@ -315,7 +315,8 @@ export const settings = StyleSheet.create({
 
 export const timetableTable = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    paddingTop: 30
   },
   shadowIndicator: {
     position: 'absolute',
@@ -348,6 +349,13 @@ export const timetableTable = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10
   },
+  headerRow: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10
+  },
   cell: {
     flex: 1
   },
@@ -379,7 +387,7 @@ export const timetableTable = StyleSheet.create({
   },
   marker: {
     width: 20,
-    top: -9,
+    top: -59,
     height: 20,
     position: 'absolute',
     zIndex: 10,

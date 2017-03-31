@@ -6,8 +6,6 @@ import { timetableTable } from '../../style'
 
 import React from 'react'
 import {
-  ListView,
-  ScrollView,
   Text,
   View,
   TouchableOpacity,
@@ -17,27 +15,9 @@ import { range } from '../../utils/array'
 import moment from 'moment-timezone'
 import Confirm from './modal/Confirm'
 
-function compareRows (r1, r2) {
-  return (
-    r1.time !== r2.time ||
-    r1.index !== r2.index ||
-    r1.cols.length !== r2.cols.length ||
-    r1.cols.find(({disabled, booking, own, machineId}, i) => {
-      const col = r2.cols[i]
-      return (
-        machineId !== col.machineId ||
-        disabled !== col.disabled ||
-        booking !== col.booking ||
-        own !== col.own
-      )
-    })
-  )
-}
-
 export default class Table extends React.Component {
   constructor (props) {
     super(props)
-    this.ds = new ListView.DataSource({rowHasChanged: compareRows})
     this.state = {
       showModal: false,
       offset: this.calculateTimesOffset(props),
@@ -159,8 +139,8 @@ export default class Table extends React.Component {
 
   render () {
     return <View style={timetableTable.container}>
-      {this.renderHeader()}
       {this.renderRows()}
+      {this.renderHeader()}
       <Confirm
         onConfirm={this.state.onConfirm || (() => {})}
         onCancel={() => this.setState({showModal: false})}
@@ -183,7 +163,7 @@ export default class Table extends React.Component {
 
   renderHeader () {
     // console.log('Rendering headers')
-    return <View style={timetableTable.row}>
+    return <View style={[timetableTable.row, timetableTable.headerRow]}>
       {this.props.laundry.machines.map(id => (
         <View style={[timetableTable.cellBg, timetableTable.headerCell]} key={id}>
           <Text
@@ -197,17 +177,18 @@ export default class Table extends React.Component {
   }
 
   renderRows () {
-    return <ScrollView ref={r => (this.scrollView = r)} onLayout={evt => this.scrollTo(evt.nativeEvent.layout)}>
+    return <View>
       {this.state.rowData.map(data => this.renderRow(data))}
       {this.renderIndicator()}
-    </ScrollView>
+    </View>
   }
 
   renderRow ({time, index, cols}) {
-    const marker = index && ((time + 1) % 2)
-      ? <View style={timetableTable.marker}>
-        <Text style={timetableTable.markerText}>{time / 2}</Text>
-      </View>
+    const marker = (index - 1) && (time % 2)
+      ? (
+        <View style={timetableTable.marker}>
+          <Text style={timetableTable.markerText}>{(time - 1) / 2}</Text>
+        </View>)
       : null
 
     return <View key={index}>
