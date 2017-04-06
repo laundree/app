@@ -363,9 +363,28 @@ export const settings = StyleSheet.create({
 
 export const timetableTable = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    paddingTop: 30
+  },
+  shadowIndicator: {
+    position: 'absolute',
+    left: 10,
+    right: 10,
+    top: 0,
+    backgroundColor: 'rgba(44,76,75,0.4)',
+    zIndex: 5
+  },
+  indicator: {
+    position: 'absolute',
+    left: 10,
+    right: 10,
+    height: 2,
+    backgroundColor: '#E54545',
+    zIndex: 6
   },
   headerCell: {
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#44B7B4',
     height: 30
   },
@@ -378,33 +397,45 @@ export const timetableTable = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10
   },
+  headerRow: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10
+  },
   cell: {
+    flex: 1
+  },
+  cellBg: {
     flex: 1,
     height: 50,
     borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: '#66D3D3',
+    flexDirection: 'row',
+    borderColor: constants.appBackgroundColor,
     backgroundColor: '#4DC4C1'
   },
   cellContainer: {
     flex: 1
   },
   unavailableCell: {
-    backgroundColor: '#4B9997',
-    borderColor: '#5CA09E'
+    backgroundColor: '#70d4d1'
   },
   bookedCell: {
-    borderColor: '#a04444',
+    position: 'absolute',
+    top: -1,
+    bottom: -1,
+    left: 0,
+    right: 0,
+    borderWidth: 0,
     backgroundColor: '#a04444'
   },
   myBookedCell: {
-    borderColor: '#49a044',
     backgroundColor: '#49a044'
   },
   marker: {
     width: 20,
-    top: -9,
+    top: -59,
     height: 20,
     position: 'absolute',
     zIndex: 10,
@@ -424,12 +455,14 @@ export const timetable = StyleSheet.create({
   container: {
     flex: 1
   },
+  listContainer: {
+    flex: 1
+  },
   dateView: {
     flex: 4,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    width: Dimensions.get('window').width
+    alignItems: 'center'
   },
   arrowHeader: {
     fontSize: 20,
@@ -444,6 +477,10 @@ export const timetable = StyleSheet.create({
   },
   titleContainer: {
     height: 50
+  },
+  tableContainer: {
+    alignSelf: 'stretch',
+    flex: 1
   }
 })
 

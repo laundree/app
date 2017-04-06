@@ -15,6 +15,7 @@
  - Date-picker for timetable
  - Modal for confirmation
  - Scroll to active time
+ - Show current time
 
 ### Changed
 
