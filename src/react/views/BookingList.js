@@ -19,39 +19,36 @@ class BookingList extends React.Component {
     this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.isSame(r2, 'd')})
 
     this.state = {
-      now: moment.tz(props.laundry.timezone),
       data: this.ds.cloneWithRows(this.props.bookings)
     }
   }
 
   renderBooking (booking) {
     console.log('Booking: ', booking)
-    const from = moment.tz(booking.from, this.props.laundry.timezone)
-    const to = moment.tz(booking.to, this.props.laundry.timezone)
+    const from = moment.tz(booking.booking.from, booking.laundry.timezone)
+    const to = moment.tz(booking.booking.to, booking.laundry.timezone)
     return <View style={{width: Dimensions.get('window').width, flex: 1}}>
       <Text>{from.hour() + ':' + from.minute()}</Text>
       <Text>{to.hour() + ':' + to.minute()}</Text>
-      <Text>{this.props.machines[booking.machine].name}</Text>
+      <Text>{booking.machine.name}</Text>
     </View>
   }
 
   render () {
+    console.log('Bookings', this.props.bookings)
     return <View>
       <ListView
         dataSource={this.state.data}
         renderRow={booking => this.renderBooking(booking)}
+        enableEmptySections
       />
     </View>
   }
 }
 
 BookingList.propTypes = {
-  date: React.PropTypes.object.isRequired,
-  laundry: React.PropTypes.object.isRequired,
-  machines: React.PropTypes.object.isRequired,
   stateHandler: React.PropTypes.object.isRequired,
-  bookings: React.PropTypes.object,
-  user: React.PropTypes.object.isRequired
+  bookings: React.PropTypes.array.isRequired
 }
 
 export default class BookingListWrapper extends React.Component {
@@ -79,21 +76,33 @@ export default class BookingListWrapper extends React.Component {
   }
 
   render () {
-    if (!this.props.machines) { // TODO Check on number of bookings instead
-      console.log('Bookings: ' + this.props.bookings)
+    if (!this.props.userBookings) return null
+    const bookings = this.props.userBookings
+      .map(bookingId => this.renderBooking(this.props.bookings[bookingId])).filter(b => b)
+    if (!bookings.length) {
       return this.renderEmpty()
     }
-    return this.renderBookingList()
+    return this.renderBookingList(bookings)
   }
 
-  renderBookingList () {
+  renderBooking (booking) {
+    const machine = this.props.machines[booking.machine]
+    if (!machine || machine.broken) {
+      return null
+    }
+    return {
+      laundry: this.props.laundry,
+      machine: this.props.machines[booking.machine],
+      booking: booking}
+  }
+
+  renderBookingList (bookings) {
     return <View style={bookingList.container}>
       <BookingList
         date={this.state.date.clone()}
         user={this.props.user}
-        laundry={this.props.laundry}
-        machines={this.props.machines}
-        bookings={this.props.bookings}
+        bookings={bookings}
+        userBookings={this.props.userBookings}
         stateHandler={this.props.stateHandler}/>
     </View>
   }
@@ -114,7 +123,8 @@ export default class BookingListWrapper extends React.Component {
 BookingListWrapper.propTypes = {
   user: React.PropTypes.object.isRequired,
   laundry: React.PropTypes.object.isRequired,
-  machines: React.PropTypes.object,
-  bookings: React.PropTypes.object,
+  machines: React.PropTypes.object.isRequired,
+  bookings: React.PropTypes.object.isRequired,
+  userBookings: React.PropTypes.arrayOf(React.PropTypes.string),
   stateHandler: React.PropTypes.object.isRequired
 }
