@@ -6,58 +6,111 @@ import React from 'react'
 import {
   Text,
   TouchableOpacity,
-  ListView,
   View,
-  Dimensions,
-  ScrollView
+  ScrollView,
+  Platform
 } from 'react-native'
 import moment from 'moment-timezone'
 import Table from './Table'
 import { timetable } from '../../style'
 import DatePicker from './DatePicker'
 import { range } from '../../utils/array'
+import ViewPager from 'react-native-viewpager'
 
 class Timetable extends React.Component {
 
   constructor (props) {
     super(props)
-    this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.isSame(r2, 'd')})
+    this.ds = new ViewPager.DataSource({pageHasChanged: (r1, r2) => r1.isSame(r2, 'd')})
 
     this.state = {
       showPicker: false,
       maxPage: 1,
       page: 0,
-      now: moment.tz(props.laundry.timezone)
+      now: moment.tz(props.laundry.timezone).startOf('day'),
+      offset: this.calculateTimesOffset(props),
+      end: this.calculateTimesEnd(props)
     }
-    this.state.data = this.ds.cloneWithRows(this.generateDays(1))
+    this.state.data = this.ds.cloneWithPages(this.generateDays())
   }
 
-  generateDays (num) {
-    return range(0, num + 1).map(i => this.state.now.clone().add(i, 'd'))
+  generateDays (date = this.props.date) {
+    const diff = date.clone().add(1, 'h').diff(this.state.now, 'd')
+    return range(0, diff + 2).map(i => this.state.now.clone().add(i, 'd'))
   }
 
-  handleScroll (pageNum) {
-    console.log(pageNum)
-    this.setState(({page, maxPage}) => {
-      if (pageNum === page) return {}
-      if (pageNum < maxPage) return {page: pageNum}
-      return {page: pageNum, maxPage: pageNum + 1, data: this.ds.cloneWithRows(this.generateDays(pageNum + 1))}
-    })
+  renderHeader () {
+    return <View style={[timetable.headerRow]}>
+      {this.props.laundry.machines.map(id => (
+        <View style={[timetable.headerCell]} key={id}>
+          <Text
+            style={timetable.headerText} numberOfLines={1}
+            ellipsizeMode={Platform.OS === 'ios' ? 'clip' : 'tail'}>
+            {(this.props.machines[id] && this.props.machines[id].name) || ''}
+          </Text>
+        </View>
+      ))}
+    </View>
+  }
+
+  componentWillReceiveProps (props) {
+    const {date, laundry} = props
+    if (laundry !== this.props.laundry) {
+      this.setState({
+        offset: this.calculateTimesOffset(props),
+        end: this.calculateTimesEnd(props)
+      })
+    }
+    if (date.isSame(this.props.date, 'd')) {
+      return
+    }
+    this
+      .setState({data: this.ds.cloneWithPages(this.generateDays(date))},
+        () => {
+          if (!this.viewPager) {
+            return
+          }
+          const shouldViewPage = this.props.date.clone().add(1, 'h').diff(this.state.now, 'd')
+          if (this.viewPager.getCurrentPage() === shouldViewPage) {
+            return
+          }
+          setTimeout(() => this.viewPager.goToPage(shouldViewPage, false), 0)
+        })
+  }
+
+  scrollTo (layout) {
+    if (!this.scrollView || this.scrolled) {
+      return
+    }
+    this.scrolled = true
+    this.scrollView.scrollTo({y: this.calculateScrollTo(layout.height), animated: false})
+  }
+
+  calculateScrollTo (height) {
+    const now = moment.tz(this.props.laundry.timezone)
+    const scrollTo = ((now.hours() * 2 + now.minutes() / 30) - this.state.offset - 1) * 50
+    const min = 0
+    const max = (this.state.end - this.state.offset) * 50 - height
+    return Math.min(Math.max(min, scrollTo), max)
   }
 
   render () {
     return <View style={timetable.container}>
       {this.renderPicker()}
-      <ScrollView>
-        <ListView
-          onScroll={evt => this.handleScroll(Math.round(evt.nativeEvent.contentOffset.x / Dimensions.get('window').width))}
+      {this.renderTitle()}
+      {this.renderHeader()}
+      <ScrollView ref={r => (this.scrollView = r)} onLayout={evt => this.scrollTo(evt.nativeEvent.layout)}>
+        <ViewPager
+          ref={r => (this.viewPager = r)}
+          onChangePage={pageNum => {
+            console.log('Change page to', pageNum)
+            this.props.onChangeDate(this.state.data.getPageData(pageNum))
+          }}
+          renderPageIndicator={false}
           style={{flex: 1}}
-          showsHorizontalScrollIndicator={false}
-          horizontal
-          pagingEnabled
           dataSource={this.state.data}
-          renderRow={d => (
-            <View style={{width: Dimensions.get('window').width, flex: 1}}>
+          renderPage={d => (
+            <View style={{flex: 1}}>
               {this.renderTable(d)}
             </View>
           )}
@@ -80,7 +133,7 @@ class Timetable extends React.Component {
       }}/>
   }
 
-  renderTitle (d) {
+  renderTitle (d = this.props.date) {
     const rightArrow = d.isSame(moment(), 'd')
       ? <Text style={timetable.dateNavigator}/>
       : <TouchableOpacity
@@ -126,8 +179,23 @@ class Timetable extends React.Component {
       laundry={this.props.laundry}
       machines={this.props.machines}
       date={d}
+      offset={this.state.offset}
+      end={this.state.end}
     />
   }
+
+  calculateTimesOffset (props = this.props) {
+    if (!props.laundry.rules.timeLimit) return 0
+    const {hour: fromHour, minute: fromMinute} = props.laundry.rules.timeLimit.from
+    return Math.floor(fromHour * 2 + fromMinute / 30)
+  }
+
+  calculateTimesEnd (props = this.props) {
+    if (!props.laundry.rules.timeLimit) return 0
+    const {hour: toHour, minute: toMinute} = props.laundry.rules.timeLimit.to
+    return Math.floor(toHour * 2 + toMinute / 30)
+  }
+
 }
 
 Timetable.propTypes = {
