@@ -1,7 +1,7 @@
 /**
  * Created by budde on 27/02/2017.
  */
-import { StyleSheet, Platform, Navigator, Dimensions } from 'react-native'
+import { Dimensions, StyleSheet, Platform, Navigator } from 'react-native'
 
 const constants = {
   colorRed: '#e55564',
@@ -217,8 +217,7 @@ export const login = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     paddingBottom: 5,
-    paddingTop: 10,
-    width: Dimensions.get('window').width
+    paddingTop: 10
   },
   buttonInput: {
     paddingLeft: 200,
