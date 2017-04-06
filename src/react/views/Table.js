@@ -8,8 +8,7 @@ import React from 'react'
 import {
   Text,
   View,
-  TouchableOpacity,
-  Platform
+  TouchableOpacity
 } from 'react-native'
 import { range } from '../../utils/array'
 import moment from 'moment-timezone'
@@ -20,8 +19,6 @@ export default class Table extends React.Component {
     super(props)
     this.state = {
       showModal: false,
-      offset: this.calculateTimesOffset(props),
-      end: this.calculateTimesEnd(props),
       now: moment.tz(props.laundry.timezone),
       rowData: this.generateRows(props)
     }
@@ -83,29 +80,12 @@ export default class Table extends React.Component {
   updateData (props = this.props) {
     return this.setState({
       rowData: this.generateRows(props),
-      offset: this.calculateTimesOffset(props),
-      end: this.calculateTimesEnd(props),
       now: moment.tz(props.laundry.timezone)
     })
   }
 
   componentDidMount () {
     this.timer = setInterval(() => this.updateData(), 60 * 1000)
-  }
-
-  calculateScrollTo (height) {
-    const scrollTo = this.calculateIndicatorPosition() - 50
-    const min = 0
-    const max = (this.state.end - this.state.offset) * 50 - height
-    return Math.min(Math.max(min, scrollTo), max)
-  }
-
-  scrollTo (layout) {
-    if (!this.scrollView || this.scrolled) {
-      return
-    }
-    this.scrolled = true
-    this.scrollView.scrollTo({y: this.calculateScrollTo(layout.height), animated: false})
   }
 
   componentWillUnmount () {
@@ -140,7 +120,6 @@ export default class Table extends React.Component {
   render () {
     return <View style={timetableTable.container}>
       {this.renderRows()}
-      {this.renderHeader()}
       <Confirm
         onConfirm={this.state.onConfirm || (() => {})}
         onCancel={() => this.setState({showModal: false})}
@@ -150,7 +129,7 @@ export default class Table extends React.Component {
   }
 
   calculateIndicatorPosition () {
-    return (48 * this.dayCoefficient(this.state.now) + (this.state.now.hours() * 2 + this.state.now.minutes() / 30) - this.state.offset) * 50
+    return (48 * this.dayCoefficient(this.state.now) + (this.state.now.hours() * 2 + this.state.now.minutes() / 30) - this.props.offset) * 50
   }
 
   renderIndicator () {
@@ -159,21 +138,6 @@ export default class Table extends React.Component {
       <View key='1' style={[timetableTable.shadowIndicator, {height: indicatorPosition + (10 / 30 * 50)}]}/>,
       <View key='2' style={[timetableTable.indicator, {top: indicatorPosition}]}/>
     ]
-  }
-
-  renderHeader () {
-    // console.log('Rendering headers')
-    return <View style={[timetableTable.row, timetableTable.headerRow]}>
-      {this.props.laundry.machines.map(id => (
-        <View style={[timetableTable.cellBg, timetableTable.headerCell]} key={id}>
-          <Text
-            style={timetableTable.headerText} numberOfLines={1}
-            ellipsizeMode={Platform.OS === 'ios' ? 'clip' : 'tail'}>
-            {(this.props.machines[id] && this.props.machines[id].name) || ''}
-          </Text>
-        </View>
-      ))}
-    </View>
   }
 
   renderRows () {
@@ -281,20 +245,8 @@ export default class Table extends React.Component {
       })
   }
 
-  calculateTimesOffset (props = this.props) {
-    if (!props.laundry.rules.timeLimit) return 0
-    const {hour: fromHour, minute: fromMinute} = props.laundry.rules.timeLimit.from
-    return Math.floor(fromHour * 2 + fromMinute / 30)
-  }
-
-  calculateTimesEnd (props = this.props) {
-    if (!props.laundry.rules.timeLimit) return 0
-    const {hour: toHour, minute: toMinute} = props.laundry.rules.timeLimit.to
-    return Math.floor(toHour * 2 + toMinute / 30)
-  }
-
   generateTimes (props) {
-    return range(this.calculateTimesOffset(props), this.calculateTimesEnd(props))
+    return range(props.offset, props.end)
   }
 
 }
@@ -305,5 +257,7 @@ Table.propTypes = {
   laundry: React.PropTypes.object.isRequired,
   machines: React.PropTypes.object.isRequired,
   date: React.PropTypes.object.isRequired,
-  currentUser: React.PropTypes.object.isRequired
+  currentUser: React.PropTypes.object.isRequired,
+  offset: React.PropTypes.number.isRequired,
+  end: React.PropTypes.number.isRequired
 }

@@ -362,46 +362,26 @@ export const settings = StyleSheet.create({
 
 export const timetableTable = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: 30
+    flex: 1
   },
   shadowIndicator: {
     position: 'absolute',
     left: 10,
     right: 10,
     top: 0,
-    backgroundColor: 'rgba(44,76,75,0.4)',
-    zIndex: 5
+    backgroundColor: 'rgba(44,76,75,0.4)'
   },
   indicator: {
     position: 'absolute',
     left: 10,
     right: 10,
     height: 2,
-    backgroundColor: '#E54545',
-    zIndex: 6
-  },
-  headerCell: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#44B7B4',
-    height: 30
-  },
-  headerText: {
-    color: '#ffffff',
-    fontSize: 12
+    backgroundColor: '#E54545'
   },
   row: {
     flexDirection: 'row',
     marginLeft: 10,
     marginRight: 10
-  },
-  headerRow: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10
   },
   cell: {
     flex: 1
@@ -437,7 +417,6 @@ export const timetableTable = StyleSheet.create({
     top: -59,
     height: 20,
     position: 'absolute',
-    zIndex: 10,
     backgroundColor: '#1b8889',
     alignItems: 'center',
     justifyContent: 'center',
@@ -480,6 +459,22 @@ export const timetable = StyleSheet.create({
   tableContainer: {
     alignSelf: 'stretch',
     flex: 1
+  },
+  headerText: {
+    color: '#ffffff',
+    fontSize: 12
+  },
+  headerRow: {
+    flexDirection: 'row',
+    marginLeft: 10,
+    marginRight: 10
+  },
+  headerCell: {
+    backgroundColor: '#44B7B4',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 30
   }
 })
 
