@@ -16,24 +16,30 @@ export default class Settings extends React.Component {
     return this.props.users && this.props.users[this.props.currentUser]
   }
 
+  get laundry () {
+    return this.props.laundry.name
+  }
+
   renderUser () {
     if (!this.user) return null
     const {displayName, photo} = this.user
-    console.log('User', photo)
-    return <View>
-      <Image
-        style={{width: 50, height: 50}}
-        source={{uri: photo}}/>
-      <Text>
-        {displayName}
-      </Text>
-    </View>
+    return <View style={settings.userView}>
+        <Image
+          style={settings.userImage}
+          source={{uri: photo}}/>
+        <View style={settings.userNameView}>
+          <Text style={settings.userName}>{displayName}</Text>
+        </View>
+      </View>
   }
 
-  render () {
-    return <View style={settings.container}>
-      {this.renderUser()}
-      <View style={{alignSelf: 'stretch', padding: 5, paddingTop: 30}}>
+  renderLaundry () {
+    return <View style={settings.settingsView}>
+      <View style={settings.laundryView}>
+        <Text style={settings.laundryHeader}>Laundry</Text>
+        <Text style={settings.laundryName}>{this.laundry}</Text>
+      </View>
+      <View style={settings.logOut}>
         <FancyTextButton
           style={settings.textButton}
           onPress={() => this.props.stateHandler.logOut()}
@@ -42,11 +48,19 @@ export default class Settings extends React.Component {
       </View>
     </View>
   }
+
+  render () {
+    return <View style={settings.container}>
+      {this.renderUser()}
+      {this.renderLaundry()}
+    </View>
+  }
 }
 
 Settings.propTypes = {
   currentUser: React.PropTypes.string,
   users: React.PropTypes.object,
+  laundry: React.PropTypes.object.isRequired,
   stateHandler: React.PropTypes.object.isRequired
 }
 

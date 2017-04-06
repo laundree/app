@@ -304,9 +304,57 @@ export const qrCodeScannerCamera = StyleSheet.create({
 
 export const settings = StyleSheet.create({
   container: {
+    backgroundColor: '#66d3d3',
     flex: 1,
+    flexDirection: 'column'
+  },
+  userView: {
+    backgroundColor: '#44B7B4',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: Dimensions.get('window').width,
+    paddingTop: 20,
+    paddingBottom: 15
+  },
+  userImage: {
+    marginLeft: 30,
+    marginRight: 30,
+    width: 150,
+    height: 150
+  },
+  userNameView: {
+    paddingTop: 5
+  },
+  userName: {
+    color: constants.defaultTextColor,
+    fontSize: 20
+  },
+  settingsView: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    width: Dimensions.get('window').width,
+    padding: 10,
+    paddingTop: 20
+  },
+  laundryView: {
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  laundryHeader: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: constants.defaultTextColor,
+    fontSize: 20
+  },
+  laundryName: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: constants.defaultTextColor,
+    fontSize: 16
+  },
+  logOut: {
+    padding: 20
   },
   textButton: {
     backgroundColor: constants.colorRed
