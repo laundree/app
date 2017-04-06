@@ -20,6 +20,7 @@
 ### Changed
 
  - Redesign machine name
+ - Redesign settings page
 
 ## [0.0.3]
 
