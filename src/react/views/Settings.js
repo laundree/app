@@ -60,7 +60,7 @@ export default class Settings extends React.Component {
 Settings.propTypes = {
   currentUser: React.PropTypes.string,
   users: React.PropTypes.object,
-  laundry: React.PropTypes.object,
+  laundry: React.PropTypes.object.isRequired,
   stateHandler: React.PropTypes.object.isRequired
 }
 
