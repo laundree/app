@@ -21,6 +21,9 @@ export default class Table extends React.Component {
     super(props)
     this.state = {
       showModal: false,
+      offset: this.calculateTimesOffset(props),
+      end: this.calculateTimesEnd(props),
+      now: moment.tz(props.laundry.timezone),
       rowData: this.generateRows(props)
     }
   }
@@ -79,24 +82,31 @@ export default class Table extends React.Component {
   }
 
   updateData (props = this.props) {
-    return this.setState({rowData: this.generateRows(props)})
+    return this.setState({
+      rowData: this.generateRows(props),
+      offset: this.calculateTimesOffset(props),
+      end: this.calculateTimesEnd(props),
+      now: moment.tz(props.laundry.timezone)
+    })
   }
 
   componentDidMount () {
     this.timer = setInterval(() => this.updateData(), 60 * 1000)
-    if (!this.scrollView) {
-      return
-    }
-    setTimeout(() => {
-      this.scrollView.scrollTo({y: this.calculateScrollTo(), animated: false})
-    }, 0)
   }
 
-  calculateScrollTo () {
-    const tooLate = Math.ceil(this.calculateTooLateKey(this.calculateDeadline()))
-    const offset = this.calculateTimesOffset()
-    const cell = (tooLate - offset) - 1
-    return ((cell - ((cell + 1) % 2)) * 50)
+  calculateScrollTo (height) {
+    const scrollTo = this.calculateIndicatorPosition() - 50
+    const min = 0
+    const max = (this.state.end - this.state.offset) * 50 - height
+    return Math.min(Math.max(min, scrollTo), max)
+  }
+
+  scrollTo (layout) {
+    if (!this.scrollView || this.scrolled) {
+      return
+    }
+    this.scrolled = true
+    this.scrollView.scrollTo({y: this.calculateScrollTo(layout.height), animated: false})
   }
 
   componentWillUnmount () {
@@ -130,8 +140,8 @@ export default class Table extends React.Component {
 
   render () {
     return <View style={timetableTable.container}>
-      {this.renderHeader()}
       {this.renderRows()}
+      {this.renderHeader()}
       <Confirm
         onConfirm={this.state.onConfirm || (() => {})}
         onCancel={() => this.setState({showModal: false})}
@@ -140,11 +150,23 @@ export default class Table extends React.Component {
     </View>
   }
 
+  calculateIndicatorPosition () {
+    return (48 * this.dayCoefficient(this.state.now) + (this.state.now.hours() * 2 + this.state.now.minutes() / 30) - this.state.offset) * 50
+  }
+
+  renderIndicator () {
+    const indicatorPosition = this.calculateIndicatorPosition()
+    return [
+      <View key='1' style={[timetableTable.shadowIndicator, {height: indicatorPosition + (10 / 30 * 50)}]}/>,
+      <View key='2' style={[timetableTable.indicator, {top: indicatorPosition}]}/>
+    ]
+  }
+
   renderHeader () {
     // console.log('Rendering headers')
-    return <View style={timetableTable.row}>
+    return <View style={[timetableTable.row, timetableTable.headerRow]}>
       {this.props.laundry.machines.map(id => (
-        <View style={[timetableTable.cell, timetableTable.headerCell]} key={id}>
+        <View style={[timetableTable.cellBg, timetableTable.headerCell]} key={id}>
           <Text
             style={timetableTable.headerText} numberOfLines={1}
             ellipsizeMode={Platform.OS === 'ios' ? 'clip' : 'tail'}>
@@ -156,16 +178,18 @@ export default class Table extends React.Component {
   }
 
   renderRows () {
-    return <ScrollView ref={r => (this.scrollView = r)}>
+    return <View>
       {this.state.rowData.map(data => this.renderRow(data))}
-    </ScrollView>
+      {this.renderIndicator()}
+    </View>
   }
 
   renderRow ({time, index, cols}) {
-    const marker = index && ((time + 1) % 2)
-      ? <View style={timetableTable.marker}>
-        <Text style={timetableTable.markerText}>{time / 2}</Text>
-      </View>
+    const marker = (index - 1) && (time % 2)
+      ? (
+        <View style={timetableTable.marker}>
+          <Text style={timetableTable.markerText}>{(time - 1) / 2}</Text>
+        </View>)
       : null
 
     return <View key={index}>
@@ -181,15 +205,18 @@ export default class Table extends React.Component {
 
   renderCellStyle (data) {
     const styles = [timetableTable.cell]
-    if (data.disabled) {
-      return styles.concat(timetableTable.unavailableCell)
-    }
     if (!data.booking) return styles
     styles.push(timetableTable.bookedCell)
     if (data.own) {
       styles.push(timetableTable.myBookedCell)
     }
     return styles
+  }
+
+  renderCellBgStyle (data) {
+    const styles = [timetableTable.cellBg]
+    if (!data.disabled) return styles
+    return styles.concat(timetableTable.unavailableCell)
   }
 
   generateBookingHandler ({booking, own, machineId}, time) {
@@ -201,12 +228,12 @@ export default class Table extends React.Component {
   }
 
   renderCell (data, time) {
-    const styles = this.renderCellStyle(data)
-
-    return <TouchableOpacity
-      onPress={this.generateBookingHandler(data, time)}
-      style={styles}
-      disabled={data.disabled}/>
+    return <View style={this.renderCellBgStyle(data)}>
+      <TouchableOpacity
+        onPress={this.generateBookingHandler(data, time)}
+        style={this.renderCellStyle(data)}
+        disabled={data.disabled && !data.booking}/>
+    </View>
   }
 
   calculateTooLateKey (tooLate) {

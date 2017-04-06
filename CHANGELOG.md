@@ -15,10 +15,12 @@
  - Date-picker for timetable
  - Modal for confirmation
  - Scroll to active time
+ - Show current time
 
 ### Changed
 
  - Redesign machine name
+ - Redesign settings page
 
 ## [0.0.3]
 
