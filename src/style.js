@@ -1,7 +1,7 @@
 /**
  * Created by budde on 27/02/2017.
  */
-import { StyleSheet, Platform, Navigator } from 'react-native'
+import { Dimensions, StyleSheet, Platform, Navigator } from 'react-native'
 
 const constants = {
   colorRed: '#e55564',

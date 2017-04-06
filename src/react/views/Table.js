@@ -6,7 +6,6 @@ import { timetableTable } from '../../style'
 
 import React from 'react'
 import {
-  ScrollView,
   Text,
   View,
   TouchableOpacity,
