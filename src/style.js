@@ -165,6 +165,7 @@ export const loggedInApp = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
+    flexDirection: 'row',
     minWidth: 40
   },
   navBarTitle: {
@@ -531,6 +532,39 @@ export const timetable = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 30
+  }
+})
+
+export const bookingList = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  listContainer: {
+    flex: 1
+  },
+  dateView: {
+    flex: 4,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  arrowHeader: {
+    fontSize: 20,
+    textAlign: 'center'
+  },
+  dateHeader: {
+    fontSize: 20,
+    textAlign: 'center'
+  },
+  dateNavigator: {
+    flex: 2
+  },
+  titleContainer: {
+    height: 50
+  },
+  tableContainer: {
+    alignSelf: 'stretch',
+    flex: 1
   }
 })
 

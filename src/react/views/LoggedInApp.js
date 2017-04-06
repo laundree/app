@@ -5,6 +5,7 @@ import React from 'react'
 import { View, Text, Navigator, Image, TouchableOpacity } from 'react-native'
 import Timetable from '../containers/Timetable'
 import Settings from './../containers/Settings'
+import BookingList from '../containers/BookingList'
 import QrCodeScanner from './QrCodeScanner'
 import QrCodeScannerCamera from './QrCodeScannerCamera'
 import Backable from './Backable'
@@ -42,6 +43,14 @@ export default class LoggedInApp extends Backable {
   }
   get timetableRoute () {
     return {title: 'Timetable', id: 'timetable', index: 0}
+  }
+
+  get bookingListRoute () {
+    return {
+      title: 'Booking List',
+      id: 'bookingList',
+      index: 1
+    }
   }
 
   get settingsRoute () {
@@ -82,6 +91,10 @@ export default class LoggedInApp extends Backable {
       case 'settings':
         return <Settings stateHandler={this.props.stateHandler}
           laundry={this.laundry}/>
+      case 'bookingList':
+        return <BookingList stateHandler={this.props.stateHandler}
+          user={this.user}
+          laundry={this.laundry}/>
       case 'timetable':
         return <Timetable stateHandler={this.props.stateHandler}
           user={this.user}
@@ -112,6 +125,13 @@ export default class LoggedInApp extends Backable {
     </View>
   }
 
+  onPressBookingList (navigator) {
+    // Checking if the booking list button has not already been clicked
+    if (navigator.getCurrentRoutes().length < 2) {
+      navigator.push(this.bookingListRoute)
+    }
+  }
+
   onPressSettings (navigator) {
     // Checking if the settings button has not already been clicked
     if (navigator.getCurrentRoutes().length < 2) {
@@ -119,9 +139,15 @@ export default class LoggedInApp extends Backable {
     }
   }
 
+  // TODO if the user has no bookings, then perhaps the button for Booking List should not be displayed?
   renderRightButton ({index}, navigator) {
     if (index > 0) return <View style={loggedInApp.navBarContainer}/>
     return <View style={loggedInApp.navBarContainer}>
+      <TouchableOpacity onPress={() => this.onPressBookingList(navigator)}>
+        <Image
+          source={require('../../../img/list.png')}
+          style={loggedInApp.navBarIcon}/>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => this.onPressSettings(navigator)}>
         <Image
           source={require('../../../img/gear.png')}
