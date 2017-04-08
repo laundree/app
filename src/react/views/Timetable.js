@@ -191,7 +191,7 @@ class Timetable extends React.Component {
   }
 
   calculateTimesEnd (props = this.props) {
-    if (!props.laundry.rules.timeLimit) return 0
+    if (!props.laundry.rules.timeLimit) return 48
     const {hour: toHour, minute: toMinute} = props.laundry.rules.timeLimit.to
     return Math.floor(toHour * 2 + toMinute / 30)
   }

@@ -9,6 +9,7 @@
  - Today and Tomorrow displayed instead of date
  - App does not crash at first connection to laundry
  - Var. IOS bugs
+ - Timetable was only shown when rules were set
 
 ### Added
 
