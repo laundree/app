@@ -72,7 +72,7 @@ class StateHandler extends EventEmitter {
     this._socket = io(path)
     this._socket.on('actions', actions => {
       console.log('Dispatching actions ', actions)
-      actions.forEach(action => this.store.dispatch(action))
+      actions.forEach(action => action && this.store.dispatch(action))
     })
     this._socket.on('disconnect', () => console.log('Socket disconnected'))
     this._socket.on('error', err => console.log('Socket errored', err))
