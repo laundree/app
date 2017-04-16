@@ -18,27 +18,43 @@
 	<string>0.0.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
 	<key>CFBundleURLTypes</key>
 	<array>
-	  <dict>
-	  <key>CFBundleURLSchemes</key>
-	  <array>
-	    <string>fb1044245498966904</string>
-	  </array>
-	  </dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1044245498966904</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.679986895872-bclqrnvvdpgi27js6818qok1ts3lk5do</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>io.Laundree</string>
+			</array>
+		</dict>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
 	<key>FacebookAppID</key>
 	<string>1044245498966904</string>
 	<key>FacebookDisplayName</key>
 	<string>Laundree App</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-	  <string>fbapi</string>
-	  <string>fb-messenger-api</string>
-	  <string>fbauth2</string>
-	  <string>fbshareextension</string>
+		<string>fbapi</string>
+		<string>fb-messenger-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

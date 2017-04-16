@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "1098336985149",
+    "firebase_url": "https://laundree-io.firebaseio.com",
+    "project_id": "laundree-io",
+    "storage_bucket": "laundree-io.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098336985149:android:411b5f2257d8ed06",
+        "android_client_info": {
+          "package_name": "io.laundree"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1098336985149-t0gec9jhjaj55580v4orm77aq2u7cnek.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1098336985149-t3unnf4fj7c6rm6eogerpo6dnr433si6.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1098336985149-2ispccrb3d22vnjvtv4tvm0m4mdao6h3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKoHk2G2kd1RO6I7Y-4Ka-eUspj-QFF_M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
