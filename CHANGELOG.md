@@ -10,9 +10,11 @@
  - App does not crash at first connection to laundry
  - Var. IOS bugs
  - Timetable was only shown when rules were set
+ - Disable back arrow in timetable
+ - Make login scrollable
 
 ### Added
-
+ - Images
  - Date-picker for timetable
  - Modal for confirmation
  - Scroll to active time

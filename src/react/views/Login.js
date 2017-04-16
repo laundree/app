@@ -8,7 +8,8 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  View
+  View,
+  ScrollView
 } from 'react-native'
 import FancyGoogleButton from './input/FancyGoogleButton'
 import FancyFacebookButton from './input/FancyFacebookButton'
@@ -39,7 +40,8 @@ export default class Login extends React.Component {
   }
 
   render () {
-    return <View style={login.container}>
+    return <View style={{flex: 1}}>
+    <ScrollView style={login.container}>
       <View style={login.logo}>
         <Image
           style={login.logoImage}
@@ -70,7 +72,8 @@ export default class Login extends React.Component {
           <Text style={login.hint}>Don't have an account? Sign-up here</Text>
         </TouchableOpacity>
       </View>
-      {this.renderNotion()}
+    </ScrollView>
+    {this.renderNotion()}
     </View>
   }
 

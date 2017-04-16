@@ -135,13 +135,14 @@ class Timetable extends React.Component {
   }
 
   renderTitle (d = this.props.date) {
+    const backDisabled = d.isSame(moment(), 'd')
     return <View style={timetable.titleContainer}>
       <View style={timetable.dateView}>
         <TouchableOpacity
-          disabled={d.isSame(moment(), 'd')}
+          disabled={backDisabled}
           style={timetable.dateNavigator}
           onPress={(event) => this.onPressLeft(event)}>
-          <Image style={timetable.arrowHeader} source={require('../../../img/back_240_dark.png')}/>
+          <Image style={[timetable.arrowHeader, backDisabled ? timetable.arrowHeaderDisabled : null]} source={require('../../../img/back_240_dark.png')}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => this.setState({showPicker: true})} style={timetable.dateHeaderTouch}>
           <Image

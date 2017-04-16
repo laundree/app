@@ -201,21 +201,19 @@ export const login = StyleSheet.create({
     fontSize: 20
   },
   socialLogin: {
-    flex: 6,
     alignSelf: 'stretch',
     alignItems: 'center',
-    paddingTop: 50
+    paddingBottom: 50
   },
   socialButton: {
     width: constants.inputMaxWidth,
     paddingBottom: 15
   },
   container: {
-    flex: 1,
-    alignItems: 'stretch'
+    flex: 1
   },
   logo: {
-    flex: 3,
+    height: 200,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -249,7 +247,7 @@ export const login = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'stretch',
     alignItems: 'center',
-    flex: 1,
+    height: 50,
     backgroundColor: constants.colorYellow
   },
   infoTitle: {
@@ -269,6 +267,7 @@ export const login = StyleSheet.create({
   },
   authFailed: {
     backgroundColor: constants.colorRed,
+    marginBottom: 30,
     padding: 15,
     alignItems: 'center',
     flexDirection: 'row',
@@ -487,6 +486,9 @@ export const timetable = StyleSheet.create({
   arrowHeader: {
     height: 17,
     width: 17
+  },
+  arrowHeaderDisabled: {
+    opacity: 0.1
   },
   dateHeader: {
     fontSize: 20,
