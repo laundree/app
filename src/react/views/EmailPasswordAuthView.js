@@ -19,7 +19,7 @@ export default class EmailPasswordAuthView extends React.Component {
     super(props)
     this.state = {email: '', password: ''}
   }
-  login() {
+  login () {
     const {email, password} = this.state
     return this.props.stateHandler.sdk.token
       .createTokenFromEmailPassword(`app-${uuid.v4()}`, email, password)

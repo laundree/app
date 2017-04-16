@@ -17,6 +17,7 @@ import { timetable } from '../../style'
 import DatePicker from './DatePicker'
 import { range } from '../../utils/array'
 import ViewPager from 'react-native-viewpager'
+import Confirm from './modal/Confirm'
 
 class Timetable extends React.Component {
 
@@ -25,6 +26,7 @@ class Timetable extends React.Component {
     this.ds = new ViewPager.DataSource({pageHasChanged: (r1, r2) => r1.isSame(r2, 'd')})
 
     this.state = {
+      showModal: false,
       showPicker: false,
       maxPage: 1,
       page: 0,
@@ -117,6 +119,11 @@ class Timetable extends React.Component {
           )}
         />
       </ScrollView>
+      <Confirm
+        onConfirm={this.state.onConfirm || (() => {})}
+        onCancel={() => this.setState({showModal: false})}
+        visible={this.state.showModal}
+        text='Are you sure that you want to delete this booking?'/>
     </View>
   }
 
@@ -142,7 +149,9 @@ class Timetable extends React.Component {
           disabled={backDisabled}
           style={timetable.dateNavigator}
           onPress={(event) => this.onPressLeft(event)}>
-          <Image style={[timetable.arrowHeader, backDisabled ? timetable.arrowHeaderDisabled : null]} source={require('../../../img/back_240_dark.png')}/>
+          <Image
+            style={[timetable.arrowHeader, backDisabled ? timetable.arrowHeaderDisabled : null]}
+            source={require('../../../img/back_240_dark.png')}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => this.setState({showPicker: true})} style={timetable.dateHeaderTouch}>
           <Image
@@ -184,7 +193,25 @@ class Timetable extends React.Component {
       date={d}
       offset={this.state.offset}
       end={this.state.end}
+      onDelete={booking => this.confirmDeleteBooking(booking)}
     />
+  }
+
+  confirmDeleteBooking (bookingId) {
+    this.setState({
+      showModal: true,
+      onConfirm: () => {
+        this.setState({showModal: false})
+        this.deleteBooking(bookingId)
+      }
+    })
+  }
+
+  deleteBooking (bookingId) {
+    console.log('Deleting booking: ' + bookingId)
+    this.props.stateHandler.sdk
+      .booking(bookingId)
+      .del()
   }
 
   calculateTimesOffset (props = this.props) {

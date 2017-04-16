@@ -3,7 +3,6 @@
  */
 import React from 'react'
 import FancyImageTextButton from './FancyImageTextButton'
-import { fancyFacebookButton } from '../../../style'
 
 const FancyEmailButton = ({text, onPress, disabled}) => <FancyImageTextButton
   style={FancyEmailButton.button}

@@ -12,33 +12,14 @@ import {
 } from 'react-native'
 import { range } from '../../utils/array'
 import moment from 'moment-timezone'
-import Confirm from './modal/Confirm'
 
 export default class Table extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      showModal: false,
       now: moment.tz(props.laundry.timezone),
       rowData: this.generateRows(props)
     }
-  }
-
-  confirmDeleteBooking (bookingId) {
-    this.setState({
-      showModal: true,
-      onConfirm: () => {
-        this.setState({showModal: false})
-        this.deleteBooking(bookingId)
-      }
-    })
-  }
-
-  deleteBooking (bookingId) {
-    console.log('Deleting booking: ' + bookingId)
-    this.props.stateHandler.sdk
-      .booking(bookingId)
-      .del()
   }
 
   createBooking (id, hour) {
@@ -120,11 +101,6 @@ export default class Table extends React.Component {
   render () {
     return <View style={timetableTable.container}>
       {this.renderRows()}
-      <Confirm
-        onConfirm={this.state.onConfirm || (() => {})}
-        onCancel={() => this.setState({showModal: false})}
-        visible={this.state.showModal}
-        text='Are you sure that you want to delete this booking?'/>
     </View>
   }
 
@@ -187,7 +163,7 @@ export default class Table extends React.Component {
       return () => this.createBooking(machineId, time)
     }
     if (!own) return
-    return () => this.confirmDeleteBooking(booking)
+    return () => this.props.onDelete(booking)
   }
 
   renderCell (data, time) {
@@ -259,5 +235,6 @@ Table.propTypes = {
   date: React.PropTypes.object.isRequired,
   currentUser: React.PropTypes.object.isRequired,
   offset: React.PropTypes.number.isRequired,
-  end: React.PropTypes.number.isRequired
+  end: React.PropTypes.number.isRequired,
+  onDelete: React.PropTypes.func.isRequired
 }

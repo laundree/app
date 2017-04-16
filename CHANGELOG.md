@@ -12,6 +12,7 @@
  - Timetable was only shown when rules were set
  - Disable back arrow in timetable
  - Make login scrollable
+ - Scroll table when modal present
 
 ### Added
  - Images
