@@ -6,101 +6,75 @@ import React from 'react'
 import {
   Linking,
   Text,
+  Image,
   TouchableOpacity,
-  View
+  View,
+  ScrollView
 } from 'react-native'
-import FancyTextButton from './input/FancyTextButton'
-import FancyTextInput from './input/FancyTextInput'
 import FancyGoogleButton from './input/FancyGoogleButton'
 import FancyFacebookButton from './input/FancyFacebookButton'
+import FancyEmailButton from './input/FancyEmailButton'
+
 import { login } from '../../style'
 
-class EmailPasswordLoginForm extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {email: '', password: ''}
-  }
-
-  render () {
-    return <View>
-      <View style={login.input}>
-        <FancyTextInput
-          label={'E-mail address'} keyboardType={'email-address'} value={this.state.email}
-          onChangeText={email => this.setState({email: email.trim()})}/>
-      </View>
-      <View style={login.input}>
-        <FancyTextInput
-          label={'Password'} secureTextEntry value={this.state.password}
-          onChangeText={password => this.setState({password})}/>
-      </View>
-      <View style={login.buttonInput}>
-        <FancyTextButton
-          disabled={this.disabled}
-          onPress={() => this.props.stateHandler.loginEmailPassword(this.state.email, this.state.password)}
-          text='Login'/>
-      </View>
-    </View>
-  }
-
-  get disabled () {
-    return Boolean(!(this.state.email && this.state.password))
-  }
-
-}
-
-EmailPasswordLoginForm.propTypes = {
-  stateHandler: React.PropTypes.object.isRequired
-}
-
 export default class Login extends React.Component {
-
-  render () {
-    return <View style={login.container}>
-      <View style={login.header}>
-        <Text style={login.headerText}>Log in with</Text>
-      </View>
-      <View style={login.socialLogin}>
-        <View style={login.socialButton}>
-          <FancyFacebookButton onPress={this.props.onOpenFacebookAuth}/>
-        </View>
-        <View style={login.socialButton}>
-          <FancyGoogleButton onPress={this.props.onOpenGoogleAuth}/>
-        </View>
-      </View>
-      <View style={login.divider}>
-        <Text style={login.dividerText}>
-          - OR -
-        </Text>
-      </View>
-      <EmailPasswordLoginForm stateHandler={this.props.stateHandler}/>
+  renderNotion () {
+    return (
       <View style={login.infoContainer}>
-        <Text style={login.infoTitle}>
+        <Text style={[login.infoText, login.infoTitle]}>
           Notice:
         </Text>
         <Text style={login.infoText}>
           By logging in without an account you
-        </Text>
-        <Text style={login.infoText}>
           are registered and accept our
         </Text>
         <TouchableOpacity
-          onPress={(event) => this.onPressTerms(event)}>
-          <Text style={login.infoLink}>
+          onPress={() => Linking.openURL('https://laundree.io/privacy')}
+        >
+          <Text style={[login.infoText, login.infoLink]}>
             Terms and Conditions and Privacy Policy
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    )
   }
 
-  onPressTerms (event) {
-    Linking.canOpenURL('https://laundree.io/privacy').then(supported => {
-      if (supported) {
-        Linking.openURL('https://laundree.io/privacy')
-      } else {
-        console.log('Don\'t know how to open URI: ' + 'https://laundree.io/privacy')
+  render () {
+    return <View style={{flex: 1}}>
+    <ScrollView style={login.container}>
+      <View style={login.logo}>
+        <Image
+          style={login.logoImage}
+          source={require('../../../img/logo_large.png')}/>
+      </View>
+      {this.props.authFailed
+        ? (
+          <View style={login.authFailed}>
+            <Image source={require('../../../img/error_240.png')} style={login.authFailedImage}/>
+            <Text style={login.authFailedText}>
+              Authentication failed
+            </Text>
+          </View>
+        )
+        : null
       }
-    })
+      <View style={login.socialLogin}>
+        <View style={login.socialButton}>
+          <FancyEmailButton onPress={this.props.onOpenEmailPasswordAuth} text='Login with Email and Password'/>
+        </View>
+        <View style={login.socialButton}>
+          <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} text='Login with Facebook'/>
+        </View>
+        <View style={login.socialButton}>
+          <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} text='Login with Google'/>
+        </View>
+        <TouchableOpacity onPress={() => Linking.openURL('https://laundree.io/auth/sign-up')}>
+          <Text style={login.hint}>Don't have an account? Sign-up here</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+    {this.renderNotion()}
+    </View>
   }
 
 }
@@ -108,5 +82,7 @@ export default class Login extends React.Component {
 Login.propTypes = {
   stateHandler: React.PropTypes.object.isRequired,
   onOpenGoogleAuth: React.PropTypes.func.isRequired,
-  onOpenFacebookAuth: React.PropTypes.func.isRequired
+  onOpenFacebookAuth: React.PropTypes.func.isRequired,
+  onOpenEmailPasswordAuth: React.PropTypes.func.isRequired,
+  authFailed: React.PropTypes.bool
 }

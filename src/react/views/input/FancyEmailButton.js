@@ -3,18 +3,17 @@
  */
 import React from 'react'
 import FancyImageTextButton from './FancyImageTextButton'
-import { fancyFacebookButton } from '../../../style'
 
-const FancyFacebookButton = ({text, onPress, disabled}) => <FancyImageTextButton
-  style={fancyFacebookButton.button}
+const FancyEmailButton = ({text, onPress, disabled}) => <FancyImageTextButton
+  style={FancyEmailButton.button}
   onPress={onPress}
   text={text}
   disabled={disabled}
-  imageSource={require('../../../../img/facebook.png')}/>
+  imageSource={require('../../../../img/email.png')}/>
 
-export default FancyFacebookButton
+export default FancyEmailButton
 
-FancyFacebookButton.propTypes = {
+FancyEmailButton.propTypes = {
   text: React.PropTypes.string.isRequired,
   onPress: React.PropTypes.func.isRequired,
   disabled: React.PropTypes.bool

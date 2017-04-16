@@ -6,7 +6,6 @@ import {
   WebView,
   View
 } from 'react-native'
-import FancyTextButton from './input/FancyTextButton'
 import config from '../../config'
 import { authWebView } from '../../style'
 import url from 'url'
@@ -92,14 +91,12 @@ class AuthWebView extends React.Component {
         source={this.props.source}
         style={authWebView.webView}
         onLoadStart={evt => this.onLoadUrl(evt.nativeEvent.url)}/>
-      <FancyTextButton onPress={this.props.onCancel} text='Cancel login' style={authWebView.button}/>
     </View>
   }
 }
 
 AuthWebView.propTypes = {
   source: WebView.propTypes.source,
-  onCancel: React.PropTypes.func.isRequired,
   onAuthFailed: React.PropTypes.func.isRequired,
   onSuccess: React.PropTypes.func.isRequired
 }

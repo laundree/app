@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
   ScrollView,
   Platform
 } from 'react-native'
@@ -16,6 +17,7 @@ import { timetable } from '../../style'
 import DatePicker from './DatePicker'
 import { range } from '../../utils/array'
 import ViewPager from 'react-native-viewpager'
+import Confirm from './modal/Confirm'
 
 class Timetable extends React.Component {
 
@@ -24,6 +26,7 @@ class Timetable extends React.Component {
     this.ds = new ViewPager.DataSource({pageHasChanged: (r1, r2) => r1.isSame(r2, 'd')})
 
     this.state = {
+      showModal: false,
       showPicker: false,
       maxPage: 1,
       page: 0,
@@ -36,7 +39,7 @@ class Timetable extends React.Component {
 
   generateDays (date = this.props.date) {
     const diff = date.clone().add(1, 'h').diff(this.state.now, 'd')
-    return range(0, diff + 2).map(i => this.state.now.clone().add(i, 'd'))
+    return range(0, diff + 3).map(i => this.state.now.clone().add(i, 'd'))
   }
 
   renderHeader () {
@@ -116,6 +119,11 @@ class Timetable extends React.Component {
           )}
         />
       </ScrollView>
+      <Confirm
+        onConfirm={this.state.onConfirm || (() => {})}
+        onCancel={() => this.setState({showModal: false})}
+        visible={this.state.showModal}
+        text='Are you sure that you want to delete this booking?'/>
     </View>
   }
 
@@ -134,18 +142,22 @@ class Timetable extends React.Component {
   }
 
   renderTitle (d = this.props.date) {
-    const rightArrow = d.isSame(moment(), 'd')
-      ? <Text style={timetable.dateNavigator}/>
-      : <TouchableOpacity
-        style={timetable.dateNavigator}
-        onPress={(event) => this.onPressLeft(event)}>
-        <Text style={timetable.arrowHeader}>{'<'}</Text>
-      </TouchableOpacity>
-
+    const backDisabled = d.isSame(moment(), 'd')
     return <View style={timetable.titleContainer}>
       <View style={timetable.dateView}>
-        {rightArrow}
-        <TouchableOpacity onPress={() => this.setState({showPicker: true})}>
+        <TouchableOpacity
+          disabled={backDisabled}
+          style={timetable.dateNavigator}
+          onPress={(event) => this.onPressLeft(event)}>
+          <Image
+            style={[timetable.arrowHeader, backDisabled ? timetable.arrowHeaderDisabled : null]}
+            source={require('../../../img/back_240_dark.png')}/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => this.setState({showPicker: true})} style={timetable.dateHeaderTouch}>
+          <Image
+            style={timetable.dateHeaderImage}
+            source={require('../../../img/calendar_240.png')}/>
+
           <Text style={timetable.dateHeader}>
             {d.isSame(moment(), 'd') ? 'Today'
               : d.isSame(moment().add(1, 'day'), 'd') ? 'Tomorrow'
@@ -155,7 +167,7 @@ class Timetable extends React.Component {
         <TouchableOpacity
           style={timetable.dateNavigator}
           onPress={(event) => this.onPressRight(event)}>
-          <Text style={timetable.arrowHeader}>{'>'}</Text>
+          <Image style={timetable.arrowHeader} source={require('../../../img/forward_240.png')}/>
         </TouchableOpacity>
       </View>
     </View>
@@ -181,7 +193,25 @@ class Timetable extends React.Component {
       date={d}
       offset={this.state.offset}
       end={this.state.end}
+      onDelete={booking => this.confirmDeleteBooking(booking)}
     />
+  }
+
+  confirmDeleteBooking (bookingId) {
+    this.setState({
+      showModal: true,
+      onConfirm: () => {
+        this.setState({showModal: false})
+        this.deleteBooking(bookingId)
+      }
+    })
+  }
+
+  deleteBooking (bookingId) {
+    console.log('Deleting booking: ' + bookingId)
+    this.props.stateHandler.sdk
+      .booking(bookingId)
+      .del()
   }
 
   calculateTimesOffset (props = this.props) {

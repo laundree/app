@@ -3,7 +3,7 @@
  */
 import React from 'react'
 import { View, TextInput } from 'react-native'
-import { fancyTextInput } from '../../../style'
+import { fancyTextInput, constants } from '../../../style'
 
 const FancyTextInput = ({label, value, onChangeText, keyboardType, secureTextEntry}) => <View style={fancyTextInput.container}>
   <TextInput
@@ -11,6 +11,7 @@ const FancyTextInput = ({label, value, onChangeText, keyboardType, secureTextEnt
     style={fancyTextInput.textInput}
     keyboardType={keyboardType}
     onChangeText={onChangeText}
+    underlineColorAndroid={constants.darkTheme}
     secureTextEntry={secureTextEntry}
     value={value}
   />
