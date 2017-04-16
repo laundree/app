@@ -2,18 +2,22 @@
  * Created by budde on 27/02/2017.
  */
 import { Dimensions, StyleSheet, Platform, Navigator } from 'react-native'
-
-const constants = {
+const isIos = Platform.OS === 'ios'
+export const constants = {
   colorRed: '#e55564',
+  colorYellow: '#E5954C',
   appBackgroundColor: '#66d3d3',
   defaultTextColor: '#03414C',
-  statusBarHeight: Platform.OS === 'ios' ? 20 : 0,
-  inputHeight: 40
+  statusBarHeight: isIos ? 20 : 0,
+  inputHeight: 45,
+  inputMaxWidth: 300,
+  darkTheme: '#1b8889',
+  fieldFontFamily: isIos ? 'AvenirNextCondensed-Regular' : 'sans-serif-condensed'
 }
 
 export const fancyButton = StyleSheet.create({
   button: {
-    borderRadius: 3,
+    borderRadius: 1,
     alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'center',
@@ -57,6 +61,8 @@ export const fancyImageTextButton = StyleSheet.create({
     marginLeft: 15
   },
   text: {
+    fontSize: 12,
+    fontFamily: constants.fieldFontFamily,
     color: '#fff'
   },
   enabled: {
@@ -94,7 +100,9 @@ export const fancyImageButton = StyleSheet.create({
 
 export const fancyTextButton = StyleSheet.create({
   text: {
-    color: '#fff'
+    color: '#fff',
+    fontSize: 12,
+    fontFamily: constants.fieldFontFamily
   },
   enabled: {
     color: '#fff'
@@ -111,10 +119,12 @@ export const fancyTextInput = StyleSheet.create({
   },
   textInput: {
     height: constants.inputHeight,
-    borderRadius: 3,
-    paddingLeft: 5,
-    paddingRight: 5,
-    backgroundColor: '#fff'
+    borderRadius: 1,
+    paddingLeft: 10,
+    paddingRight: 10,
+    fontSize: 12,
+    borderWidth: isIos ? 1 : 0,
+    borderColor: constants.darkTheme
   },
   container: {
     alignSelf: 'stretch'
@@ -191,22 +201,35 @@ export const login = StyleSheet.create({
     fontSize: 20
   },
   socialLogin: {
-    padding: 5,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
+    flex: 6,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    paddingTop: 50
   },
   socialButton: {
-    width: constants.inputHeight,
-    paddingTop: 10,
-    paddingBottom: 5,
-    marginLeft: 30,
-    marginRight: 30
+    width: constants.inputMaxWidth,
+    paddingBottom: 15
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'stretch'
+  },
+  logo: {
+    flex: 3,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  logoImage: {
+    height: 100,
+    resizeMode: 'contain'
+  },
+  emailFormContainer: {
+    flex: 1,
+    paddingTop: 30,
+    paddingBottom: 30,
+    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center'
   },
   login: {
     textAlign: 'center',
@@ -214,41 +237,58 @@ export const login = StyleSheet.create({
     marginBottom: 5
   },
   input: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 5,
-    paddingTop: 10
+    paddingBottom: 15,
+    width: constants.inputMaxWidth
   },
   buttonInput: {
-    paddingLeft: 200,
-    paddingRight: 20,
     paddingBottom: 5,
-    paddingTop: 10
+    paddingTop: 10,
+    width: constants.inputMaxWidth
   },
   infoContainer: {
-    paddingTop: 10,
-    paddingLeft: 10,
-    paddingRight: 5
+    justifyContent: 'center',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    flex: 1,
+    backgroundColor: constants.colorYellow
   },
   infoTitle: {
-    fontSize: 14,
-    textAlign: 'center',
     fontWeight: 'bold'
   },
   infoText: {
-    fontSize: 14,
-    textAlign: 'center'
+    color: '#fff',
+    fontSize: 10
   },
   infoLink: {
-    fontSize: 14,
-    textDecorationLine: 'underline',
-    textAlign: 'center'
+    fontStyle: 'italic'
+  },
+  hint: {
+    fontSize: 12,
+    color: '#fff',
+    padding: 10
+  },
+  authFailed: {
+    backgroundColor: constants.colorRed,
+    padding: 15,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
+  authFailedImage: {
+    width: 15,
+    height: 15,
+    marginRight: 10
+  },
+  authFailedText: {
+    fontSize: 12,
+    color: '#fff',
+    marginRight: 25
   }
 })
 
 export const loginApp = StyleSheet.create({
   mainContainer: {
-    paddingTop: Navigator.NavigationBar.Styles.General.NavBarHeight + constants.statusBarHeight,
+    paddingTop: constants.statusBarHeight,
     backgroundColor: constants.appBackgroundColor,
     flex: 1
   },
@@ -312,21 +352,23 @@ export const settings = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: Dimensions.get('window').width,
-    paddingTop: 20,
-    paddingBottom: 15
+    paddingTop: 40,
+    paddingBottom: 40
   },
   userImage: {
     marginLeft: 30,
+    marginBottom: 10,
     marginRight: 30,
-    width: 150,
-    height: 150
+    borderRadius: 50,
+    width: 100,
+    height: 100
   },
   userNameView: {
     paddingTop: 5
   },
   userName: {
     color: constants.defaultTextColor,
-    fontSize: 20
+    fontSize: 15
   },
   settingsView: {
     flex: 1,
@@ -417,7 +459,7 @@ export const timetableTable = StyleSheet.create({
     top: -59,
     height: 20,
     position: 'absolute',
-    backgroundColor: '#1b8889',
+    backgroundColor: constants.darkTheme,
     alignItems: 'center',
     justifyContent: 'center',
     borderTopRightRadius: 3,
@@ -443,15 +485,27 @@ export const timetable = StyleSheet.create({
     alignItems: 'center'
   },
   arrowHeader: {
-    fontSize: 20,
-    textAlign: 'center'
+    height: 17,
+    width: 17
   },
   dateHeader: {
     fontSize: 20,
     textAlign: 'center'
   },
+  dateHeaderImage: {
+    height: 15,
+    width: 15,
+    marginRight: 7
+  },
+  dateHeaderTouch: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1
+  },
   dateNavigator: {
-    flex: 2
+    width: 50,
+    alignItems: 'center'
   },
   titleContainer: {
     height: 50

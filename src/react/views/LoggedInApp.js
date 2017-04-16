@@ -135,7 +135,7 @@ export default class LoggedInApp extends Backable {
     return <View style={loggedInApp.navBarContainer}>
       <TouchableOpacity onPress={this.backAction}>
         <Image
-          source={require('../../../img/back.png')}
+          source={require('../../../img/back_240.png')}
           style={loggedInApp.navBarIcon}/>
       </TouchableOpacity>
     </View>

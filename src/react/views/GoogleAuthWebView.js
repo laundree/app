@@ -5,13 +5,12 @@ import React from 'react'
 import AuthWebView from './AuthWebView'
 import config from '../../config'
 
-const GoogleAuthWebView = ({onCancel, onAuthFailed, onSuccess}) => <AuthWebView
+const GoogleAuthWebView = ({onAuthFailed, onSuccess}) => <AuthWebView
   onSuccess={onSuccess}
-  onAuthFailed={onAuthFailed} onCancel={onCancel}
+  onAuthFailed={onAuthFailed}
   source={{uri: `${config.laundree.host}/auth/google?mode=native-app`}}/>
 
 GoogleAuthWebView.propTypes = {
-  onCancel: AuthWebView.propTypes.onCancel,
   onSuccess: AuthWebView.propTypes.onSuccess,
   onAuthFailed: AuthWebView.propTypes.onAuthFailed
 }

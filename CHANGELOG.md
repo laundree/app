@@ -17,9 +17,12 @@
  - Modal for confirmation
  - Scroll to active time
  - Show current time
+ - Add icons to timetable
+ - Add error message to failed login
 
 ### Changed
 
+ - Redesign login page
  - Redesign machine name
  - Redesign settings page
 

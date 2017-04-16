@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
   ScrollView,
   Platform
 } from 'react-native'
@@ -36,7 +37,7 @@ class Timetable extends React.Component {
 
   generateDays (date = this.props.date) {
     const diff = date.clone().add(1, 'h').diff(this.state.now, 'd')
-    return range(0, diff + 2).map(i => this.state.now.clone().add(i, 'd'))
+    return range(0, diff + 3).map(i => this.state.now.clone().add(i, 'd'))
   }
 
   renderHeader () {
@@ -134,18 +135,19 @@ class Timetable extends React.Component {
   }
 
   renderTitle (d = this.props.date) {
-    const rightArrow = d.isSame(moment(), 'd')
-      ? <Text style={timetable.dateNavigator}/>
-      : <TouchableOpacity
-        style={timetable.dateNavigator}
-        onPress={(event) => this.onPressLeft(event)}>
-        <Text style={timetable.arrowHeader}>{'<'}</Text>
-      </TouchableOpacity>
-
     return <View style={timetable.titleContainer}>
       <View style={timetable.dateView}>
-        {rightArrow}
-        <TouchableOpacity onPress={() => this.setState({showPicker: true})}>
+        <TouchableOpacity
+          disabled={d.isSame(moment(), 'd')}
+          style={timetable.dateNavigator}
+          onPress={(event) => this.onPressLeft(event)}>
+          <Image style={timetable.arrowHeader} source={require('../../../img/back_240_dark.png')}/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => this.setState({showPicker: true})} style={timetable.dateHeaderTouch}>
+          <Image
+            style={timetable.dateHeaderImage}
+            source={require('../../../img/calendar_240.png')}/>
+
           <Text style={timetable.dateHeader}>
             {d.isSame(moment(), 'd') ? 'Today'
               : d.isSame(moment().add(1, 'day'), 'd') ? 'Tomorrow'
@@ -155,7 +157,7 @@ class Timetable extends React.Component {
         <TouchableOpacity
           style={timetable.dateNavigator}
           onPress={(event) => this.onPressRight(event)}>
-          <Text style={timetable.arrowHeader}>{'>'}</Text>
+          <Image style={timetable.arrowHeader} source={require('../../../img/forward_240.png')}/>
         </TouchableOpacity>
       </View>
     </View>
