@@ -13,16 +13,23 @@ import OneSignal from 'react-native-onesignal'
 
 export default class LoggedInApp extends Backable {
 
+  constructor (props) {
+    super(props)
+    this.onIds = (device) => {
+      console.log('Got id', device.userId)
+      this.props.stateHandler.updateOneSignalId(device.userId)
+    }
+  }
+
   componentWillMount () {
+    console.log('Waiting for id')
     OneSignal.addEventListener('ids', this.onIds)
+    OneSignal.configure()
+    OneSignal.setSubscription(true)
   }
 
   componentWillUnmount () {
     OneSignal.removeEventListener('ids', this.onIds)
-  }
-
-  onIds (device) {
-    console.log('User ID: ', device.userId)
   }
 
   findInitialRoute (u = null) {

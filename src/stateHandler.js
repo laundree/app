@@ -16,14 +16,25 @@ function saveUserIdAndToken (userId, token) {
   console.log('Saving credentials')
   return AsyncStorage.multiSet([[`${storageKey}:userId`, userId], [`${storageKey}:token`, token]])
 }
+function saveOneSignalId (id) {
+  return AsyncStorage.setItem(`${storageKey}:oneSignalId`, id)
+}
 
-function loadUserIdAndToken () {
-  return AsyncStorage
+function loadOneSignalId (id) {
+  return AsyncStorage.getItem(`${storageKey}:oneSignalId`)
+}
+
+function removeOneSignalId () {
+  return AsyncStorage.removeItem(`${storageKey}:oneSignalId`)
+}
+
+async function loadUserIdAndToken () {
+  const values = await AsyncStorage
     .multiGet([`${storageKey}:userId`, `${storageKey}:token`])
-    .then(values => values.reduce((o, [key, val]) => {
-      o[key.substr(storageKey.length + 1)] = val
-      return o
-    }, {}))
+  return values.reduce((o, [key, val]) => {
+    o[key.substr(storageKey.length + 1)] = val
+    return o
+  }, {})
 }
 
 function clearUserIdAndToken () {
@@ -61,6 +72,7 @@ class StateHandler extends EventEmitter {
   _setupAuth (userId, token) {
     console.log('Setting up auth', userId, token)
     if (!(userId && token)) {
+      OneSignal.setSubscription(false)
       this.sdk.updateAuth({})
       this._disconnectSocket()
       this._auth = null
@@ -80,11 +92,19 @@ class StateHandler extends EventEmitter {
     this._socket.on('connect', () => console.log('Socket connected'))
     this.sdk.setupRedux(this.store, this._socket) // Possible event emitter leak
     this._auth = {userId, token}
-    this.setOneSignalSubscription()
   }
 
-  setOneSignalSubscription () {
-    OneSignal.setSubscription(true)
+  async updateOneSignalId (id) {
+    console.log('Updating id', id)
+    if (!this._auth.userId) {
+      return
+    }
+    const currentId = await loadOneSignalId()
+    if (currentId === id) {
+      return
+    }
+    await this.sdk.user(this._auth.userId).addOneSignalPlayerId(id)
+    saveOneSignalId(id)
   }
 
   get isAuthenticated () {
@@ -98,9 +118,9 @@ class StateHandler extends EventEmitter {
       .then(() => this.emit('authChange'))
   }
 
-  updateAuth (userId, secret) {
-    return Promise.all([saveUserIdAndToken(userId, secret), this._setupAuth(userId, secret)])
-      .then(() => this.emit('authChange'))
+  async updateAuth (userId, secret) {
+    await Promise.all([saveUserIdAndToken(userId, secret), this._setupAuth(userId, secret)])
+    this.emit('authChange')
   }
 
   refresh () {
@@ -109,11 +129,10 @@ class StateHandler extends EventEmitter {
     this.emit('refresh')
   }
 
-  logOut () {
-    return clearUserIdAndToken().then(() => {
-      this._setupAuth()
-      this.emit('authChange')
-    })
+  async logOut () {
+    await Promise.all([clearUserIdAndToken(), removeOneSignalId()])
+    this._setupAuth()
+    this.emit('authChange')
   }
 }
 
@@ -121,4 +140,3 @@ export default function fetchStateHandler () {
   return loadUserIdAndToken()
     .then(credentials => new StateHandler(credentials))
 }
-

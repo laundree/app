@@ -10,7 +10,7 @@
     "buffer": "^5.0.5",
     "events": "^1.1.1",
     "extend": "^3.0.0",
-    "laundree-sdk": "0.0.22",
+    "laundree-sdk": "0.0.23",
     "moment-timezone": "^0.5.11",
     "react": "15.4.2",
     "react-native": "0.40.0",
