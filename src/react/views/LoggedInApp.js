@@ -9,8 +9,21 @@ import QrCodeScanner from './QrCodeScanner'
 import QrCodeScannerCamera from './QrCodeScannerCamera'
 import Backable from './Backable'
 import { loggedInApp } from '../../style'
+import OneSignal from 'react-native-onesignal'
 
 export default class LoggedInApp extends Backable {
+
+  componentWillMount () {
+    OneSignal.addEventListener('ids', this.onIds)
+  }
+
+  componentWillUnmount () {
+    OneSignal.removeEventListener('ids', this.onIds)
+  }
+
+  onIds (device) {
+    console.log('User ID: ', device.userId)
+  }
 
   findInitialRoute (u = null) {
     const user = u || this.props.users[this.props.currentUser]

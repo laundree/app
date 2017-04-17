@@ -8,6 +8,7 @@ import uuid from 'uuid'
 import { AsyncStorage } from 'react-native'
 import EventEmitter from 'events'
 import config from './config'
+import OneSignal from 'react-native-onesignal'
 
 const storageKey = '@LaundreeStorage'
 
@@ -79,6 +80,11 @@ class StateHandler extends EventEmitter {
     this._socket.on('connect', () => console.log('Socket connected'))
     this.sdk.setupRedux(this.store, this._socket) // Possible event emitter leak
     this._auth = {userId, token}
+    this.setOneSignalSubscription()
+  }
+
+  setOneSignalSubscription () {
+    OneSignal.setSubscription(true)
   }
 
   get isAuthenticated () {
