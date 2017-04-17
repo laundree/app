@@ -118,10 +118,8 @@ export default class LoggedInApp extends Backable {
   }
 
   get laundry () {
-    console.log('Laundries in LoggedInApp: ' + this.props.laundries)
-    console.log(this.user.laundries[0])
-    console.log(this.props.laundries[this.user.laundries[0]])
-    return this.props.laundries[this.user.laundries[0]]
+    const user = this.user
+    return user && this.props.laundries[this.user.laundries[0]]
   }
 
   renderScene ({id, index}, navigator) {

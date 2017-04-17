@@ -89,7 +89,15 @@ class StateHandler extends EventEmitter {
     })
     this._socket.on('disconnect', () => console.log('Socket disconnected'))
     this._socket.on('error', err => console.log('Socket errored', err))
-    this._socket.on('connect', () => console.log('Socket connected'))
+    this._socket.on('connect', () => {
+      console.log('Socket connected')
+      this.emit('socketConnect')
+    })
+    this._socket.on('reconnect', () => {
+      console.log('Socket reconnected')
+      this.emit('socketConnect')
+      this.emit('socketReconnect')
+    })
     this.sdk.setupRedux(this.store, this._socket) // Possible event emitter leak
     this._auth = {userId, token}
   }
