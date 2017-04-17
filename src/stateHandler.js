@@ -133,7 +133,7 @@ class StateHandler extends EventEmitter {
 
   refresh () {
     if (!this._auth) return this._setupAuth()
-    this._setupAuth(this._auth.rberrId, this._auth.token)
+    this._setupAuth(this._auth.userId, this._auth.token)
     this.emit('refresh')
   }
 
