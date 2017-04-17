@@ -157,7 +157,6 @@ export default class LoggedInApp extends Backable {
     }
   }
 
-  // TODO if the user has no bookings, then perhaps the button for Booking List should not be displayed?
   renderRightButton ({index}, navigator) {
     if (index > 0) return <View style={loggedInApp.navBarContainer}/>
     return <View style={loggedInApp.navBarContainer}>
