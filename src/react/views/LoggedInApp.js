@@ -9,8 +9,28 @@ import QrCodeScanner from './QrCodeScanner'
 import QrCodeScannerCamera from './QrCodeScannerCamera'
 import Backable from './Backable'
 import { loggedInApp } from '../../style'
+import OneSignal from 'react-native-onesignal'
 
 export default class LoggedInApp extends Backable {
+
+  constructor (props) {
+    super(props)
+    this.onIds = (device) => {
+      console.log('Got id', device.userId)
+      this.props.stateHandler.updateOneSignalId(device.userId)
+    }
+  }
+
+  componentWillMount () {
+    console.log('Waiting for id')
+    OneSignal.addEventListener('ids', this.onIds)
+    OneSignal.configure()
+    OneSignal.setSubscription(true)
+  }
+
+  componentWillUnmount () {
+    OneSignal.removeEventListener('ids', this.onIds)
+  }
 
   findInitialRoute (u = null) {
     const user = u || this.props.users[this.props.currentUser]
@@ -98,10 +118,8 @@ export default class LoggedInApp extends Backable {
   }
 
   get laundry () {
-    console.log('Laundries in LoggedInApp: ' + this.props.laundries)
-    console.log(this.user.laundries[0])
-    console.log(this.props.laundries[this.user.laundries[0]])
-    return this.props.laundries[this.user.laundries[0]]
+    const user = this.user
+    return user && this.props.laundries[this.user.laundries[0]]
   }
 
   renderScene ({id, index}, navigator) {
