@@ -17,7 +17,7 @@ export default class Settings extends React.Component {
   }
 
   get laundry () {
-    return this.props.laundry.name
+    return this.props.laundry && this.props.laundry.name
   }
 
   renderUser () {
@@ -35,10 +35,13 @@ export default class Settings extends React.Component {
 
   renderLaundry () {
     return <View style={settings.settingsView}>
-      <View style={settings.laundryView}>
-        <Text style={settings.laundryHeader}>Laundry</Text>
-        <Text style={settings.laundryName}>{this.laundry}</Text>
-      </View>
+      {this.laundry
+        ? (
+          <View style={settings.laundryView}>
+            <Text style={settings.laundryHeader}>Laundry</Text>
+            <Text style={settings.laundryName}>{this.laundry}</Text>
+          </View>)
+        : null}
       <View style={settings.logOut}>
         <FancyTextButton
           style={settings.textButton}
@@ -63,4 +66,3 @@ Settings.propTypes = {
   laundry: React.PropTypes.object.isRequired,
   stateHandler: React.PropTypes.object.isRequired
 }
-

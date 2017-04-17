@@ -23,6 +23,7 @@
  - Add icons to timetable
  - Add error message to failed login
  - Booking list
+ - Unsubscribe at logout
 
 ### Changed
 
