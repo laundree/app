@@ -47,7 +47,7 @@ export default class LoggedInApp extends Backable {
 
   get bookingListRoute () {
     return {
-      title: 'Booking List',
+      title: 'Your bookings',
       id: 'bookingList',
       index: 1
     }

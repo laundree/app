@@ -537,34 +537,53 @@ export const timetable = StyleSheet.create({
 
 export const bookingList = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    marginTop: 10
   },
-  listContainer: {
-    flex: 1
-  },
-  dateView: {
-    flex: 4,
+  row: {
     flexDirection: 'row',
+    marginLeft: 10,
+    marginRight: 10,
+    height: 50,
+    borderTopWidth: 1,
+    borderColor: constants.appBackgroundColor,
+    backgroundColor: '#4DC4C1'
+  },
+  time: {
+    flexDirection: 'column',
+    width: 50,
+    borderRightWidth: 1,
+    borderColor: constants.appBackgroundColor,
+    backgroundColor: constants.colorYellow,
     justifyContent: 'center',
     alignItems: 'center'
   },
-  arrowHeader: {
-    fontSize: 20,
-    textAlign: 'center'
+  timeText: {
+    color: '#ffffff'
   },
-  dateHeader: {
-    fontSize: 20,
-    textAlign: 'center'
+  machine: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 10
   },
-  dateNavigator: {
-    flex: 2
+  headerRow: {
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 10,
+    marginBottom: 5,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 30
   },
-  titleContainer: {
-    height: 50
+  headerText: {
+    fontSize: 20
   },
-  tableContainer: {
-    alignSelf: 'stretch',
-    flex: 1
+  noBookingsView: {
+    flexDirection: 'column',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })
 

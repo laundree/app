@@ -5,44 +5,84 @@
 import React from 'react'
 import {
   Text,
-  ListView,
+  ScrollView,
   View,
-  Dimensions,
+  TouchableOpacity
 } from 'react-native'
 import moment from 'moment-timezone'
 import {bookingList} from '../../style'
+import Confirm from './modal/Confirm'
 
 class BookingList extends React.Component {
 
   constructor (props) {
     super(props)
-    this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.isSame(r2, 'd')})
 
+    console.log('Unsorted: ', this.props.bookings)
     this.state = {
-      data: this.ds.cloneWithRows(this.props.bookings)
-    }
-  }
+      showModal: false
 
-  renderBooking (booking) {
-    console.log('Booking: ', booking)
-    const from = moment.tz(booking.booking.from, booking.laundry.timezone)
-    const to = moment.tz(booking.booking.to, booking.laundry.timezone)
-    return <View style={{width: Dimensions.get('window').width, flex: 1}}>
-      <Text>{from.hour() + ':' + from.minute()}</Text>
-      <Text>{to.hour() + ':' + to.minute()}</Text>
-      <Text>{booking.machine.name}</Text>
-    </View>
+    }
+    console.log('Sorted: ', this.props.bookings)
   }
 
   render () {
-    console.log('Bookings', this.props.bookings)
-    return <View>
-      <ListView
-        dataSource={this.state.data}
-        renderRow={booking => this.renderBooking(booking)}
-        enableEmptySections
-      />
+    const sortedBookings = this.props.bookings.sort((a, b) => { a.from.isBefore(b.from) })
+    return <View style={bookingList.container}>
+      <ScrollView>
+        {sortedBookings.map((b, i) => this.renderBooking(b, i, sortedBookings))}
+      </ScrollView>
+      <Confirm
+        onConfirm={this.state.onConfirm || (() => {})}
+        onCancel={() => this.setState({showModal: false})}
+        visible={this.state.showModal}
+        text='Are you sure that you want to delete this booking?'/>
     </View>
+  }
+
+  renderBooking (booking, index, sortedBookings) {
+    const bookingDate = booking.from.clone().startOf('day')
+    const prevDate = index < 1 ? bookingDate : sortedBookings[index - 1].from.clone().startOf('day')
+
+    return <View key={booking.id}>
+      {!index || prevDate.isBefore(bookingDate) ? this.renderSectionHeader(bookingDate) : null}
+      <TouchableOpacity
+        onPress={() => this.onPress(booking)}>
+        <View style={bookingList.row}>
+          <View style={bookingList.time}>
+            <Text style={bookingList.timeText}>{booking.from.format('HH:mm')}</Text>
+            <Text style={bookingList.timeText}>{booking.to.format('HH:mm')}</Text>
+          </View>
+          <View style={bookingList.machine}>
+            <Text>{booking.machine}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </View>
+  }
+
+  renderSectionHeader (d) {
+    return <View style={bookingList.headerRow}>
+      <Text style={bookingList.headerText}>{d.isSame(moment(), 'd') ? 'Today'
+        : d.isSame(moment().add(1, 'day'), 'd') ? 'Tomorrow'
+          : d.format('dddd D[/]M')}</Text>
+    </View>
+  }
+
+  onPress (booking) {
+    this.setState({
+      showModal: true,
+      onConfirm: () => {
+        this.setState({showModal: false})
+        this.deleteBooking(booking)
+      }
+    })
+  }
+
+  deleteBooking (booking) {
+    this.props.stateHandler.sdk
+      .booking(booking.id)
+      .del()
   }
 }
 
@@ -90,28 +130,28 @@ export default class BookingListWrapper extends React.Component {
     if (!machine || machine.broken) {
       return null
     }
+    const from = moment.tz(booking.from, this.props.laundry.timezone)
     return {
-      laundry: this.props.laundry,
-      machine: this.props.machines[booking.machine],
-      booking: booking}
+      id: booking.id,
+      machine: this.props.machines[booking.machine].name,
+      from: from,
+      to: moment.tz(booking.to, this.props.laundry.timezone)
+    }
   }
 
   renderBookingList (bookings) {
-    return <View style={bookingList.container}>
-      <BookingList
-        date={this.state.date.clone()}
-        user={this.props.user}
-        bookings={bookings}
-        userBookings={this.props.userBookings}
-        stateHandler={this.props.stateHandler}/>
-    </View>
+    // bookings.map((id, from, to, machine, owner) => {
+    //   return {id, from, to, machine, owner}
+    // })
+    return <BookingList
+      bookings={bookings}
+      stateHandler={this.props.stateHandler}/>
   }
 
   renderEmpty () {
-    return <View style={bookingList.container}>
-      <Text>
-        You have no bookings yet.
-      </Text>
+    return <View style={bookingList.noBookingsView}>
+      <Text style={bookingList.headerText}>You have no active bookings</Text>
+      <Text>Make a booking in the timetable</Text>
     </View>
   }
 
