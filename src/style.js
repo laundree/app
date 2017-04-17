@@ -165,6 +165,7 @@ export const loggedInApp = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
+    flexDirection: 'row',
     minWidth: 40
   },
   navBarTitle: {
@@ -531,6 +532,58 @@ export const timetable = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 30
+  }
+})
+
+export const bookingList = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 10
+  },
+  row: {
+    flexDirection: 'row',
+    marginLeft: 10,
+    marginRight: 10,
+    height: 50,
+    borderTopWidth: 1,
+    borderColor: constants.appBackgroundColor,
+    backgroundColor: '#4DC4C1'
+  },
+  time: {
+    flexDirection: 'column',
+    width: 50,
+    borderRightWidth: 1,
+    borderColor: constants.appBackgroundColor,
+    backgroundColor: constants.colorYellow,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  timeText: {
+    color: '#ffffff'
+  },
+  machine: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 10
+  },
+  headerRow: {
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 10,
+    marginBottom: 5,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 30
+  },
+  headerText: {
+    fontSize: 20
+  },
+  noBookingsView: {
+    flexDirection: 'column',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })
 
