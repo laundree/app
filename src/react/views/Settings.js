@@ -6,12 +6,30 @@ import React from 'react'
 import {
   View,
   Text,
-  Image
+  Image,
+  Switch
 } from 'react-native'
 import FancyTextButton from './input/FancyTextButton'
 import {settings} from '../../style'
 
 export default class Settings extends React.Component {
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      notificationsEnabled: true
+    }
+  }
+
+  componentDidMount () {
+    this.fetchData().done()
+  }
+
+  async fetchData () {
+    const enabled = await this.props.stateHandler.notificationSettings
+    this.setState({ notificationsEnabled: enabled })
+  }
+
   get user () {
     return this.props.users && this.props.users[this.props.currentUser]
   }
@@ -42,13 +60,35 @@ export default class Settings extends React.Component {
             <Text style={settings.laundryName}>{this.laundry}</Text>
           </View>)
         : null}
-      <View style={settings.logOut}>
-        <FancyTextButton
-          style={settings.textButton}
-          onPress={() => this.props.stateHandler.logOut()}
-          text='Log out'
-        />
+    </View>
+  }
+
+  onToggleNotifications (value) {
+    this.props.stateHandler.saveNotificationSetting(value)
+    this.setState({notificationsEnabled: value})
+  }
+
+  renderNotifications () {
+    return <View style={settings.notificationView}>
+      <View style={settings.notificationHeaderView}>
+        <Text style={settings.notificationHeader}>Notifications</Text>
       </View>
+      <View style={settings.notificationRow}>
+        <Text style={settings.notificationText}>Reminder 30 min before</Text>
+        <Switch
+          onValueChange={(value) => this.onToggleNotifications(value)}
+          value={this.state.notificationsEnabled}/>
+      </View>
+    </View>
+  }
+
+  renderLogOut () {
+    return <View style={settings.logOut}>
+      <FancyTextButton
+        style={settings.textButton}
+        onPress={() => this.props.stateHandler.logOut()}
+        text='Log out'
+      />
     </View>
   }
 
@@ -56,6 +96,8 @@ export default class Settings extends React.Component {
     return <View style={settings.container}>
       {this.renderUser()}
       {this.renderLaundry()}
+      {this.renderNotifications()}
+      {this.renderLogOut()}
     </View>
   }
 }

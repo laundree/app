@@ -28,6 +28,18 @@ function removeOneSignalId () {
   return AsyncStorage.removeItem(`${storageKey}:oneSignalId`)
 }
 
+function saveNotificationSetting (enabled) {
+  return AsyncStorage.setItem(`${storageKey}:notifications`, enabled ? '1' : '0')
+}
+
+async function loadNotificationSetting () {
+  return (await AsyncStorage.getItem(`${storageKey}:notifications`)) === '1'
+}
+
+function removeNotificationSetting () {
+  return AsyncStorage.removeItem(`${storageKey}:notifications`)
+}
+
 async function loadUserIdAndToken () {
   const values = await AsyncStorage
     .multiGet([`${storageKey}:userId`, `${storageKey}:token`])
@@ -61,6 +73,16 @@ class StateHandler extends EventEmitter {
     if (this._sdk) return this._sdk
     this._sdk = new Sdk(config.laundree.host)
     return this._sdk
+  }
+
+  get notificationSetting () {
+    return loadNotificationSetting()
+  }
+
+  async saveNotificationSetting (enabled) {
+    await saveNotificationSetting(enabled)
+    console.log('save setting', enabled)
+    await OneSignal.setSubscription(enabled)
   }
 
   _disconnectSocket () {
@@ -113,6 +135,7 @@ class StateHandler extends EventEmitter {
     }
     await this.sdk.user(this._auth.userId).addOneSignalPlayerId(id)
     saveOneSignalId(id)
+    saveNotificationSetting(true)
   }
 
   get isAuthenticated () {
@@ -138,7 +161,7 @@ class StateHandler extends EventEmitter {
   }
 
   async logOut () {
-    await Promise.all([clearUserIdAndToken(), removeOneSignalId()])
+    await Promise.all([clearUserIdAndToken(), removeOneSignalId(), removeNotificationSetting()])
     this._setupAuth()
     this.emit('authChange')
   }
