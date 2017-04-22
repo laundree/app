@@ -1,8 +1,5 @@
-/**
- * Created by soeholm on 26.02.17.
- */
-function range (start, end) {
-  if (start === undefined) throw new Error('Start not given')
+// @flow
+export function range (start: number, end?: number) {
   if (end === undefined) {
     end = start
     start = 0
@@ -13,5 +10,3 @@ function range (start, end) {
   }
   return array
 }
-
-module.exports = {range}
