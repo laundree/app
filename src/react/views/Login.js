@@ -4,7 +4,6 @@
 
 import React from 'react'
 import {
-  Linking,
   Text,
   Image,
   TouchableOpacity,
@@ -31,7 +30,7 @@ export default class Login extends React.Component {
           </Text>
         </View>
         <TouchableOpacity
-          onPress={() => Linking.openURL('https://laundree.io/privacy')}
+          onPress={this.props.onOpenPrivacy}
         >
           <Text style={[login.infoText, login.infoLink]}>
             <FormattedMessage id='login.notice.terms'/>
@@ -70,7 +69,7 @@ export default class Login extends React.Component {
         <View style={login.socialButton}>
           <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} id='login.google'/>
         </View>
-        <TouchableOpacity onPress={() => Linking.openURL('https://laundree.io/auth/sign-up')}>
+        <TouchableOpacity onPress={this.props.onOpenSignUp}>
           <Text style={login.hint}>
             <FormattedMessage id='login.hint'/>
           </Text>
@@ -87,6 +86,8 @@ Login.propTypes = {
   stateHandler: React.PropTypes.object.isRequired,
   onOpenGoogleAuth: React.PropTypes.func.isRequired,
   onOpenFacebookAuth: React.PropTypes.func.isRequired,
+  onOpenSignUp: React.PropTypes.func.isRequired,
   onOpenEmailPasswordAuth: React.PropTypes.func.isRequired,
+  onOpenPrivacy: React.PropTypes.func.isRequired,
   authFailed: React.PropTypes.bool
 }

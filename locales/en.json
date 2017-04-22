@@ -14,6 +14,7 @@
   "login.authentication.failed": "Authentication failed",
   "login.button": "Login",
   "login.cancel": "Cancel login",
+  "login.close": "Close",
   "login.email": "Login with Email and Password",
   "login.facebook": "Login with Facebook",
   "login.forgotpassword": "Forgot your password? Reset it here",

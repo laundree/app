@@ -9,7 +9,10 @@ import {
 import Login from './Login'
 import { loginApp, constants } from '../../style'
 import FacebookAuthWebView from './FacebookAuthWebView'
+import SignUpWebView from './SignUpWebView'
+import PrivacyWebView from './PrivacyWebView'
 import GoogleAuthWebView from './GoogleAuthWebView'
+import ForgotWebView from './ForgotWebView'
 import EmailPasswordAuthView from './EmailPasswordAuthView'
 import FancyTextButton from './input/FancyTextButton'
 import Backable from './Backable'
@@ -21,50 +24,77 @@ export default class LoginApp extends Backable {
     this.state = {authFailed: false}
   }
 
-  get googleRoute () {
+  static get googleRoute () {
     return {
       index: 1,
+      cancelTitle: 'login.cancel',
       Element: GoogleAuthWebView
     }
   }
 
-  get facebookRoute () {
+  static get facebookRoute () {
     return {
       index: 1,
+      cancelTitle: 'login.cancel',
       Element: FacebookAuthWebView
     }
   }
 
-  get emailPasswordRoute () {
+  static get signUpRoute () {
     return {
       index: 1,
-      Element: EmailPasswordAuthView
+      cancelTitle: 'login.close',
+      Element: SignUpWebView
+    }
+  }
+  static get privacyRoute () {
+    return {
+      index: 1,
+      cancelTitle: 'login.close',
+      Element: PrivacyWebView
     }
   }
 
-  renderScene ({index, Element}, navigator) {
+  static get emailPasswordRoute () {
+    return {
+      index: 1,
+      Element: EmailPasswordAuthView,
+      cancelTitle: 'login.cancel'
+    }
+  }
+  static get forgotRoute () {
+    return {
+      index: 1,
+      Element: ForgotWebView,
+      cancelTitle: 'login.close'
+    }
+  }
+  renderScene ({index, Element, cancelTitle}, navigator) {
     switch (index) {
       case 0:
         this.backAction = null
         return <Login
           authFailed={this.state.authFailed}
           stateHandler={this.props.stateHandler}
-          onOpenEmailPasswordAuth={() => navigator.push(this.emailPasswordRoute)}
-          onOpenGoogleAuth={() => navigator.push(this.googleRoute)}
-          onOpenFacebookAuth={() => navigator.push(this.facebookRoute)}
+          onOpenEmailPasswordAuth={() => navigator.push(LoginApp.emailPasswordRoute)}
+          onOpenGoogleAuth={() => navigator.push(LoginApp.googleRoute)}
+          onOpenFacebookAuth={() => navigator.push(LoginApp.facebookRoute)}
+          onOpenSignUp={() => navigator.push(LoginApp.signUpRoute)}
+          onOpenPrivacy={() => navigator.push(LoginApp.privacyRoute)}
         />
       case 1:
         this.backAction = () => navigator.pop()
         return <View style={{flex: 1}}>
           <Element
             stateHandler={this.props.stateHandler}
+            onOpenForgot={() => navigator.push(LoginApp.forgotRoute)}
             onSuccess={({secret, userId}) => this.props.stateHandler.updateAuth(userId, secret)}
             onAuthFailed={() => {
               navigator.pop()
               this.setState({authFailed: true})
             }}/>
           <FancyTextButton
-            onPress={() => navigator.pop()} id='login.cancel'
+            onPress={() => navigator.pop()} id={cancelTitle}
             style={{backgroundColor: constants.colorRed}}/>
         </View>
       default:
