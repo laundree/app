@@ -1,6 +1,4 @@
-/**
- * Created by soeholm on 25.02.17.
- */
+// @flow
 
 import { timetableTable } from '../../style'
 
@@ -12,9 +10,35 @@ import {
 } from 'react-native'
 import { range } from '../../utils/array'
 import moment from 'moment-timezone'
+import type { Col, Booking, Machine, User, Laundry } from '../../reduxTypes'
+import type { StateHandler } from '../../stateHandler'
 
-export default class Table extends React.Component {
-  constructor (props) {
+type Props = {
+  stateHandler: StateHandler,
+  bookings: Col<Booking>,
+  laundry: Laundry,
+  machines: Col<Machine>,
+  date: moment,
+  currentUser: User,
+  offset: number,
+  end: number,
+  deleted: { [string]: boolean },
+  onDelete: (id: string) => void
+}
+type Colu = { booking?: string, own?: boolean, machineId: string, disabled?: boolean }
+type Row = { time: moment, index: number, cols: Colu[] }
+
+type State = {
+  now: moment,
+  rowData: Row[]
+}
+
+export default class Table extends React.Component<void, Props, State> {
+
+  state: State
+  timer: number
+
+  constructor (props: Props) {
     super(props)
     this.state = {
       now: moment.tz(props.laundry.timezone),
@@ -22,30 +46,23 @@ export default class Table extends React.Component {
     }
   }
 
-  createBooking (id, hour) {
+  createBooking (id: string, hour: number) {
     console.log('Creating booking at time ' + hour)
     const fromHh = hour
-    const toHh = fromHh + 1
     const fromDate = this.props.date.clone().minute((fromHh % 2) && 30).hour((fromHh - (fromHh % 2)) / 2)
-    const toDate = this.props.date.clone().minute((toHh % 2) && 30).hour((toHh - (toHh % 2)) / 2)
-    this.props.stateHandler.sdk.machine(id).createBooking(
-      {
-        year: fromDate.year(),
-        month: fromDate.month(),
-        day: fromDate.date(),
-        hour: fromDate.hour(),
-        minute: fromDate.minute()
-      },
-      {
-        year: toDate.year(),
-        month: toDate.month(),
-        day: toDate.date(),
-        hour: toDate.hour(),
-        minute: toDate.minute()
-      }).catch(err => console.log(err))
+    const from = {
+      year: fromDate.year(),
+      month: fromDate.month(),
+      day: fromDate.date(),
+      hour: fromDate.hour(),
+      minute: fromDate.minute()
+    }
+    const to = {...from, hour: from.minute === 0 ? from.hour : from.hour + 1, minute: from.minute === 30 ? 0 : 30}
+    return this.props.stateHandler.sdk.machine(id)
+      .createBooking(from, to)
   }
 
-  componentWillReceiveProps (props) {
+  componentWillReceiveProps (props: Props) {
     if (
       this.props.machines === props.machines &&
       this.props.bookings === props.bookings &&
@@ -58,7 +75,7 @@ export default class Table extends React.Component {
     this.updateData(props)
   }
 
-  updateData (props = this.props) {
+  updateData (props: Props) {
     return this.setState({
       rowData: this.generateRows(props),
       now: moment.tz(props.laundry.timezone)
@@ -66,14 +83,14 @@ export default class Table extends React.Component {
   }
 
   componentDidMount () {
-    this.timer = setInterval(() => this.updateData(), 60 * 1000)
+    this.timer = setInterval(() => this.updateData(this.props), 60 * 1000)
   }
 
   componentWillUnmount () {
     clearInterval(this.timer)
   }
 
-  generateBookingMap (props) {
+  generateBookingMap (props: Props) {
     return Object.keys(props.bookings)
       .map(key => props.bookings[key])
       .map(({from, to, machine, id}) => ({
@@ -94,7 +111,7 @@ export default class Table extends React.Component {
       }, {})
   }
 
-  dateToY (date) {
+  dateToY (date: moment) {
     return Math.floor((date.hours() * 60 + date.minutes()) / 30)
   }
 
@@ -123,7 +140,7 @@ export default class Table extends React.Component {
     </View>
   }
 
-  renderRow ({time, index, cols}) {
+  renderRow ({time, index, cols}: Row) {
     const marker = (index - 1) && (time % 2)
       ? (
         <View style={timetableTable.marker}>
@@ -142,54 +159,28 @@ export default class Table extends React.Component {
     </View>
   }
 
-  renderCellStyle (data) {
-    const styles = [timetableTable.cell]
-    if (!data.booking) return styles
-    styles.push(timetableTable.bookedCell)
-    if (data.own) {
-      styles.push(timetableTable.myBookedCell)
-    }
-    return styles
+  renderCell (data: Colu, time: moment) {
+    return <BookingButton
+      deleted={this.props.deleted}
+      data={data} onCreate={() => this.createBooking(data.machineId, time)}
+      onDelete={this.props.onDelete}/>
   }
 
-  renderCellBgStyle (data) {
-    const styles = [timetableTable.cellBg]
-    if (!data.disabled) return styles
-    return styles.concat(timetableTable.unavailableCell)
-  }
-
-  generateBookingHandler ({booking, own, machineId}, time) {
-    if (!booking) {
-      return () => this.createBooking(machineId, time)
-    }
-    if (!own) return
-    return () => this.props.onDelete(booking)
-  }
-
-  renderCell (data, time) {
-    return <View style={this.renderCellBgStyle(data)}>
-      <TouchableOpacity
-        onPress={this.generateBookingHandler(data, time)}
-        style={this.renderCellStyle(data)}
-        disabled={data.disabled && !data.booking}/>
-    </View>
-  }
-
-  calculateTooLateKey (tooLate) {
+  calculateTooLateKey (tooLate: moment) {
     return 48 * this.dayCoefficient(tooLate) + tooLate.hours() * 2 + tooLate.minutes() / 30
   }
 
-  dayCoefficient (moment) {
+  dayCoefficient (moment: moment) {
     if (this.props.date.isBefore(moment, 'd')) return 1
     if (this.props.date.isAfter(moment, 'd')) return -1
     return 0
   }
 
-  calculateDeadline (props = this.props) {
+  calculateDeadline (props: Props) {
     return moment.tz(props.laundry.timezone).add(10, 'minutes')
   }
 
-  generateRows (props) {
+  generateRows (props: Props) {
     const deadline = this.calculateDeadline(props)
     const deadlineTime = this.calculateTooLateKey(deadline)
     const bookingMap = this.generateBookingMap(props)
@@ -212,29 +203,80 @@ export default class Table extends React.Component {
               if (!booking) {
                 return obj
               }
-              return Object.assign(obj, {
-                booking: booking.id,
-                own: booking.owner === this.props.currentUser.id
-              })
+              return {...obj, booking: booking.id, own: booking.owner === this.props.currentUser.id}
             })
         }
       })
   }
 
-  generateTimes (props) {
+  generateTimes (props: Props) {
     return range(props.offset, props.end)
   }
-
 }
 
-Table.propTypes = {
-  stateHandler: React.PropTypes.object.isRequired,
-  bookings: React.PropTypes.object.isRequired,
-  laundry: React.PropTypes.object.isRequired,
-  machines: React.PropTypes.object.isRequired,
-  date: React.PropTypes.object.isRequired,
-  currentUser: React.PropTypes.object.isRequired,
-  offset: React.PropTypes.number.isRequired,
-  end: React.PropTypes.number.isRequired,
-  onDelete: React.PropTypes.func.isRequired
+class BookingButton extends React.Component {
+  props: {
+    deleted: { [string]: boolean },
+    data: Colu,
+    onCreate: () => Promise<*>,
+    onDelete: (id: string) => void
+  }
+  state: { created: boolean } = {created: false}
+
+  renderCellStyle (data: Colu) {
+    const styles = [timetableTable.cell]
+    if (!data.booking) {
+      if (this.state.created) {
+        styles.push(timetableTable.createdCell)
+        return styles
+      }
+      return styles
+    }
+    const b = data.booking
+    styles.push(timetableTable.bookedCell)
+    if (data.own) {
+      styles.push(timetableTable.myBookedCell)
+      if (this.props.deleted[b]) {
+        styles.push(timetableTable.deletedCell)
+      }
+    }
+    return styles
+  }
+
+  static renderCellBgStyle (data: Colu) {
+    const styles = [timetableTable.cellBg]
+    if (!data.disabled) return styles
+    return styles.concat(timetableTable.unavailableCell)
+  }
+
+  generateBookingHandler ({booking, own}: Colu) {
+    if (!booking) {
+      return async () => {
+        this.setState({created: true})
+        try {
+          await this.props.onCreate()
+        } finally {
+          this.setState({created: false})
+        }
+      }
+    }
+    if (!own) {
+      return
+    }
+    const b = booking
+    return () => this.props.onDelete(b)
+  }
+
+  render () {
+    return (
+      <View style={BookingButton.renderCellBgStyle(this.props.data)}>
+        <TouchableOpacity
+          activeOpacity={0}
+          onPress={this.generateBookingHandler(this.props.data)}
+          style={this.renderCellStyle(this.props.data)}
+          disabled={this.props.data.disabled && !this.props.data.booking}/>
+      </View>
+    )
+  }
+
 }

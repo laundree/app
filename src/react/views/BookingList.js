@@ -1,37 +1,54 @@
-/**
- * Created by soeholm on 06.04.17.
- */
+// @flow
 
 import React from 'react'
 import {
   Text,
   ScrollView,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl
 } from 'react-native'
 import moment from 'moment-timezone'
-import {bookingList} from '../../style'
+import { bookingList, constants } from '../../style'
 import Confirm from './modal/Confirm'
 import { FormattedDate, FormattedMessage } from 'react-intl'
+import type { Col, Booking, Machine, User, Laundry } from '../../reduxTypes'
+import type { StateHandler } from '../../stateHandler'
+
+type RichBooking = {
+  from: moment,
+  to: moment,
+  machineName: string,
+  id: string
+}
 
 class BookingList extends React.Component {
+  state: { showModal: boolean, refreshing: boolean, onConfirm?: () => void, deleted: { [string]: boolean } } = {
+    showModal: false,
+    deleted: {},
+    refreshing: false
+  }
+  props: { bookings: RichBooking[], stateHandler: StateHandler, onRefresh: () => Promise<*> }
 
-  constructor (props) {
-    super(props)
+  getSortedBookings () {
+    return this.props.bookings.sort((a, b) => a.from.valueOf() - b.from.valueOf())
+  }
 
-    console.log('Unsorted: ', this.props.bookings)
-    this.state = {
-      showModal: false
-
-    }
-    console.log('Sorted: ', this.props.bookings)
+  async refresh () {
+    this.setState({refreshing: true})
+    await this.props.onRefresh()
+    this.setState({refreshing: false})
   }
 
   render () {
-    const sortedBookings = this.props.bookings.sort((a, b) => { a.from.isBefore(b.from) })
+    const sortedBookings = this.getSortedBookings()
     return <View style={bookingList.container}>
-      <ScrollView>
-        {sortedBookings.map((b, i) => this.renderBooking(b, i, sortedBookings))}
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()}/>}>
+        <View style={bookingList.scroll}>
+          {sortedBookings.map((booking, index) => this.renderBooking(booking, index, sortedBookings))}
+        </View>
       </ScrollView>
       <Confirm
         onConfirm={this.state.onConfirm || (() => {})}
@@ -44,18 +61,19 @@ class BookingList extends React.Component {
   renderBooking (booking, index, sortedBookings) {
     const bookingDate = booking.from.clone().startOf('day')
     const prevDate = index < 1 ? bookingDate : sortedBookings[index - 1].from.clone().startOf('day')
-
+    const deleted = this.state.deleted[booking.id]
     return <View key={booking.id}>
       {!index || prevDate.isBefore(bookingDate) ? this.renderSectionHeader(bookingDate) : null}
       <TouchableOpacity
+        disabled={deleted}
         onPress={() => this.onPress(booking)}>
-        <View style={bookingList.row}>
+        <View style={[bookingList.row, deleted && bookingList.rowDeleted]}>
           <View style={bookingList.time}>
             <Text style={bookingList.timeText}>{booking.from.format('HH:mm')}</Text>
             <Text style={bookingList.timeText}>{booking.to.format('HH:mm')}</Text>
           </View>
           <View style={bookingList.machine}>
-            <Text>{booking.machine}</Text>
+            <Text>{booking.machineName}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -88,96 +106,96 @@ class BookingList extends React.Component {
     })
   }
 
-  deleteBooking (booking) {
-    this.props.stateHandler.sdk
-      .booking(booking.id)
-      .del()
+  async deleteBooking (booking) {
+    this.setState(({deleted}) => {
+      deleted[booking.id] = true
+      return {deleted}
+    })
+    try {
+      await this.props.stateHandler.sdk
+        .booking(booking.id)
+        .del()
+    } catch (_) {
+      this.setState(({deleted}) => {
+        deleted[booking.id] = false
+        return {deleted}
+      })
+    }
   }
-}
-
-BookingList.propTypes = {
-  stateHandler: React.PropTypes.object.isRequired,
-  bookings: React.PropTypes.array.isRequired
 }
 
 export default class BookingListWrapper extends React.Component {
+  state: { date: moment } = {
+    date: moment.tz(this.props.laundry.timezone).startOf('day')
+  }
+  props: {
+    user: User,
+    laundry: Laundry,
+    machines: Col<Machine>,
+    bookings: Col<Booking>,
+    userBookings: ?(string[]),
+    stateHandler: StateHandler
+  }
+  loader = () => this.fetchData()
 
-  constructor (props) {
-    super(props)
-    this.state = {
-      date: moment.tz(this.props.laundry.timezone).startOf('day')
-    }
+  convertTime (dt: string): moment {
+    return moment.tz(dt, this.props.laundry.timezone)
   }
 
-  componentWillMount () {
-    // Retrieve machines
-    this.props.stateHandler.sdk.listMachines(this.laundryId)
-    this.fetchData()
+  componentDidMount () {
+    setTimeout(() => this.fetchData(), 1000)
+    this.props.stateHandler.on('reconnected', this.loader)
+  }
+
+  componentWillUnmount () {
+    this.props.stateHandler.removeListener('reconnected', this.loader)
   }
 
   fetchData () {
     // Retrieve bookings
-    this.props.stateHandler.sdk.listBookingsForUser(this.laundryId, this.props.user.id, {to: {$gte: new Date()}})
-  }
-
-  get laundryId () {
-    return this.props.laundry.id
+    return Promise.all([
+      this.props.stateHandler.sdk.listMachines(this.props.laundry.id),
+      this.props.stateHandler.sdk.listBookingsForUser(this.props.laundry.id, this.props.user.id, {to: {$gte: new Date()}})
+    ])
   }
 
   render () {
-    if (!this.props.userBookings) return null
-    const bookings = this.props.userBookings
-      .map(bookingId => this.renderBooking(this.props.bookings[bookingId])).filter(b => b)
+    const userBookings = this.props.userBookings
+    if (!userBookings) {
+      return <ActivityIndicator color={constants.darkTheme} size='large' style={bookingList.activityIndicator}/>
+    }
+    const bookings = userBookings
+      .reduce((arr: RichBooking[], id: string): RichBooking[] => {
+        const b = this.props.bookings[id]
+        if (!b) {
+          return arr
+        }
+        const machine = this.props.machines[b.machine]
+        if (!machine || machine.broken) {
+          return arr
+        }
+        return arr.concat({
+          id: b.id,
+          machineName: machine.name,
+          from: this.convertTime(b.from),
+          to: this.convertTime(b.to)
+        })
+      }, [])
     if (!bookings.length) {
-      return this.renderEmpty()
+      return <View style={bookingList.noBookingsView}>
+        <Text style={bookingList.headerText}>
+          <FormattedMessage id='bookinglist.nobookings.title'/>
+        </Text>
+        <Text>
+          <FormattedMessage id='bookinglist.nobookings.text'/>
+        </Text>
+      </View>
     }
-    return this.renderBookingList(bookings)
-  }
-
-  renderBooking (booking) {
-    const machine = this.props.machines[booking.machine]
-    if (!machine || machine.broken) {
-      return null
-    }
-    const from = moment.tz(booking.from, this.props.laundry.timezone)
-    return {
-      id: booking.id,
-      machine: this.props.machines[booking.machine].name,
-      from: from,
-      to: moment.tz(booking.to, this.props.laundry.timezone)
-    }
-  }
-
-  renderBookingList (bookings) {
-    // bookings.map((id, from, to, machine, owner) => {
-    //   return {id, from, to, machine, owner}
-    // })
     return <BookingList
+      onRefresh={() => this.fetchData()}
       bookings={bookings}
+      laundry={this.props.laundry}
       stateHandler={this.props.stateHandler}/>
   }
 
-  renderEmpty () {
-    return <View style={bookingList.noBookingsView}>
-      <Text style={bookingList.headerText}>
-        <FormattedMessage id='bookinglist.nobookings.title'/>
-      </Text>
-      <Text>
-        <FormattedMessage id='bookinglist.nobookings.text'/>
-      </Text>
-    </View>
-  }
-
-  get isLaundryOwner () {
-    return this.props.laundry.owners.indexOf(this.props.user) >= 0
-  }
-}
-
-BookingListWrapper.propTypes = {
-  user: React.PropTypes.object.isRequired,
-  laundry: React.PropTypes.object.isRequired,
-  machines: React.PropTypes.object.isRequired,
-  bookings: React.PropTypes.object.isRequired,
-  userBookings: React.PropTypes.arrayOf(React.PropTypes.string),
-  stateHandler: React.PropTypes.object.isRequired
 }

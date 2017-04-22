@@ -1,18 +1,16 @@
-/**
- * Created by budde on 26/02/2017.
- */
+// @flow
 import React from 'react'
 import { BackAndroid } from 'react-native'
 
-export default class Backable extends React.Component {
+export default class Backable<P, S> extends React.Component<void, P, S> {
+  props: P
+  state: S
+  backAction: ?(() => void)
 
-  constructor (props) {
-    super(props)
-    this.listener = () => {
-      if (!this.backAction) return false
-      this.backAction()
-      return true
-    }
+  listener = () => {
+    if (!this.backAction) return false
+    this.backAction()
+    return true
   }
 
   componentDidMount () {

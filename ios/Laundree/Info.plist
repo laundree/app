@@ -34,13 +34,13 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Your message to user when the camera is accessed for the first time</string>
+	<string>$(PRODUCT_NAME) camera use</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Your message to user when the microsphone is accessed for the first time</string>
+	<string>$(PRODUCT_NAME) microphone use</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Your message to user when the photo library is accessed for the first time</string>
+	<string>$(PRODUCT_NAME) access to photo library</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
