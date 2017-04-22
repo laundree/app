@@ -1,6 +1,4 @@
-/**
- * Created by soeholm on 05.02.17.
- */
+// @flow
 
 import React from 'react'
 import LoginApp from './LoginApp'
@@ -9,30 +7,25 @@ import LoggedInApp from '../containers/LoggedInApp'
 import { Text, View } from 'react-native'
 import { Provider } from 'react-redux'
 import { app } from '../../style'
+import type { StateHandler } from '../../stateHandler'
 import { IntlProvider } from 'react-intl'
 import locales from '../../../locales'
 
 export default class App extends React.Component {
-
-  constructor (props) {
-    super(props)
-    this.state = {stateHandler: null, sesh: 0}
-  }
+  state: { stateHandler: ?StateHandler, sesh: number } = {stateHandler: null, sesh: 0}
 
   componentDidMount () {
-    fetchStateHandler().then(stateHandler => {
-      stateHandler.on('authChange', () => this.setState(({sesh}) => ({sesh: sesh + 1})))
-      this.setState({stateHandler})
-    })
-  }
-
-  renderLogin () {
-    return <LoginApp stateHandler={this.state.stateHandler}/>
+    fetchStateHandler()
+      .then(stateHandler => {
+        stateHandler.on('authChange', () => this.setState(({sesh}) => ({sesh: sesh + 1})))
+        this.setState({stateHandler})
+      })
   }
 
   renderContent () {
+    if (!this.state.stateHandler) return null
     if (!this.state.stateHandler.isAuthenticated) {
-      return this.renderLogin()
+      return <LoginApp stateHandler={this.state.stateHandler}/>
     }
     return <Provider store={this.state.stateHandler.store}>
       <LoggedInApp stateHandler={this.state.stateHandler}/>

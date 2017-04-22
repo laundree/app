@@ -1,6 +1,4 @@
-/**
- * Created by soeholm on 05.02.17.
- */
+// @flow
 
 import React from 'react'
 import {
@@ -9,38 +7,72 @@ import {
   View,
   Image,
   ScrollView,
+  ActivityIndicator,
+  RefreshControl,
   Platform
 } from 'react-native'
 import moment from 'moment-timezone'
 import Table from './Table'
-import { timetable } from '../../style'
+import { timetable, loader, constants } from '../../style'
 import DatePicker from './DatePicker'
 import { range } from '../../utils/array'
 import ViewPager from 'react-native-viewpager'
 import Confirm from './modal/Confirm'
+import type { User, Machine, Laundry, Booking, Col } from '../../reduxTypes'
+import type { StateHandler } from '../../stateHandler'
 import { FormattedDate, FormattedMessage } from 'react-intl'
 
+type TimetableState = {
+  showModal: boolean,
+  showPicker: boolean,
+  maxPage: number,
+  page: number,
+  now: moment,
+  offset: number,
+  end: number,
+  data: ViewPager.DataSource,
+  onConfirm?: () => void,
+  refreshing: boolean,
+  deleted: { [string]: boolean }
+}
+
 class Timetable extends React.Component {
+  props: {
+    date: moment,
+    onRefresh: () => Promise<*>,
+    onChangeDate: () => void,
+    laundry: Laundry,
+    machines: Col<Machine>,
+    stateHandler: StateHandler,
+    bookings: Col<Booking>,
+    user: User
+  }
+  ds = new ViewPager.DataSource({pageHasChanged: (r1, r2) => r1.isSame(r2, 'd')})
+  state: TimetableState
+  viewPager: ViewPager
+  scrollView: ScrollView
+  scrolled: boolean
 
   constructor (props) {
     super(props)
-    this.ds = new ViewPager.DataSource({pageHasChanged: (r1, r2) => r1.isSame(r2, 'd')})
-
+    const now = moment.tz(props.laundry.timezone).startOf('day')
     this.state = {
       showModal: false,
       showPicker: false,
+      refreshing: false,
       maxPage: 1,
       page: 0,
-      now: moment.tz(props.laundry.timezone).startOf('day'),
+      now,
       offset: this.calculateTimesOffset(props),
-      end: this.calculateTimesEnd(props)
+      end: this.calculateTimesEnd(props),
+      data: this.ds.cloneWithPages(this.generateDays(now)),
+      deleted: {}
     }
-    this.state.data = this.ds.cloneWithPages(this.generateDays())
   }
 
-  generateDays (date = this.props.date) {
-    const diff = date.clone().add(1, 'h').diff(this.state.now, 'd')
-    return range(0, diff + 3).map(i => this.state.now.clone().add(i, 'd'))
+  generateDays (now: moment, date: ?moment) {
+    const diff = (date || this.props.date).clone().add(1, 'h').diff(now, 'd')
+    return range(0, diff + 3).map(i => now.clone().add(i, 'd'))
   }
 
   renderHeader () {
@@ -69,7 +101,7 @@ class Timetable extends React.Component {
       return
     }
     this
-      .setState({data: this.ds.cloneWithPages(this.generateDays(date))},
+      .setState({data: this.ds.cloneWithPages(this.generateDays(this.state.now, date))},
         () => {
           if (!this.viewPager) {
             return
@@ -98,12 +130,20 @@ class Timetable extends React.Component {
     return Math.min(Math.max(min, scrollTo), max)
   }
 
+  async refresh () {
+    this.setState({refreshing: true})
+    await this.props.onRefresh()
+    this.setState({refreshing: false})
+  }
+
   render () {
     return <View style={timetable.container}>
       {this.renderPicker()}
       {this.renderTitle()}
       {this.renderHeader()}
-      <ScrollView ref={r => (this.scrollView = r)} onLayout={evt => this.scrollTo(evt.nativeEvent.layout)}>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()}/>}
+        ref={r => (this.scrollView = r)} onLayout={evt => this.scrollTo(evt.nativeEvent.layout)}>
         <ViewPager
           ref={r => (this.viewPager = r)}
           onChangePage={pageNum => {
@@ -142,7 +182,8 @@ class Timetable extends React.Component {
       }}/>
   }
 
-  renderTitle (d = this.props.date) {
+  renderTitle (d: ?moment) {
+    d = d || this.props.date
     const backDisabled = d.isSame(moment(), 'd')
     return <View style={timetable.titleContainer}>
       <View style={timetable.dateView}>
@@ -188,8 +229,9 @@ class Timetable extends React.Component {
     this.props.onChangeDate(newDate)
   }
 
-  renderTable (d) {
+  renderTable (d: moment) {
     return <Table
+      deleted={this.state.deleted}
       stateHandler={this.props.stateHandler}
       currentUser={this.props.user}
       bookings={this.props.bookings}
@@ -198,11 +240,11 @@ class Timetable extends React.Component {
       date={d}
       offset={this.state.offset}
       end={this.state.end}
-      onDelete={booking => this.confirmDeleteBooking(booking)}
+      onDelete={(booking: string) => this.confirmDeleteBooking(booking)}
     />
   }
 
-  confirmDeleteBooking (bookingId) {
+  confirmDeleteBooking (bookingId: string) {
     this.setState({
       showModal: true,
       onConfirm: () => {
@@ -212,60 +254,83 @@ class Timetable extends React.Component {
     })
   }
 
-  deleteBooking (bookingId) {
+  async deleteBooking (bookingId: string) {
     console.log('Deleting booking: ' + bookingId)
-    this.props.stateHandler.sdk
-      .booking(bookingId)
-      .del()
+    this.setState(({deleted}) => {
+      deleted[bookingId] = true
+      return {deleted}
+    })
+    try {
+      await this.props.stateHandler.sdk
+        .booking(bookingId)
+        .del()
+    } catch (_) {
+      this.setState(({deleted}) => {
+        deleted[bookingId] = false
+        return {deleted}
+      })
+    }
   }
 
-  calculateTimesOffset (props = this.props) {
-    if (!props.laundry.rules.timeLimit) return 0
+  calculateTimesOffset (props) {
+    props = props || this.props
+    if (!props.laundry.rules.timeLimit) {
+      return 0
+    }
     const {hour: fromHour, minute: fromMinute} = props.laundry.rules.timeLimit.from
     return Math.floor(fromHour * 2 + fromMinute / 30)
   }
 
-  calculateTimesEnd (props = this.props) {
-    if (!props.laundry.rules.timeLimit) return 48
+  calculateTimesEnd (props) {
+    props = props || this.props
+    if (!props.laundry.rules.timeLimit) {
+      return 48
+    }
     const {hour: toHour, minute: toMinute} = props.laundry.rules.timeLimit.to
     return Math.floor(toHour * 2 + toMinute / 30)
   }
 
 }
 
-Timetable.propTypes = {
-  date: React.PropTypes.object.isRequired,
-  onChangeDate: React.PropTypes.func.isRequired,
-  laundry: React.PropTypes.object.isRequired,
-  machines: React.PropTypes.object.isRequired,
-  stateHandler: React.PropTypes.object.isRequired,
-  bookings: React.PropTypes.object,
-  user: React.PropTypes.object.isRequired
+type TimetableWrapperProps = {
+  laundry: Laundry,
+  stateHandler: StateHandler,
+  machines: Col<Machine>,
+  user: User,
+  onInitialLoad: () => void,
+  bookings: Col<Booking>
 }
 
 export default class TimetableWrapper extends React.Component {
+  props: TimetableWrapperProps
+  state = {
+    loaded: false,
+    date: moment.tz(this.props.laundry.timezone).startOf('day')
+  }
+  loader = () => this.load()
 
-  constructor (props) {
-    super(props)
-    this.state = {
-      date: moment.tz(this.props.laundry.timezone).startOf('day')
-    }
+  componentDidMount () {
+    this.load()
+    this.props.stateHandler.on('reconnected', this.loader)
   }
 
-  componentWillMount () {
-    // Retrieve machines
-    this.props.stateHandler.sdk.listMachines(this.laundryId)
-    this.fetchData()
+  componentWillUnmount () {
+    this.props.stateHandler.removeListener('reconnected', this.loader)
   }
 
-  fetchData () {
+  isLaundryOwner () {
+    return this.props.laundry.owners.indexOf(this.props.user.id) >= 0
+  }
+
+  fetchData (): Promise<*> {
     // Retrieve bookings
-    let tomorrow = this.state.date.clone().add(1, 'day')
 
-    this.props.stateHandler.sdk.listBookingsInTime(this.laundryId, {
-      year: this.state.date.year(),
-      month: this.state.date.month(),
-      day: this.state.date.date()
+    const yesterday = this.state.date.clone().subtract(1, 'day')
+    const tomorrow = this.state.date.clone().add(2, 'day')
+    return this.props.stateHandler.sdk.listBookingsInTime(this.props.laundry.id, {
+      year: yesterday.year(),
+      month: yesterday.month(),
+      day: yesterday.date()
     }, {
       year: tomorrow.year(),
       month: tomorrow.month(),
@@ -273,34 +338,43 @@ export default class TimetableWrapper extends React.Component {
     })
   }
 
-  get laundryId () {
-    return this.props.laundry.id
-  }
-
   render () {
-    if (!this.props.machines) {
+    if (!this.props.laundry.machines.length) {
       return this.renderEmpty()
     }
     return this.renderTables()
   }
 
+  async load () {
+    console.log('Loading...')
+    await this.props.stateHandler.sdk.listMachines(this.props.laundry.id)
+    await this.fetchData()
+    console.log('... Loaded')
+    this.setState({loaded: true})
+  }
+
   renderTables () {
     return <View style={timetable.container}>
-      <Timetable
-        date={this.state.date.clone()}
-        onChangeDate={newDate => this.onChangeDate(newDate)}
-        user={this.props.user}
-        laundry={this.props.laundry}
-        machines={this.props.machines}
-        bookings={this.props.bookings}
-        stateHandler={this.props.stateHandler}/>
+      {this.state.loaded
+        ? <Timetable
+          onRefresh={() => this.fetchData()}
+          date={this.state.date.clone()}
+          onChangeDate={newDate => this.onChangeDate(newDate)}
+          user={this.props.user}
+          laundry={this.props.laundry}
+          machines={this.props.machines}
+          bookings={this.props.bookings}
+          stateHandler={this.props.stateHandler}/>
+        : <ActivityIndicator color={constants.darkTheme} size={'large'} style={loader.activityIndicator}/>}
     </View>
   }
 
-  onChangeDate (newDate) {
+  onChangeDate (newDate: moment) {
     this.setState({
       date: newDate
-    }, () => this.fetchData())
+    }, () => {
+      this.fetchData()
+    })
   }
 
   renderEmpty () {
@@ -308,24 +382,12 @@ export default class TimetableWrapper extends React.Component {
       <Text>
         <FormattedMessage id='timetable.nomachines'/>
       </Text>
-      {this.isLaundryOwner ? <Text>
-          <FormattedMessage id='timetable.nomachines.owner'/>
+      {this.isLaundryOwner() ? <Text>
+        <FormattedMessage id='timetable.nomachines.owner'/>
       </Text> : <Text>
           <FormattedMessage id='timetable.nomachines.notowner'/>
       </Text>}
     </View>
   }
 
-  get isLaundryOwner () {
-    return this.props.laundry.owners.indexOf(this.props.user) >= 0
-  }
 }
-
-TimetableWrapper.propTypes = {
-  user: React.PropTypes.object.isRequired,
-  laundry: React.PropTypes.object.isRequired,
-  machines: React.PropTypes.object,
-  bookings: React.PropTypes.object,
-  stateHandler: React.PropTypes.object.isRequired
-}
-

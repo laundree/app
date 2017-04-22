@@ -1,26 +1,41 @@
-/**
- * Created by budde on 25/02/2017.
- */
+// @flow
+
 import React from 'react'
-import { View, Text, Navigator, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Navigator, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import Timetable from '../containers/Timetable'
 import Settings from './../containers/Settings'
 import BookingList from '../containers/BookingList'
 import QrCodeScanner from './QrCodeScanner'
 import QrCodeScannerCamera from './QrCodeScannerCamera'
 import Backable from './Backable'
-import { loggedInApp } from '../../style'
+import { loggedInApp, constants } from '../../style'
 import OneSignal from 'react-native-onesignal'
+import Fade from './animation/Fade'
+import type { User, Laundry, Col } from '../../reduxTypes'
+import type { NavigatorSceneConfig } from 'react-native'
 import { FormattedMessage } from 'react-intl'
 
-export default class LoggedInApp extends Backable {
+type Props = {
+  currentUser: ?string,
+  users: Col<User>,
+  laundries: Col<Laundry>,
+  stateHandler: React.PropTypes.object.isRequired
+}
 
-  constructor (props) {
-    super(props)
-    this.onIds = (device) => {
-      console.log('Got id', device.userId)
-      this.props.stateHandler.updateOneSignalId(device.userId)
-    }
+type Route = {
+  title: string,
+  id: string,
+  index: number,
+  hideBookings?: boolean,
+  sceneConfig?: NavigatorSceneConfig
+}
+
+export default class LoggedInApp extends Backable<Props, void> {
+  navigator: Navigator
+
+  onIds = (device: { userId: string }) => {
+    console.log('Got id', device.userId)
+    this.props.stateHandler.updateOneSignalId(device.userId)
   }
 
   componentWillMount () {
@@ -34,20 +49,23 @@ export default class LoggedInApp extends Backable {
     OneSignal.removeEventListener('ids', this.onIds)
   }
 
-  findInitialRoute (u = null) {
-    const user = u || this.props.users[this.props.currentUser]
+  findInitialRoute (u: ?User = null): Route {
+    const user = u || (this.props.currentUser && this.props.users[this.props.currentUser])
     if (!user) return this.loadingRoute
     return user.laundries.length ? this.timetableRoute : this.qrRoute
   }
 
-  refresh (users, currentUser) {
-    this.navigator.replace(this.findInitialRoute(users[currentUser]))
+  refresh (users: Col<User>, currentUser?: string = '') {
+    this.navigator.resetTo(this.findInitialRoute(users[currentUser]))
   }
 
-  componentWillReceiveProps ({currentUser, users, laundries}) {
-    if (!this.props.currentUser && currentUser) return this.refresh(users, currentUser)
-    if (!currentUser) return
-    if (this.props.users[this.props.currentUser].laundries.length !== users[currentUser].laundries.length) {
+  componentWillReceiveProps ({currentUser, users, laundries}: Props): void {
+    if (!this.props.currentUser && currentUser) {
+      return this.refresh(users, currentUser)
+    }
+    const user = this.user()
+    if (!user || !currentUser) return
+    if (user.laundries.length !== users[currentUser].laundries.length) {
       this.props.stateHandler.refresh()
       this.navigator.replace(this.loadingRoute)
     }
@@ -55,73 +73,73 @@ export default class LoggedInApp extends Backable {
     this.refresh(users, currentUser)
   }
 
-  findLaundries (user = this.user, laundries = this.props.laundries) {
-    return user.laundries.map(id => laundries[id]).filter(l => l)
+  findLaundries (user?: User, laundries?: Col<Laundry>): Laundry[] {
+    const ls = laundries || this.props.laundries
+    return (user || this.user() || {laundries: []}).laundries.map(id => ls[id]).filter(l => l)
   }
 
-  get loadingRoute () {
-    return {title: 'general.loading', element: null, index: 0}
-  }
-  get timetableRoute () {
-    return {title: 'general.timetable', id: 'timetable', index: 0}
+  loadingRoute = {title: '', id: 'loading', index: 0, hideBookings: true}
+
+  timetableRoute = {title: 'general.timetable', id: 'timetable', index: 0}
+
+  bookingListRoute = {
+    title: 'general.yourbookings',
+    id: 'bookingList',
+    index: 1
   }
 
-  get bookingListRoute () {
-    return {
-      title: 'general.yourbookings',
-      id: 'bookingList',
-      index: 1
+  settingsRoute = {
+    title: 'general.settings',
+    id: 'settings',
+    index: 1
+  }
+
+  qrRoute = {
+    index: 0,
+    hideBookings: true,
+    title: 'general.add.laundry',
+    id: 'qr'
+  }
+
+  qrScannerRoute = {
+    index: 1,
+    title: 'general.qrocde',
+    id: 'qr-scanner',
+    hideBookings: true,
+    sceneConfig: Navigator.SceneConfigs.FloatFromBottom
+  }
+
+  static renderTitle ({title}: Route) {
+    if (!title) {
+      return null
     }
-  }
-
-  get settingsRoute () {
-    return {
-      title: 'general.settings',
-      id: 'settings',
-      index: 1
-    }
-  }
-
-  get qrRoute () {
-    return {
-      index: 0,
-      title: 'general.add.laundry',
-      id: 'qr'
-    }
-  }
-
-  get qrScannerRoute () {
-    return {
-      index: 1,
-      title: 'general.qrocde',
-      id: 'qr-scanner',
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom
-    }
-  }
-
-  renderTitle ({title}) {
     return <View style={loggedInApp.navBarContainer}>
       <Text style={loggedInApp.navBarTitle}>
-        <FormattedMessage id={title}/>
+        {title ? <FormattedMessage id={title}/> : ' '}
       </Text>
     </View>
   }
 
-  renderSceneElement (id, navigator) {
+  renderSceneElement (id: string) {
     switch (id) {
+      case 'loading':
+        return <ActivityIndicator color={constants.darkTheme} size={'large'} style={loggedInApp.activityIndicator}/>
       case 'qr':
-        return <QrCodeScanner onShowScanner={() => navigator.push(this.qrScannerRoute)}/>
+        return <QrCodeScanner onShowScanner={() => this.navigator.push(this.qrScannerRoute)}/>
       case 'settings':
-        return <Settings stateHandler={this.props.stateHandler}
-          laundry={this.laundry}/>
+        return <Settings
+          stateHandler={this.props.stateHandler}
+          laundry={this.laundry()}/>
       case 'bookingList':
-        return <BookingList stateHandler={this.props.stateHandler}
-          user={this.user}
-          laundry={this.laundry}/>
+        return <BookingList
+          stateHandler={this.props.stateHandler}
+          user={this.user()}
+          laundry={this.laundry()}/>
       case 'timetable':
-        return <Timetable stateHandler={this.props.stateHandler}
-          user={this.user}
-          laundry={this.laundry}/>
+        return <Timetable
+          stateHandler={this.props.stateHandler}
+          user={this.user()}
+          laundry={this.laundry()}/>
       case 'qr-scanner':
         return <QrCodeScannerCamera stateHandler={this.props.stateHandler}/>
       default:
@@ -129,46 +147,53 @@ export default class LoggedInApp extends Backable {
     }
   }
 
-  get user () {
-    return this.props.users[this.props.currentUser]
+  user (): ?User {
+    return this.props.users[this.props.currentUser || '']
   }
 
-  get laundry () {
-    const user = this.user
-    return user && this.props.laundries[this.user.laundries[0]]
+  laundry (): ?Laundry {
+    const user = this.user()
+    return user && this.props.laundries[user.laundries[0]]
   }
 
-  renderScene ({id, index}, navigator) {
-    this.backAction = index > 0 ? () => navigator.pop() : null
+  back () {
+    this.navigator.pop()
+    this.setState(({backSesh}) => ({backSesh: backSesh + 1, backOpacity: 0}))
+  }
 
+  renderScene ({id, index}: Route) {
+    this.backAction = index > 0 ? () => this.back() : null
     return <View style={loggedInApp.mainContainer}>
-      {this.renderSceneElement(id, navigator)}
+      {this.renderSceneElement(id)}
     </View>
   }
 
-  onPressBookingList (navigator) {
+  onPressBookingList () {
     // Checking if the booking list button has not already been clicked
-    if (navigator.getCurrentRoutes().length < 2) {
-      navigator.push(this.bookingListRoute)
+    if (this.navigator.getCurrentRoutes().length < 2) {
+      this.navigator.push(this.bookingListRoute)
     }
   }
 
-  onPressSettings (navigator) {
+  onPressSettings () {
     // Checking if the settings button has not already been clicked
-    if (navigator.getCurrentRoutes().length < 2) {
-      navigator.push(this.settingsRoute)
+    console.log(this.navigator.getCurrentRoutes())
+    if (this.navigator.getCurrentRoutes().length < 2) {
+      this.navigator.push(this.settingsRoute)
     }
   }
 
-  renderRightButton ({index}, navigator) {
+  renderRightButton ({index, hideBookings}: Route) {
     if (index > 0) return <View style={loggedInApp.navBarContainer}/>
     return <View style={loggedInApp.navBarContainer}>
-      <TouchableOpacity onPress={() => this.onPressBookingList(navigator)}>
-        <Image
-          source={require('../../../img/list.png')}
-          style={loggedInApp.navBarIcon}/>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => this.onPressSettings(navigator)}>
+      {hideBookings
+        ? null
+        : <TouchableOpacity onPress={() => this.onPressBookingList()}>
+          <Image
+            source={require('../../../img/list.png')}
+            style={loggedInApp.navBarIcon}/>
+        </TouchableOpacity>}
+      <TouchableOpacity onPress={() => this.onPressSettings()}>
         <Image
           source={require('../../../img/gear.png')}
           style={loggedInApp.navBarIcon}/>
@@ -176,32 +201,30 @@ export default class LoggedInApp extends Backable {
     </View>
   }
 
-  renderLeftButton (_, navigator) {
-    if (!this.backAction) return <View style={loggedInApp.navBarContainer}/>
+  renderLeftButton () {
+    if (!this.backAction) {
+      return null
+    }
     return <View style={loggedInApp.navBarContainer}>
-      <TouchableOpacity onPress={this.backAction}>
-        <Image
-          source={require('../../../img/back_240.png')}
-          style={loggedInApp.navBarIcon}/>
-      </TouchableOpacity>
+      <BackButton onPress={this.backAction}/>
     </View>
   }
 
-  configureScene ({sceneConfig}, routeStack) {
+  configureScene ({sceneConfig}: Route) {
     return sceneConfig || Navigator.SceneConfigs.PushFromRight
   }
 
   render () {
     return <Navigator
-      configureScene={(route, routeStack) => this.configureScene(route, routeStack)}
+      configureScene={route => this.configureScene(route)}
       ref={navigator => { this.navigator = navigator }}
       initialRoute={this.findInitialRoute()}
       renderScene={(route, navigator) => this.renderScene(route, navigator)}
       navigationBar={<Navigator.NavigationBar
         routeMapper={{
-          LeftButton: (route, navigator) => this.renderLeftButton(route, navigator),
-          Title: route => this.renderTitle(route),
-          RightButton: (route, navigator) => this.renderRightButton(route, navigator)
+          LeftButton: (route, navigator) => this.renderLeftButton(),
+          Title: route => LoggedInApp.renderTitle(route),
+          RightButton: (route, navigator) => this.renderRightButton(route)
 
         }}
         style={loggedInApp.navigationBar}
@@ -210,9 +233,29 @@ export default class LoggedInApp extends Backable {
   }
 }
 
-LoggedInApp.propTypes = {
-  currentUser: React.PropTypes.string,
-  users: React.PropTypes.object,
-  laundries: React.PropTypes.object,
-  stateHandler: React.PropTypes.object.isRequired
+type BackButtonProps = {
+  onPress: () => void
 }
+type BackButtonState = {
+  opacity: number
+}
+class BackButton extends React.Component<void, BackButtonProps, BackButtonState> {
+  props: BackButtonProps
+  state = {opacity: 1}
+
+  onPress () {
+    this.props.onPress()
+    this.setState({opacity: 0})
+  }
+
+  render () {
+    return <TouchableOpacity onPress={() => this.onPress()}>
+      <Fade duration={100} opacity={this.state.opacity}>
+        <Image
+          source={require('../../../img/back_240.png')}
+          style={loggedInApp.navBarIcon}/>
+      </Fade>
+    </TouchableOpacity>
+  }
+}
+

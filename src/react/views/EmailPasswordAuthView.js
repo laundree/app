@@ -1,13 +1,11 @@
-/**
- * Created by budde on 25/02/2017.
- */
+// @flow
 import React from 'react'
 import {
   View,
   TouchableOpacity,
   Text
 } from 'react-native'
-import AuthWebView from './AuthWebView'
+import type { StateHandler } from '../../stateHandler'
 import { login } from '../../style'
 import FancyTextButton from './input/FancyTextButton'
 import FancyTextInput from './input/FancyTextInput'
@@ -15,17 +13,28 @@ import uuid from 'uuid'
 import { FormattedMessage } from 'react-intl'
 
 export default class EmailPasswordAuthView extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {email: '', password: ''}
+  state = {email: '', password: '', loading: false}
+
+  props: {
+    stateHandler: StateHandler,
+    onSuccess: () => void,
+    onAuthFailed: () => void,
+    onOpenForgot: () => void
   }
-  login () {
+
+  async login () {
     const {email, password} = this.state
-    return this.props.stateHandler.sdk.token
-      .createTokenFromEmailPassword(`app-${uuid.v4()}`, email, password)
-      .then(({secret, owner: {id}}) => this.props.onSuccess({secret, userId: id}))
-      .catch(this.props.onAuthFailed)
+    this.setState({loading: true})
+    try {
+      const {secret, owner: {id}} = await this.props.stateHandler.sdk.token
+        .createTokenFromEmailPassword(`app-${uuid.v4()}`, email, password)
+      this.props.onSuccess({secret, userId: id})
+    } catch (err) {
+      this.props.onAuthFailed(err)
+    }
+    this.setState({loading: false})
   }
+
   render () {
     // TODO FancyTextInput should use formatMessage
     return <View style={login.emailFormContainer}>
@@ -41,7 +50,7 @@ export default class EmailPasswordAuthView extends React.Component {
       </View>
       <View style={login.buttonInput}>
         <FancyTextButton
-          disabled={this.disabled}
+          disabled={this.isDisabled()}
           onPress={() => this.login()}
           id='login.button'/>
       </View>
@@ -53,15 +62,8 @@ export default class EmailPasswordAuthView extends React.Component {
     </View>
   }
 
-  get disabled () {
-    return Boolean(!(this.state.email && this.state.password))
+  isDisabled () {
+    return Boolean(!(this.state.email && this.state.password && !this.state.loading))
   }
 
-}
-
-EmailPasswordAuthView.propTypes = {
-  stateHandler: React.PropTypes.object.isRequired,
-  onSuccess: AuthWebView.propTypes.onSuccess,
-  onAuthFailed: AuthWebView.propTypes.onAuthFailed,
-  onOpenForgot: React.PropTypes.func.isRequired
 }

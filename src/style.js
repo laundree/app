@@ -180,6 +180,15 @@ export const loggedInApp = StyleSheet.create({
   },
   content: {
     borderWidth: 1
+  },
+  activityIndicator: {
+    flex: 1
+  }
+})
+
+export const loader = StyleSheet.create({
+  activityIndicator: {
+    flex: 1
   }
 })
 
@@ -454,6 +463,12 @@ export const timetableTable = StyleSheet.create({
   cell: {
     flex: 1
   },
+  createdCell: {
+    backgroundColor: '#3aa07c'
+  },
+  deletedCell: {
+    backgroundColor: '#3aa07c'
+  },
   cellBg: {
     flex: 1,
     height: 50,
@@ -563,8 +578,7 @@ export const timetable = StyleSheet.create({
 
 export const bookingList = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: 10
+    flex: 1
   },
   row: {
     flexDirection: 'row',
@@ -574,6 +588,9 @@ export const bookingList = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: constants.appBackgroundColor,
     backgroundColor: '#4DC4C1'
+  },
+  rowDeleted: {
+    opacity: 0.2
   },
   time: {
     flexDirection: 'column',
@@ -610,6 +627,13 @@ export const bookingList = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  activityIndicator: {
+    flex: 1
+  },
+  scroll: {
+    paddingTop: 10,
+    paddingBottom: 20
   }
 })
 

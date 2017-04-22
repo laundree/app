@@ -1,6 +1,4 @@
-/**
- * Created by budde on 25/02/2017.
- */
+// @flow
 import React from 'react'
 import {
   Navigator,
@@ -16,60 +14,51 @@ import ForgotWebView from './ForgotWebView'
 import EmailPasswordAuthView from './EmailPasswordAuthView'
 import FancyTextButton from './input/FancyTextButton'
 import Backable from './Backable'
+import type { StateHandler } from '../../stateHandler'
 
-export default class LoginApp extends Backable {
+type Props = { stateHandler: StateHandler }
+type State = { authFailed: boolean }
+type Route = { index: number, cancelTitle: string, Element: any }
+export default class LoginApp extends Backable<Props, State> {
+  state = {authFailed: false}
 
-  constructor (props) {
-    super(props)
-    this.state = {authFailed: false}
-  }
-
-  static get googleRoute () {
-    return {
-      index: 1,
-      cancelTitle: 'login.cancel',
-      Element: GoogleAuthWebView
-    }
+  static googleRoute: Route = {
+    index: 1,
+    cancelTitle: 'login.cancel',
+    Element: GoogleAuthWebView
   }
 
-  static get facebookRoute () {
-    return {
-      index: 1,
-      cancelTitle: 'login.cancel',
-      Element: FacebookAuthWebView
-    }
+  static facebookRoute: Route = {
+    index: 1,
+    cancelTitle: 'login.cancel',
+    Element: FacebookAuthWebView
   }
 
-  static get signUpRoute () {
-    return {
-      index: 1,
-      cancelTitle: 'login.close',
-      Element: SignUpWebView
-    }
-  }
-  static get privacyRoute () {
-    return {
-      index: 1,
-      cancelTitle: 'login.close',
-      Element: PrivacyWebView
-    }
+  static signUpRoute: Route = {
+    index: 1,
+    cancelTitle: 'login.close',
+    Element: SignUpWebView
   }
 
-  static get emailPasswordRoute () {
-    return {
-      index: 1,
-      Element: EmailPasswordAuthView,
-      cancelTitle: 'login.cancel'
-    }
+  static privacyRoute: Route = {
+    index: 1,
+    cancelTitle: 'login.close',
+    Element: PrivacyWebView
   }
-  static get forgotRoute () {
-    return {
-      index: 1,
-      Element: ForgotWebView,
-      cancelTitle: 'login.close'
-    }
+
+  static emailPasswordRoute: Route = {
+    index: 1,
+    Element: EmailPasswordAuthView,
+    cancelTitle: 'login.cancel'
   }
-  renderScene ({index, Element, cancelTitle}, navigator) {
+
+  static forgotRoute: Route = {
+    index: 1,
+    Element: ForgotWebView,
+    cancelTitle: 'login.close'
+  }
+
+  renderScene ({index, Element, cancelTitle}: Route, navigator: Navigator) {
     switch (index) {
       case 0:
         this.backAction = null
@@ -88,7 +77,7 @@ export default class LoginApp extends Backable {
           <Element
             stateHandler={this.props.stateHandler}
             onOpenForgot={() => navigator.push(LoginApp.forgotRoute)}
-            onSuccess={({secret, userId}) => this.props.stateHandler.updateAuth(userId, secret)}
+            onSuccess={({secret, userId}) => this.props.stateHandler.updateAuth({userId, token: secret})}
             onAuthFailed={() => {
               navigator.pop()
               this.setState({authFailed: true})
