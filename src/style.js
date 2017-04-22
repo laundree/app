@@ -348,6 +348,7 @@ export const settings = StyleSheet.create({
     flexDirection: 'column'
   },
   userView: {
+    flex: 1,
     backgroundColor: '#44B7B4',
     justifyContent: 'center',
     alignItems: 'center',
@@ -391,6 +392,28 @@ export const settings = StyleSheet.create({
   laundryName: {
     justifyContent: 'center',
     alignItems: 'center',
+    color: constants.defaultTextColor,
+    fontSize: 16
+  },
+  notificationView: {
+    flex: 1
+  },
+  notificationHeaderView: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  notificationHeader: {
+    color: constants.defaultTextColor,
+    fontSize: 20
+  },
+  notificationRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingLeft: 30,
+    paddingRight: 30
+  },
+  notificationText: {
     color: constants.defaultTextColor,
     fontSize: 16
   },
