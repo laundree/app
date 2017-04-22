@@ -6,9 +6,11 @@ import React from 'react'
 import LoginApp from './LoginApp'
 import fetchStateHandler from '../../stateHandler'
 import LoggedInApp from '../containers/LoggedInApp'
-import { View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Provider } from 'react-redux'
 import { app } from '../../style'
+import { IntlProvider } from 'react-intl'
+import locales from '../../../locales'
 
 export default class App extends React.Component {
 
@@ -29,7 +31,6 @@ export default class App extends React.Component {
   }
 
   renderContent () {
-    if (!this.state.stateHandler) return null
     if (!this.state.stateHandler.isAuthenticated) {
       return this.renderLogin()
     }
@@ -39,6 +40,12 @@ export default class App extends React.Component {
   }
 
   render () {
-    return <View style={app.mainContainer}>{this.renderContent()}</View>
+    if (!this.state.stateHandler) return null
+    const locale = this.state.stateHandler.locale
+    console.log('Locale: ', locale)
+    console.log('Locales: ', locales)
+    return <IntlProvider locale={locale} messages={locales[locale].messages} textComponent={Text}>
+        <View style={app.mainContainer}>{this.renderContent()}</View>
+    </IntlProvider>
   }
 }

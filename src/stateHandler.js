@@ -9,6 +9,7 @@ import { AsyncStorage } from 'react-native'
 import EventEmitter from 'events'
 import config from './config'
 import OneSignal from 'react-native-onesignal'
+import ReactNativeI18n from 'react-native-i18n'
 
 const storageKey = '@LaundreeStorage'
 
@@ -60,6 +61,11 @@ class StateHandler extends EventEmitter {
     super()
     this._authenticated = false
     this._setupAuth(userId, token)
+  }
+
+  get locale () {
+    if (!ReactNativeI18n.locale) return 'en'
+    return ReactNativeI18n.locale.split('-')[0]
   }
 
   get store () {

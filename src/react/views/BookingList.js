@@ -12,6 +12,7 @@ import {
 import moment from 'moment-timezone'
 import {bookingList} from '../../style'
 import Confirm from './modal/Confirm'
+import { FormattedDate, FormattedMessage } from 'react-intl'
 
 class BookingList extends React.Component {
 
@@ -36,7 +37,7 @@ class BookingList extends React.Component {
         onConfirm={this.state.onConfirm || (() => {})}
         onCancel={() => this.setState({showModal: false})}
         visible={this.state.showModal}
-        text='Are you sure that you want to delete this booking?'/>
+        id='general.confirm.delete'/>
     </View>
   }
 
@@ -63,9 +64,17 @@ class BookingList extends React.Component {
 
   renderSectionHeader (d) {
     return <View style={bookingList.headerRow}>
-      <Text style={bookingList.headerText}>{d.isSame(moment(), 'd') ? 'Today'
-        : d.isSame(moment().add(1, 'day'), 'd') ? 'Tomorrow'
-          : d.format('dddd D[/]M')}</Text>
+      <Text style={bookingList.headerText}> {
+        d.isSame(moment(), 'd')
+        ? <FormattedMessage id='timetable.today'/>
+        : d.isSame(moment().add(1, 'day'), 'd')
+          ? <FormattedMessage id='timetable.tomorrow'/>
+          : <Text>
+              <FormattedDate value={d} weekday='long'/>
+              <Text>{' '}</Text>
+              <FormattedDate value={d} month='numeric' day='numeric'/>
+            </Text>
+      } </Text>
     </View>
   }
 
@@ -150,8 +159,12 @@ export default class BookingListWrapper extends React.Component {
 
   renderEmpty () {
     return <View style={bookingList.noBookingsView}>
-      <Text style={bookingList.headerText}>You have no active bookings</Text>
-      <Text>Make a booking in the timetable</Text>
+      <Text style={bookingList.headerText}>
+        <FormattedMessage id='bookinglist.nobookings.title'/>
+      </Text>
+      <Text>
+        <FormattedMessage id='bookinglist.nobookings.text'/>
+      </Text>
     </View>
   }
 

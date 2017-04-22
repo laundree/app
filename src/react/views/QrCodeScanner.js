@@ -10,6 +10,7 @@ import {
   View
 } from 'react-native'
 import { qrCodeScanner } from '../../style'
+import { FormattedMessage } from 'react-intl'
 
 export default class QrCodeScanner extends Component {
 
@@ -17,17 +18,16 @@ export default class QrCodeScanner extends Component {
     return (
       <View style={qrCodeScanner.container}>
         <Text style={qrCodeScanner.message}>
-          Press the button to start scanning the QR code for the laundry
+          <FormattedMessage id='qrcodescanner.startscan'/>
         </Text>
         <TouchableOpacity onPress={this.props.onShowScanner} style={qrCodeScanner.image} >
           <Image source={require('../../../img/qrcode_240.png')} resizeMode='contain' style={{flex: 1}}/>
         </TouchableOpacity>
         <Text style={qrCodeScanner.message}>
-          Or ask the admin to add your {'\n'}
-          e-mail address
+          <FormattedMessage id='qrcodescanner.askadmin'/>
         </Text>
         <Text style={qrCodeScanner.message}>
-          Happy washing!
+          <FormattedMessage id='qrcodescanner.happywashing'/>
         </Text>
       </View>
     )

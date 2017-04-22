@@ -64,7 +64,7 @@ export default class LoginApp extends Backable {
               this.setState({authFailed: true})
             }}/>
           <FancyTextButton
-            onPress={() => navigator.pop()} text='Cancel login'
+            onPress={() => navigator.pop()} id='login.cancel'
             style={{backgroundColor: constants.colorRed}}/>
         </View>
       default:

@@ -9,29 +9,31 @@ import {
   View
 } from 'react-native'
 import Base from './Base'
+import { FormattedMessage } from 'react-intl'
 
-const Confirm = ({text, visible, onCancel, onConfirm}) => (
+const Confirm = ({id, visible, onCancel, onConfirm}) => (
   <Base visible={visible} onRequestClose={onCancel}>
     <View style={modal.title}>
       <Text style={modal.titleText}>
-        {text}
+        <FormattedMessage id={id}/>
       </Text>
     </View>
     <View style={modal.buttonContainer}>
       <View style={modal.button}>
         <FancyTextButton
-          text='Yes'
+          id='general.yes'
           onPress={onConfirm}/>
       </View>
       <View style={modal.button}>
         <FancyTextButton
-          style={modal.redButton} text='No' onPress={onCancel}/>
+          style={modal.redButton} id='general.no'
+          onPress={onCancel}/>
       </View>
     </View>
   </Base>)
 
 Confirm.propTypes = {
-  text: React.PropTypes.string.isRequired,
+  id: React.PropTypes.string.isRequired,
   onConfirm: React.PropTypes.func.isRequired,
   onCancel: React.PropTypes.func.isRequired,
   visible: React.PropTypes.bool

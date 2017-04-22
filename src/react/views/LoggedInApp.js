@@ -11,6 +11,7 @@ import QrCodeScannerCamera from './QrCodeScannerCamera'
 import Backable from './Backable'
 import { loggedInApp } from '../../style'
 import OneSignal from 'react-native-onesignal'
+import { FormattedMessage } from 'react-intl'
 
 export default class LoggedInApp extends Backable {
 
@@ -59,15 +60,15 @@ export default class LoggedInApp extends Backable {
   }
 
   get loadingRoute () {
-    return {title: 'Loading', element: null, index: 0}
+    return {title: 'general.loading', element: null, index: 0}
   }
   get timetableRoute () {
-    return {title: 'Timetable', id: 'timetable', index: 0}
+    return {title: 'general.timetable', id: 'timetable', index: 0}
   }
 
   get bookingListRoute () {
     return {
-      title: 'Your bookings',
+      title: 'general.yourbookings',
       id: 'bookingList',
       index: 1
     }
@@ -75,7 +76,7 @@ export default class LoggedInApp extends Backable {
 
   get settingsRoute () {
     return {
-      title: 'Settings',
+      title: 'general.settings',
       id: 'settings',
       index: 1
     }
@@ -84,7 +85,7 @@ export default class LoggedInApp extends Backable {
   get qrRoute () {
     return {
       index: 0,
-      title: 'Add laundry',
+      title: 'general.add.laundry',
       id: 'qr'
     }
   }
@@ -92,7 +93,7 @@ export default class LoggedInApp extends Backable {
   get qrScannerRoute () {
     return {
       index: 1,
-      title: 'Scan QR code',
+      title: 'general.qrocde',
       id: 'qr-scanner',
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom
     }
@@ -100,7 +101,9 @@ export default class LoggedInApp extends Backable {
 
   renderTitle ({title}) {
     return <View style={loggedInApp.navBarContainer}>
-      <Text style={loggedInApp.navBarTitle}>{title}</Text>
+      <Text style={loggedInApp.navBarTitle}>
+        <FormattedMessage id={title}/>
+      </Text>
     </View>
   }
 
