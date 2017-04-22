@@ -4,7 +4,6 @@
 import { createStore } from 'redux'
 import { redux, Sdk } from 'laundree-sdk'
 import io from 'socket.io-client'
-import uuid from 'uuid'
 import { AsyncStorage } from 'react-native'
 import EventEmitter from 'events'
 import config from './config'
@@ -21,7 +20,7 @@ function saveOneSignalId (id) {
   return AsyncStorage.setItem(`${storageKey}:oneSignalId`, id)
 }
 
-function loadOneSignalId (id) {
+function loadOneSignalId () {
   return AsyncStorage.getItem(`${storageKey}:oneSignalId`)
 }
 
@@ -59,7 +58,6 @@ class StateHandler extends EventEmitter {
 
   constructor ({userId, token}) {
     super()
-    this._authenticated = false
     this._setupAuth(userId, token)
   }
 
@@ -146,13 +144,6 @@ class StateHandler extends EventEmitter {
 
   get isAuthenticated () {
     return Boolean(this._auth)
-  }
-
-  loginEmailPassword (email, password) {
-    return this.sdk.token
-      .createTokenFromEmailPassword(`app-${uuid.v4()}`, email, password)
-      .then(({secret, owner: {id}}) => this.updateAuth(id, secret))
-      .then(() => this.emit('authChange'))
   }
 
   async updateAuth (userId, secret) {

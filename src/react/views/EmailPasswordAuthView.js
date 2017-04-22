@@ -5,8 +5,7 @@ import React from 'react'
 import {
   View,
   TouchableOpacity,
-  Text,
-  Linking
+  Text
 } from 'react-native'
 import AuthWebView from './AuthWebView'
 import { login } from '../../style'
@@ -46,7 +45,7 @@ export default class EmailPasswordAuthView extends React.Component {
           onPress={() => this.login()}
           id='login.button'/>
       </View>
-      <TouchableOpacity onPress={() => Linking.openURL('https://laundree.io/auth/forgot')}>
+      <TouchableOpacity onPress={this.props.onOpenForgot}>
         <Text style={login.hint}>
           <FormattedMessage id='login.forgotpassword'/>
         </Text>
@@ -63,5 +62,6 @@ export default class EmailPasswordAuthView extends React.Component {
 EmailPasswordAuthView.propTypes = {
   stateHandler: React.PropTypes.object.isRequired,
   onSuccess: AuthWebView.propTypes.onSuccess,
-  onAuthFailed: AuthWebView.propTypes.onAuthFailed
+  onAuthFailed: AuthWebView.propTypes.onAuthFailed,
+  onOpenForgot: React.PropTypes.func.isRequired
 }
