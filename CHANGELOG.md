@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Fixed
+
+ - Reconnect issue
+
+### Added
+
+ - Instant booking
+ - Activity indicators
+
+
 ## [0.0.4]
 
 ### Fixed
