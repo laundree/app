@@ -31,11 +31,11 @@ function removeOneSignalId () {
   return AsyncStorage.removeItem(`${storageKey}:oneSignalId`)
 }
 
-function saveNotificationSetting (enabled) {
+function saveNotificationSetting (enabled: boolean) {
   return AsyncStorage.setItem(`${storageKey}:notifications`, enabled ? '1' : '0')
 }
 
-async function loadNotificationSetting () {
+async function loadNotificationSetting (): Promise<boolean> {
   return (await AsyncStorage.getItem(`${storageKey}:notifications`)) === '1'
 }
 
@@ -92,11 +92,11 @@ export class StateHandler extends EventEmitter {
     return this._sdk
   }
 
-  get notificationSetting () {
+  fetchNotificationSettings () {
     return loadNotificationSetting()
   }
 
-  async saveNotificationSetting (enabled) {
+  async saveNotificationSetting (enabled: boolean) {
     await saveNotificationSetting(enabled)
     console.log('save setting', enabled)
     await OneSignal.setSubscription(enabled)

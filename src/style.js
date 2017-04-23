@@ -391,49 +391,29 @@ export const settings = StyleSheet.create({
   },
   settingsView: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    width: Dimensions.get('window').width,
-    padding: 10,
-    paddingTop: 20
+    padding: 10
   },
   laundryView: {
     justifyContent: 'center',
     alignItems: 'center'
   },
-  laundryHeader: {
+  settingsHeader: {
     justifyContent: 'center',
     alignItems: 'center',
     color: constants.defaultTextColor,
-    fontSize: 20
+    fontSize: 20,
+    padding: 5
   },
-  laundryName: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    color: constants.defaultTextColor,
-    fontSize: 16
-  },
-  notificationView: {
-    flex: 1
-  },
-  notificationHeaderView: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  notificationHeader: {
-    color: constants.defaultTextColor,
-    fontSize: 20
-  },
-  notificationRow: {
+  settingsHeaderView: {},
+  settingsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingLeft: 30,
-    paddingRight: 30
+    padding: 5
   },
-  notificationText: {
+  settingsText: {
     color: constants.defaultTextColor,
-    fontSize: 16
+    fontSize: 12
   },
   logOut: {
     padding: 20
