@@ -165,7 +165,7 @@ class Timetable extends React.Component {
         onConfirm={this.state.onConfirm || (() => {})}
         onCancel={() => this.setState({showModal: false})}
         visible={this.state.showModal}
-        id='timetable.confirm.delete'/>
+        id='general.confirm.delete'/>
     </View>
   }
 
