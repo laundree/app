@@ -30,9 +30,9 @@
   "timetable.today": "Today",
   "timetable.tomorrow": "Tomorrow",
   "timetable.select": "Select",
-  "timetable.nomachines": "There are no machines registered.",
-  "timetable.nomachines.notowner": "Ask your administrator to register machines.",
-  "timetable.nomachines.owner": "Go to the website and register machines.",
+  "timetable.nomachines": "There are no machines registered",
+  "timetable.nomachines.notowner": "Ask your administrator to register machines",
+  "timetable.nomachines.owner": "Go to the website and register machines",
   "qrcodescanner.askadmin": "Or ask the admin to add\nyour e-mail address",
   "qrcodescanner.happywashing": "Happy washing!",
   "qrcodescanner.startscan": "Press the button to\nstart scanning the QR\ncode for the laundry"

@@ -559,7 +559,16 @@ export const timetable = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 30
-  }
+  },
+  noMachinesView: {
+    flexDirection: 'column',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  noMachinesHeader: {
+    fontSize: 20
+  },
 })
 
 export const bookingList = StyleSheet.create({

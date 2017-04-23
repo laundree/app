@@ -379,8 +379,8 @@ export default class TimetableWrapper extends React.Component {
   }
 
   renderEmpty () {
-    return <View style={timetable.container}>
-      <Text>
+    return <View style={timetable.noMachinesView}>
+      <Text style={timetable.noMachinesHeader}>
         <FormattedMessage id='timetable.nomachines'/>
       </Text>
       {this.isLaundryOwner() ? <Text>

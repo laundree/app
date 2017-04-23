@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 
 const Base = ({children, visible, onRequestClose}) => (
-  <Modal visible={visible} transparent onRequestClose={onRequestClose}>
+  <Modal visible={visible} transparent onRequestClose={onRequestClose || (() => {})}>
     <View style={modal.base}>
       <View style={modal.window}>
         {children}
