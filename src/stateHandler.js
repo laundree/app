@@ -7,6 +7,7 @@ import EventEmitter from 'events'
 import config from './config'
 import OneSignal from 'react-native-onesignal'
 import type { Store } from 'redux'
+import type { State, Action } from './reduxTypes'
 import ReactNativeI18n from 'react-native-i18n'
 
 const storageKey = '@LaundreeStorage'
@@ -42,13 +43,17 @@ function removeNotificationSetting () {
   return AsyncStorage.removeItem(`${storageKey}:notifications`)
 }
 
-async function loadUserIdAndToken (): Promise<?{ userId: string, token: string }> {
+async function loadUserIdAndToken (): Promise<?Auth> {
   const values = await AsyncStorage
     .multiGet([`${storageKey}:userId`, `${storageKey}:token`])
-  return values.reduce((o, [key, val]) => {
+  const auth = values.reduce((o, [key, val]) => {
     o[key.substr(storageKey.length + 1)] = val
     return o
   }, {})
+  if (!auth.userId || !auth.token) {
+    return null
+  }
+  return auth
 }
 
 function clearUserIdAndToken () {
@@ -59,7 +64,7 @@ function clearUserIdAndToken () {
 type Auth = { userId: string, token: string }
 
 export class StateHandler extends EventEmitter {
-  _store: Store
+  _store: ?Store<State, Action>
   _sdk: Sdk
   _socket: any
   _auth: ?Auth
@@ -74,7 +79,7 @@ export class StateHandler extends EventEmitter {
     return ReactNativeI18n.locale.split('-')[0]
   }
 
-  get store (): Store {
+  get store (): Store<State, Action> {
     if (this._store) return this._store
     const store = createStore(redux.reducers, {})
     this._store = store
