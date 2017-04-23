@@ -74,10 +74,14 @@ export default class Settings extends React.Component {
   renderNotifications () {
     return <View style={settings.notificationView}>
       <View style={settings.notificationHeaderView}>
-        <Text style={settings.notificationHeader}>Notifications</Text>
+        <Text style={settings.notificationHeader}>
+          <FormattedMessage id='settings.notifications'/>
+        </Text>
       </View>
       <View style={settings.notificationRow}>
-        <Text style={settings.notificationText}>Reminder 30 min before</Text>
+        <Text style={settings.notificationText}>
+            <FormattedMessage id='settings.notifications.text'/>
+        </Text>
         <Switch
           onValueChange={(value) => this.onToggleNotifications(value)}
           value={this.state.notificationsEnabled}/>
