@@ -23,7 +23,7 @@ export default class LoadingWebView extends React.Component {
   render () {
     return (
       <View style={this.props.viewStyle}>
-        <Modal transparent visible={!this.state.loaded} animationType='fade'>
+        <Modal transparent visible={!this.state.loaded} animationType='fade' onRequestClose={() => {}}>
           <ActivityIndicator color={constants.darkTheme} size='large' style={loader.activityIndicator}/>
         </Modal>
         <WebView
