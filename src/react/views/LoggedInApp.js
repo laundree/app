@@ -103,7 +103,7 @@ export default class LoggedInApp extends Backable<Props, void> {
 
   qrScannerRoute = {
     index: 1,
-    title: 'general.qrocde',
+    title: 'general.qrcode',
     id: 'qr-scanner',
     hideBookings: true,
     sceneConfig: Navigator.SceneConfigs.FloatFromBottom
