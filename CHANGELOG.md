@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [0.1.0]
+
 ### Fixed
 
  - Reconnect issue
