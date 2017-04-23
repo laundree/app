@@ -7,7 +7,8 @@ import {
   View,
   TouchableOpacity,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
+  InteractionManager
 } from 'react-native'
 import moment from 'moment-timezone'
 import { bookingList, constants } from '../../style'
@@ -143,7 +144,7 @@ export default class BookingListWrapper extends React.Component {
   }
 
   componentDidMount () {
-    setTimeout(() => this.fetchData(), 1000)
+    InteractionManager.runAfterInteractions(() => this.fetchData(), 1000)
     this.props.stateHandler.on('reconnected', this.loader)
   }
 

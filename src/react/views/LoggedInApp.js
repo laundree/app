@@ -158,7 +158,6 @@ export default class LoggedInApp extends Backable<Props, void> {
 
   back () {
     this.navigator.pop()
-    this.setState(({backSesh}) => ({backSesh: backSesh + 1, backOpacity: 0}))
   }
 
   renderScene ({id, index}: Route) {
