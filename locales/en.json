@@ -24,6 +24,8 @@
   "login.notice.text": "By signing in you accept our",
   "settings.laundry": "Laundry",
   "settings.logout": "Log out",
+  "settings.notifications": "Notifications",
+  "settings.notifications.text": "Reminder 30 min before booking",
   "timetable.today": "Today",
   "timetable.tomorrow": "Tomorrow",
   "timetable.select": "Select",

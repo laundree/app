@@ -28,6 +28,7 @@
  - Unsubscribe at logout
  - Multilanguage support
  - Notifications can be enabled and disabled
+ - Danish translations of strings
 
 ### Changed
 
