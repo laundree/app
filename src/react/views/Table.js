@@ -225,7 +225,7 @@ class BookingButton extends React.Component {
 
   renderCellStyle (data: Colu) {
     const styles = [timetableTable.cell]
-    if (!data.booking) {
+    if (!data.booking || data.disabled) {
       if (this.state.created) {
         styles.push(timetableTable.createdCell)
         return styles
