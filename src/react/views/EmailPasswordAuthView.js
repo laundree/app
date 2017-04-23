@@ -13,6 +13,7 @@ import { login } from '../../style'
 import FancyTextButton from './input/FancyTextButton'
 import FancyTextInput from './input/FancyTextInput'
 import uuid from 'uuid'
+import { FormattedMessage } from 'react-intl'
 
 export default class EmailPasswordAuthView extends React.Component {
   constructor (props) {
@@ -27,6 +28,7 @@ export default class EmailPasswordAuthView extends React.Component {
       .catch(this.props.onAuthFailed)
   }
   render () {
+    // TODO FancyTextInput should use formatMessage
     return <View style={login.emailFormContainer}>
       <View style={login.input}>
         <FancyTextInput
@@ -42,10 +44,12 @@ export default class EmailPasswordAuthView extends React.Component {
         <FancyTextButton
           disabled={this.disabled}
           onPress={() => this.login()}
-          text='Login'/>
+          id='login.button'/>
       </View>
       <TouchableOpacity onPress={() => Linking.openURL('https://laundree.io/auth/forgot')}>
-        <Text style={login.hint}>Forgot your password? Reset it here</Text>
+        <Text style={login.hint}>
+          <FormattedMessage id='login.forgotpassword'/>
+        </Text>
       </TouchableOpacity>
     </View>
   }

@@ -18,6 +18,7 @@ import DatePicker from './DatePicker'
 import { range } from '../../utils/array'
 import ViewPager from 'react-native-viewpager'
 import Confirm from './modal/Confirm'
+import { FormattedDate, FormattedMessage } from 'react-intl'
 
 class Timetable extends React.Component {
 
@@ -123,7 +124,7 @@ class Timetable extends React.Component {
         onConfirm={this.state.onConfirm || (() => {})}
         onCancel={() => this.setState({showModal: false})}
         visible={this.state.showModal}
-        text='Are you sure that you want to delete this booking?'/>
+        id='timetable.confirm.delete'/>
     </View>
   }
 
@@ -159,9 +160,13 @@ class Timetable extends React.Component {
             source={require('../../../img/calendar_240.png')}/>
 
           <Text style={timetable.dateHeader}>
-            {d.isSame(moment(), 'd') ? 'Today'
-              : d.isSame(moment().add(1, 'day'), 'd') ? 'Tomorrow'
-                : d.format('dddd D[/]M')}
+            {d.isSame(moment(), 'd') ? <FormattedMessage id='timetable.today'/>
+              : d.isSame(moment().add(1, 'day'), 'd') ? <FormattedMessage id='timetable.tomorrow'/>
+                : <Text>
+                    <FormattedDate value={d} weekday='long'/>
+                  <Text>{' '}</Text>
+                    <FormattedDate value={d} month='numeric' day='numeric'/>
+                </Text>}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -301,12 +306,12 @@ export default class TimetableWrapper extends React.Component {
   renderEmpty () {
     return <View style={timetable.container}>
       <Text>
-        There are no machines registered.
+        <FormattedMessage id='timetable.nomachines'/>
       </Text>
       {this.isLaundryOwner ? <Text>
-        Go to the website and register machines.
+          <FormattedMessage id='timetable.nomachines.owner'/>
       </Text> : <Text>
-        Ask your administrator to register machines.
+          <FormattedMessage id='timetable.nomachines.notowner'/>
       </Text>}
     </View>
   }

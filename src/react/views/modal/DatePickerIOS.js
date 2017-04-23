@@ -27,17 +27,17 @@ class Picker extends React.Component {
       <View style={modal.button}>
         <FancyTextButton
           disabled={new Date(this.state.date).setHours(0, 0, 0, 0) === new Date().setHours(0, 0, 0, 0)}
-          text='Today' onPress={() => this.setState({date: new Date()})}/>
+          id='timetable.today' onPress={() => this.setState({date: new Date()})}/>
       </View>
 
       <View style={modal.buttonContainer}>
         <View style={modal.button}>
           <FancyTextButton
-            text='Select' onPress={() => this.props.onChange(this.state.date)}/>
+            id='timetable.select' onPress={() => this.props.onChange(this.state.date)}/>
         </View>
         <View style={modal.button}>
           <FancyTextButton
-            style={modal.redButton} text='Cancel' onPress={this.props.onCancel}/>
+            style={modal.redButton} id='general.cancel' onPress={this.props.onCancel}/>
         </View>
       </View>
     </Base>

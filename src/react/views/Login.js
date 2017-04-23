@@ -14,6 +14,7 @@ import {
 import FancyGoogleButton from './input/FancyGoogleButton'
 import FancyFacebookButton from './input/FancyFacebookButton'
 import FancyEmailButton from './input/FancyEmailButton'
+import { FormattedMessage } from 'react-intl'
 
 import { login } from '../../style'
 
@@ -21,18 +22,19 @@ export default class Login extends React.Component {
   renderNotion () {
     return (
       <View style={login.infoContainer}>
-        <Text style={[login.infoText, login.infoTitle]}>
-          Notice:
-        </Text>
-        <Text style={login.infoText}>
-          By logging in without an account you
-          are registered and accept our
-        </Text>
+        <View style={login.infoTop}>
+          <Text style={[login.infoText, login.infoTitle]}>
+            <FormattedMessage id='login.notice'/>
+          </Text>
+          <Text style={login.infoText}>
+            <FormattedMessage id='login.notice.text'/>
+          </Text>
+        </View>
         <TouchableOpacity
           onPress={() => Linking.openURL('https://laundree.io/privacy')}
         >
           <Text style={[login.infoText, login.infoLink]}>
-            Terms and Conditions and Privacy Policy
+            <FormattedMessage id='login.notice.terms'/>
           </Text>
         </TouchableOpacity>
       </View>
@@ -52,7 +54,7 @@ export default class Login extends React.Component {
           <View style={login.authFailed}>
             <Image source={require('../../../img/error_240.png')} style={login.authFailedImage}/>
             <Text style={login.authFailedText}>
-              Authentication failed
+              <FormattedMessage id='login.authentication.failed'/>
             </Text>
           </View>
         )
@@ -60,16 +62,18 @@ export default class Login extends React.Component {
       }
       <View style={login.socialLogin}>
         <View style={login.socialButton}>
-          <FancyEmailButton onPress={this.props.onOpenEmailPasswordAuth} text='Login with Email and Password'/>
+          <FancyEmailButton onPress={this.props.onOpenEmailPasswordAuth} id='login.email'/>
         </View>
         <View style={login.socialButton}>
-          <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} text='Login with Facebook'/>
+          <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} id='login.facebook'/>
         </View>
         <View style={login.socialButton}>
-          <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} text='Login with Google'/>
+          <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} id='login.google'/>
         </View>
         <TouchableOpacity onPress={() => Linking.openURL('https://laundree.io/auth/sign-up')}>
-          <Text style={login.hint}>Don't have an account? Sign-up here</Text>
+          <Text style={login.hint}>
+            <FormattedMessage id='login.hint'/>
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

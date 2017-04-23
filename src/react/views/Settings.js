@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 import FancyTextButton from './input/FancyTextButton'
 import {settings} from '../../style'
+import { FormattedMessage } from 'react-intl'
 
 export default class Settings extends React.Component {
 
@@ -56,7 +57,9 @@ export default class Settings extends React.Component {
       {this.laundry
         ? (
           <View style={settings.laundryView}>
-            <Text style={settings.laundryHeader}>Laundry</Text>
+            <Text style={settings.laundryHeader}>
+              <FormattedMessage id='settings.laundry'/>
+            </Text>
             <Text style={settings.laundryName}>{this.laundry}</Text>
           </View>)
         : null}
@@ -87,7 +90,7 @@ export default class Settings extends React.Component {
       <FancyTextButton
         style={settings.textButton}
         onPress={() => this.props.stateHandler.logOut()}
-        text='Log out'
+        id='settings.logout'
       />
     </View>
   }

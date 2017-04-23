@@ -26,6 +26,7 @@
  - Add error message to failed login
  - Booking list
  - Unsubscribe at logout
+ - Multilanguage support
  - Notifications can be enabled and disabled
 
 ### Changed

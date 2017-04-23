@@ -254,6 +254,9 @@ export const login = StyleSheet.create({
   infoTitle: {
     fontWeight: 'bold'
   },
+  infoTop: {
+    flexDirection: 'row'
+  },
   infoText: {
     color: '#fff',
     fontSize: 10
