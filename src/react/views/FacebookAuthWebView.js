@@ -1,17 +1,10 @@
-/**
- * Created by budde on 25/02/2017.
- */
+// @flow
 import React from 'react'
 import AuthWebView from './AuthWebView'
 import config from '../../config'
-
-const FacebookAuthWebView = ({onAuthFailed, onSuccess}) => <AuthWebView
+type Props = { onAuthFailed: () => void, onSuccess: () => void }
+const FacebookAuthWebView = ({onAuthFailed, onSuccess}: Props) => <AuthWebView
   onAuthFailed={onAuthFailed} onSuccess={onSuccess}
   source={{uri: `${config.laundree.host}/auth/facebook?mode=native-app`}}/>
-
-FacebookAuthWebView.propTypes = {
-  onSuccess: AuthWebView.propTypes.onSuccess,
-  onAuthFailed: AuthWebView.propTypes.onAuthFailed
-}
 
 export default FacebookAuthWebView
