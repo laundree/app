@@ -1,37 +1,34 @@
-/**
- * Created by budde on 25/02/2017.
- */
+// @flow
 import React from 'react'
 import {
   WebView,
-  View
+  View,
+  ActivityIndicator,
+  Modal
 } from 'react-native'
 import config from '../../config'
-import { authWebView } from '../../style'
+import { authWebView, constants, loader } from '../../style'
 import url from 'url'
 
 class AuthWebView extends React.Component {
+  state: { onMessage: ?() => void, loaded: boolean } = {onMessage: null, loaded: false}
+  interval: number
+  _messageHandled: boolean
+  ref: WebView
 
-  constructor (props) {
-    super(props)
-    this.state = {onMessage: undefined}
-  }
-
-  isBack (u) {
+  isBack (u: string) {
     const backUrl = `${config.laundree.host}/native-app`
     const {host, auth, protocol, path} = url.parse(backUrl)
     const {host: host2, auth: auth2, protocol: protocol2, path: path2} = url.parse(u)
     return auth === auth2 && protocol === protocol2 && path === path2 && host === host2
   }
 
-  onLoadUrl (url) {
-    console.log('Loading url ', url, this.isBack(url), this.state.onMessage)
+  onLoadUrl (url: string) {
     if (!this.isBack(url)) return
     this.startSendTokenRequest()
   }
 
-  get injectedJavaScript () {
-    return `(function() {
+  injectedJavaScript = `(function() {
   var originalPostMessage = window.postMessage;
   var patchedPostMessage = function(message, targetOrigin, transfer) { 
     originalPostMessage(message, targetOrigin, transfer);
@@ -41,9 +38,8 @@ class AuthWebView extends React.Component {
   };  
   window.postMessage = patchedPostMessage;
 })();`
-  }
 
-  handleMessage (message) {
+  handleMessage (message: string) {
     console.log('Handling message', message)
     if (this._messageHandled) return
     console.log('Handling message', message)
@@ -84,7 +80,11 @@ class AuthWebView extends React.Component {
 
   render () {
     return <View style={authWebView.view}>
+      <Modal transparent visible={!this.state.loaded} animationType='fade'>
+        <ActivityIndicator color={constants.darkTheme} size='large' style={loader.activityIndicator}/>
+      </Modal>
       <WebView
+        onLoadEnd={() => this.setState({loaded: true})}
         injectedJavaScript={this.injectedJavaScript}
         ref={ref => { this.ref = ref }}
         onMessage={evt => this.handleMessage(evt.nativeEvent.data)}

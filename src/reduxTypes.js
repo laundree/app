@@ -38,3 +38,9 @@ export type Booking = {
   to: string,
   owner: string
 }
+
+export type State = {
+
+}
+
+export type Action = {type: string}
