@@ -1,7 +1,7 @@
 /**
  * Created by budde on 27/02/2017.
  */
-import { Dimensions, StyleSheet, Platform, Navigator } from 'react-native'
+import { StyleSheet, Platform, Navigator } from 'react-native'
 const isIos = Platform.OS === 'ios'
 export const constants = {
   colorRed: '#e55564',
@@ -370,7 +370,6 @@ export const settings = StyleSheet.create({
     backgroundColor: '#44B7B4',
     justifyContent: 'center',
     alignItems: 'center',
-    width: Dimensions.get('window').width,
     paddingTop: 40,
     paddingBottom: 40
   },
@@ -568,7 +567,7 @@ export const timetable = StyleSheet.create({
   },
   noMachinesHeader: {
     fontSize: 20
-  },
+  }
 })
 
 export const bookingList = StyleSheet.create({
