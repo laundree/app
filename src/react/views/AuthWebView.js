@@ -1,17 +1,20 @@
 // @flow
 import React from 'react'
-import {
-  WebView,
-  View,
-  ActivityIndicator,
-  Modal
-} from 'react-native'
+import LoadingWebView from './LoadingWebView'
+import type { WebView } from 'react-native'
 import config from '../../config'
-import { authWebView, constants, loader } from '../../style'
+import { authWebView } from '../../style'
 import url from 'url'
 
 class AuthWebView extends React.Component {
-  state: { onMessage: ?() => void, loaded: boolean } = {onMessage: null, loaded: false}
+  state: { onMessage: ?() => void } = {onMessage: null}
+  props: {
+    source: {
+      uri: string
+    },
+    onSuccess: () => void,
+    onAuthFailed: () => void
+  }
   interval: number
   _messageHandled: boolean
   ref: WebView
@@ -79,26 +82,15 @@ class AuthWebView extends React.Component {
   }
 
   render () {
-    return <View style={authWebView.view}>
-      <Modal transparent visible={!this.state.loaded} animationType='fade'>
-        <ActivityIndicator color={constants.darkTheme} size='large' style={loader.activityIndicator}/>
-      </Modal>
-      <WebView
-        onLoadEnd={() => this.setState({loaded: true})}
-        injectedJavaScript={this.injectedJavaScript}
-        ref={ref => { this.ref = ref }}
-        onMessage={evt => this.handleMessage(evt.nativeEvent.data)}
-        source={this.props.source}
-        style={authWebView.webView}
-        onLoadStart={evt => this.onLoadUrl(evt.nativeEvent.url)}/>
-    </View>
+    return <LoadingWebView
+      viewStyle={authWebView.view}
+      injectedJavaScript={this.injectedJavaScript}
+      webViewRef={ref => { this.ref = ref }}
+      onMessage={evt => this.handleMessage(evt.nativeEvent.data)}
+      source={this.props.source}
+      style={authWebView.webView}
+      onLoadStart={evt => this.onLoadUrl(evt.nativeEvent.url)}/>
   }
-}
-
-AuthWebView.propTypes = {
-  source: WebView.propTypes.source,
-  onAuthFailed: React.PropTypes.func.isRequired,
-  onSuccess: React.PropTypes.func.isRequired
 }
 
 export default AuthWebView

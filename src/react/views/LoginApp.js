@@ -7,14 +7,17 @@ import {
 import Login from './Login'
 import { loginApp, constants } from '../../style'
 import FacebookAuthWebView from './FacebookAuthWebView'
-import SignUpWebView from './SignUpWebView'
-import PrivacyWebView from './PrivacyWebView'
 import GoogleAuthWebView from './GoogleAuthWebView'
-import ForgotWebView from './ForgotWebView'
 import EmailPasswordAuthView from './EmailPasswordAuthView'
 import FancyTextButton from './input/FancyTextButton'
 import Backable from './Backable'
 import type { StateHandler } from '../../stateHandler'
+import LoadingWebView from './LoadingWebView'
+import config from '../../config'
+
+const SignUpWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/auth/sign-up`}} viewStyle={loginApp.webViewView} style={loginApp.webView}/>
+const ForgotWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/auth/forgot`}} viewStyle={loginApp.webViewView} style={loginApp.webView}/>
+const PrivacyWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/privacy`}} viewStyle={loginApp.webViewView} style={loginApp.webView}/>
 
 type Props = { stateHandler: StateHandler }
 type State = { authFailed: boolean }

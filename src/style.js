@@ -317,6 +317,12 @@ export const loginApp = StyleSheet.create({
   navBarTitle: {
     fontSize: 20,
     color: '#fff'
+  },
+  webViewView: {
+    flex: 1
+  },
+  webView: {
+    backgroundColor: constants.appBackgroundColor
   }
 })
 
