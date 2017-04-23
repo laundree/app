@@ -22,7 +22,7 @@ export default class Settings extends React.Component {
   }
 
   componentDidMount () {
-    this.fetchData().done()
+    this.fetchData()
   }
 
   async fetchData () {
