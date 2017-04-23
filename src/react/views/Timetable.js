@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   ActivityIndicator,
+  InteractionManager,
   RefreshControl,
   Platform
 } from 'react-native'
@@ -373,7 +374,7 @@ export default class TimetableWrapper extends React.Component {
     this.setState({
       date: newDate
     }, () => {
-      this.fetchData()
+      InteractionManager.runAfterInteractions(() => this.fetchData())
     })
   }
 
