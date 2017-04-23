@@ -312,11 +312,11 @@ export default class TimetableWrapper extends React.Component {
 
   componentDidMount () {
     this.load()
-    this.props.stateHandler.on('reconnected', this.loader)
+    this.props.stateHandler.on('connected', this.loader)
   }
 
   componentWillUnmount () {
-    this.props.stateHandler.removeListener('reconnected', this.loader)
+    this.props.stateHandler.removeListener('connected', this.loader)
   }
 
   isLaundryOwner () {

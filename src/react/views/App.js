@@ -35,8 +35,6 @@ export default class App extends React.Component {
   render () {
     if (!this.state.stateHandler) return null
     const locale = this.state.stateHandler.locale
-    console.log('Locale: ', locale)
-    console.log('Locales: ', locales)
     return <IntlProvider locale={locale} messages={locales[locale].messages} textComponent={Text}>
         <View style={app.mainContainer}>{this.renderContent()}</View>
     </IntlProvider>
