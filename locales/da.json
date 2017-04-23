@@ -29,9 +29,9 @@
   "timetable.today": "I dag",
   "timetable.tomorrow": "I morgen",
   "timetable.select": "Vælg",
-  "timetable.nomachines": "Der er ingen maskiner registreret.",
-  "timetable.nomachines.notowner": "Bed administratoren om at registere maskiner.",
-  "timetable.nomachines.owner": "Registrer maskiner på hjemmesiden.",
+  "timetable.nomachines": "Der er ingen maskiner registreret",
+  "timetable.nomachines.notowner": "Bed administratoren om at registere maskiner",
+  "timetable.nomachines.owner": "Registrer maskiner på hjemmesiden",
   "qrcodescanner.askadmin": "Eller bed administratoren om at\ntilføje din e-mail adresse",
   "qrcodescanner.happywashing": "God vasketur!",
   "qrcodescanner.startscan": "Tryk på knappen\nfor at begynde at scanne QR\nkoden for vaskeriet"
