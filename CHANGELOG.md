@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+ - Authentication with deep linking
+
 ## [0.1.0]
 
 ### Fixed

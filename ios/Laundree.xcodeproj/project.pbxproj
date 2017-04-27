@@ -22,6 +22,7 @@
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		4E04BFC91EACE0E400710E62 /* libRNI18n.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E04BFC61EACE0B800710E62 /* libRNI18n.a */; };
+		4E49DAD11EB0F40F00A7CD7A /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E49DAB61EB0F3FE00A7CD7A /* libRCTLinking.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		776432EEBAC9464BB0C0412B /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F952177CE70743EE933BC3C3 /* libReact.a */; };
 		7F6011801EA9480281E75A3C /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA06BCA107D24DAE80D6BF36 /* libRCTCamera.a */; };
@@ -215,6 +216,20 @@
 			remoteGlobalIDString = CDD7BF831B2D5126006FDA75;
 			remoteInfo = RNI18nTests;
 		};
+		4E49DAB51EB0F3FE00A7CD7A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4E49DAA91EB0F3FE00A7CD7A /* RCTLinking.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RCTLinking;
+		};
+		4E49DAB71EB0F3FE00A7CD7A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4E49DAA91EB0F3FE00A7CD7A /* RCTLinking.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2D2A28471D9B043800D4039D;
+			remoteInfo = "RCTLinking-tvOS";
+		};
 		4E68AA151E65A5B700CFB4EE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 210EFE905D65480A8ED22E6F /* RCTCamera.xcodeproj */;
@@ -283,6 +298,7 @@
 		3A487E2B9F714DA291365C6E /* RCTOneSignal.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOneSignal.xcodeproj; path = "../node_modules/react-native-onesignal/ios/RCTOneSignal.xcodeproj"; sourceTree = "<group>"; };
 		43B79E8362CE4CF386EF4F1A /* RNI18n.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNI18n.xcodeproj; path = "../node_modules/react-native-i18n/RNI18n.xcodeproj"; sourceTree = "<group>"; };
 		4E04BFC01EACE0B800710E62 /* RNI18n.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNI18n.xcodeproj; path = "../node_modules/react-native-i18n/RNI18n.xcodeproj"; sourceTree = "<group>"; };
+		4E49DAA91EB0F3FE00A7CD7A /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		4EE5A4EC1EA4C04D00861370 /* Laundree.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Laundree.entitlements; path = Laundree/Laundree.entitlements; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		612353FFC0C44BD49EC4D948 /* libcxxreact.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libcxxreact.a; sourceTree = "<group>"; };
@@ -308,6 +324,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E49DAD11EB0F40F00A7CD7A /* libRCTLinking.a in Frameworks */,
 				4E04BFC91EACE0E400710E62 /* libRNI18n.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -457,6 +474,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		4E49DAAA1EB0F3FE00A7CD7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4E49DAB61EB0F3FE00A7CD7A /* libRCTLinking.a */,
+				4E49DAB81EB0F3FE00A7CD7A /* libRCTLinking-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		4E68AA0F1E65A5B600CFB4EE /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -494,6 +520,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				4E49DAA91EB0F3FE00A7CD7A /* RCTLinking.xcodeproj */,
 				4E04BFC01EACE0B800710E62 /* RNI18n.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
@@ -640,6 +667,10 @@
 				{
 					ProductGroup = 00C302BC1ABCB91800DB3ED1 /* Products */;
 					ProjectRef = 00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */;
+				},
+				{
+					ProductGroup = 4E49DAAA1EB0F3FE00A7CD7A /* Products */;
+					ProjectRef = 4E49DAA91EB0F3FE00A7CD7A /* RCTLinking.xcodeproj */;
 				},
 				{
 					ProductGroup = 78C398B11ACF4ADC00677621 /* Products */;
@@ -866,6 +897,20 @@
 			remoteRef = 4E04BFC71EACE0B800710E62 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		4E49DAB61EB0F3FE00A7CD7A /* libRCTLinking.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTLinking.a;
+			remoteRef = 4E49DAB51EB0F3FE00A7CD7A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4E49DAB81EB0F3FE00A7CD7A /* libRCTLinking-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libRCTLinking-tvOS.a";
+			remoteRef = 4E49DAB71EB0F3FE00A7CD7A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		4E68AA161E65A5B700CFB4EE /* libRCTCamera.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1043,7 +1088,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 2X9774HVYR;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-onesignal/ios/**";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS/**",
+				);
 				INFOPLIST_FILE = Laundree/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1066,7 +1114,10 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2X9774HVYR;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-onesignal/ios/**";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS/**",
+				);
 				INFOPLIST_FILE = Laundree/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (

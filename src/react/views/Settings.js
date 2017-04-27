@@ -11,10 +11,19 @@ import {
 import FancyTextButton from './input/FancyTextButton'
 import { settings } from '../../style'
 import { FormattedMessage } from 'react-intl'
+import type { StateHandler } from '../../stateHandler'
+import type { Col, User, Laundry } from '../../reduxTypes'
 
 export default class Settings extends React.Component {
   state = {
     notificationsEnabled: true
+  }
+
+  props: {
+    currentUser: string,
+    users: Col<User>,
+    laundry: ?Laundry,
+    stateHandler: StateHandler
   }
 
   componentDidMount () {
@@ -108,11 +117,4 @@ export default class Settings extends React.Component {
       {this.renderLogOut()}
     </View>
   }
-}
-
-Settings.propTypes = {
-  currentUser: React.PropTypes.string,
-  users: React.PropTypes.object,
-  laundry: React.PropTypes.object.isRequired,
-  stateHandler: React.PropTypes.object.isRequired
 }

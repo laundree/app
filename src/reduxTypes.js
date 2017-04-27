@@ -2,11 +2,14 @@
 
 export type User = {
   id: string,
+  displayName: string,
+  photo: string,
   laundries: string[]
 }
 export type Laundry = {
   id: string,
   timezone: string,
+  name: string,
   owners: string[],
   machines: string[],
   rules: {
@@ -39,8 +42,6 @@ export type Booking = {
   owner: string
 }
 
-export type State = {
+export type State = {}
 
-}
-
-export type Action = {type: string}
+export type Action = { type: string }
