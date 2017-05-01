@@ -111,7 +111,7 @@ class Timetable extends React.Component {
           if (this.viewPager.getCurrentPage() === shouldViewPage) {
             return
           }
-          setTimeout(() => this.viewPager.goToPage(shouldViewPage, false), 0)
+          InteractionManager.runAfterInteractions(() => this.viewPager.goToPage(shouldViewPage, false), 0)
         })
   }
 
