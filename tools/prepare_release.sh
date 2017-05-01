@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-. secrets/android/release.conf
-
 NPM_VERSION=$(node -p -e "require('./package.json').version")
 export VERSION_CODE=$(git rev-list --count HEAD)
 export VERSION_NAME=${TRAVIS_TAG:-$NPM_VERSION}

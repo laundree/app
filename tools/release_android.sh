@@ -8,6 +8,7 @@ export VERSION_NAME=${TRAVIS_TAG:-$NPM_VERSION}
 echo "Would have beeen RELEASING ANDROID VERSION: $VERSION_NAME VERSION CODE: $VERSION_CODE"
 
 cp secrets/android/my-release-key.keystore android/app/my-release-key.keystore
+cp secrets/android/google-services.json android/app/google-services.json
 cp secrets/android/service-account-credentials.json android/app/service-account-credentials.json
 
 cd android && ./gradlew assembleRelease && ./gradlew publishApkRelease

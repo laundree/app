@@ -9,6 +9,7 @@ import OneSignal from 'react-native-onesignal'
 import type { Store } from 'redux'
 import type { State, Action } from './reduxTypes'
 import ReactNativeI18n from 'react-native-i18n'
+import Analytics from 'react-native-firebase-analytics'
 
 const storageKey = '@LaundreeStorage'
 
@@ -110,6 +111,7 @@ export class StateHandler extends EventEmitter {
 
   _setupAuth (auth: ?Auth) {
     console.log('Setting up auth', auth)
+    Analytics.setUserId(auth && auth.userId)
     if (!auth) {
       OneSignal.setSubscription(false)
       this.sdk.updateAuth({})

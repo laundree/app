@@ -14,6 +14,8 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
+@import Firebase;
+
 @implementation AppDelegate
 @synthesize oneSignal = _oneSignal;
 
@@ -38,7 +40,7 @@
   // OneSignal
   self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
                                                          appId:@"390e23c3-658b-46cd-83ee-2fdead3211af"];
-
+  [FIRApp configure];
   return YES;
 }
 

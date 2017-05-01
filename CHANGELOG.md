@@ -4,6 +4,7 @@
 
 ### Added
  - Authentication with deep linking
+ - Firebase analytics
 
 ## [0.1.0]
 

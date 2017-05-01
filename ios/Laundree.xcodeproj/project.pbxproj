@@ -12,6 +12,7 @@
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
+		041821FC4E5F4EA08B7CBA4F /* libRNFIRAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 861D21B48DFE4030B869CE6F /* libRNFIRAnalytics.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
@@ -21,9 +22,12 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		28043F56CC83499C19AD094D /* libPods-Laundree.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5BD12F5BFAB0448497A9B57 /* libPods-Laundree.a */; };
 		4E04BFC91EACE0E400710E62 /* libRNI18n.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E04BFC61EACE0B800710E62 /* libRNI18n.a */; };
 		4E49DAD11EB0F40F00A7CD7A /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E49DAB61EB0F3FE00A7CD7A /* libRCTLinking.a */; };
+		4E9005D91EB75DD300A7D79B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4E9005D81EB75DD300A7D79B /* GoogleService-Info.plist */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		5F0FEEE7EA3319887C3ED8F8 /* libPods-LaundreeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C779A1A09D4870461ABF642 /* libPods-LaundreeTests.a */; };
 		776432EEBAC9464BB0C0412B /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F952177CE70743EE933BC3C3 /* libReact.a */; };
 		7F6011801EA9480281E75A3C /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA06BCA107D24DAE80D6BF36 /* libRCTCamera.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
@@ -237,6 +241,13 @@
 			remoteGlobalIDString = 4107012F1ACB723B00C6AA39;
 			remoteInfo = RCTCamera;
 		};
+		4EC2D9651EB7509D00EED95D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D532AB1739C341158C3F81B1 /* RNFIRAnalytics.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNFIRAnalytics;
+		};
 		4EE5A4C21EA4B20500861370 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3A487E2B9F714DA291365C6E /* RCTOneSignal.xcodeproj */;
@@ -284,6 +295,8 @@
 		00E356EE1AD99517003FC87E /* LaundreeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LaundreeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* LaundreeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LaundreeTests.m; sourceTree = "<group>"; };
+		0C779A1A09D4870461ABF642 /* libPods-LaundreeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LaundreeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1211595546F72B880C377260 /* Pods-Laundree.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Laundree.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Laundree/Pods-Laundree.debug.xcconfig"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Laundree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Laundree.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -297,17 +310,24 @@
 		210EFE905D65480A8ED22E6F /* RCTCamera.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTCamera.xcodeproj; path = "../node_modules/react-native-camera/ios/RCTCamera.xcodeproj"; sourceTree = "<group>"; };
 		3A487E2B9F714DA291365C6E /* RCTOneSignal.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOneSignal.xcodeproj; path = "../node_modules/react-native-onesignal/ios/RCTOneSignal.xcodeproj"; sourceTree = "<group>"; };
 		43B79E8362CE4CF386EF4F1A /* RNI18n.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNI18n.xcodeproj; path = "../node_modules/react-native-i18n/RNI18n.xcodeproj"; sourceTree = "<group>"; };
+		4C1FBE6FDCE43C19B07426C1 /* Pods-Laundree.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Laundree.release.xcconfig"; path = "Pods/Target Support Files/Pods-Laundree/Pods-Laundree.release.xcconfig"; sourceTree = "<group>"; };
 		4E04BFC01EACE0B800710E62 /* RNI18n.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNI18n.xcodeproj; path = "../node_modules/react-native-i18n/RNI18n.xcodeproj"; sourceTree = "<group>"; };
 		4E49DAA91EB0F3FE00A7CD7A /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+		4E9005D81EB75DD300A7D79B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4EE5A4EC1EA4C04D00861370 /* Laundree.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Laundree.entitlements; path = Laundree/Laundree.entitlements; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		612353FFC0C44BD49EC4D948 /* libcxxreact.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libcxxreact.a; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		8400CC48F196431DB0E2728D /* libRCTOneSignal.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTOneSignal.a; sourceTree = "<group>"; };
+		861D21B48DFE4030B869CE6F /* libRNFIRAnalytics.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFIRAnalytics.a; sourceTree = "<group>"; };
+		A5BD12F5BFAB0448497A9B57 /* libPods-Laundree.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Laundree.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6B35A0646D14216AC4D878C /* libjschelpers.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libjschelpers.a; sourceTree = "<group>"; };
+		C23E6C04EEA27165F57EB624 /* Pods-LaundreeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LaundreeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LaundreeTests/Pods-LaundreeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CDF587F816A442CB9460DE0D /* libyoga.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libyoga.a; sourceTree = "<group>"; };
+		D532AB1739C341158C3F81B1 /* RNFIRAnalytics.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFIRAnalytics.xcodeproj; path = "../node_modules/react-native-firebase-analytics/ios/RNFIRAnalytics.xcodeproj"; sourceTree = "<group>"; };
 		DA06BCA107D24DAE80D6BF36 /* libRCTCamera.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTCamera.a; sourceTree = "<group>"; };
+		E5EBFDEB0036172112D99060 /* Pods-LaundreeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LaundreeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LaundreeTests/Pods-LaundreeTests.release.xcconfig"; sourceTree = "<group>"; };
 		F952177CE70743EE933BC3C3 /* libReact.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libReact.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -317,6 +337,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */,
+				5F0FEEE7EA3319887C3ED8F8 /* libPods-LaundreeTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,6 +364,8 @@
 				84AA241757464F258212E6B5 /* libyoga.a in Frameworks */,
 				A7F68925BEFA4E49AC9367A5 /* libcxxreact.a in Frameworks */,
 				F2B85392730C41D2BEC55FFD /* libjschelpers.a in Frameworks */,
+				041821FC4E5F4EA08B7CBA4F /* libRNFIRAnalytics.a in Frameworks */,
+				28043F56CC83499C19AD094D /* libPods-Laundree.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,6 +479,26 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		3E41A67CF95D18DD6BA11BC2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				1211595546F72B880C377260 /* Pods-Laundree.debug.xcconfig */,
+				4C1FBE6FDCE43C19B07426C1 /* Pods-Laundree.release.xcconfig */,
+				C23E6C04EEA27165F57EB624 /* Pods-LaundreeTests.debug.xcconfig */,
+				E5EBFDEB0036172112D99060 /* Pods-LaundreeTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		3E655C8311D13323407B6666 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A5BD12F5BFAB0448497A9B57 /* libPods-Laundree.a */,
+				0C779A1A09D4870461ABF642 /* libPods-LaundreeTests.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		4E04BF9D1EACCFEE00710E62 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -487,6 +530,14 @@
 			isa = PBXGroup;
 			children = (
 				4E68AA161E65A5B700CFB4EE /* libRCTCamera.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4EC2D9451EB7509D00EED95D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4EC2D9661EB7509D00EED95D /* libRNFIRAnalytics.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -536,6 +587,7 @@
 				210EFE905D65480A8ED22E6F /* RCTCamera.xcodeproj */,
 				3A487E2B9F714DA291365C6E /* RCTOneSignal.xcodeproj */,
 				43B79E8362CE4CF386EF4F1A /* RNI18n.xcodeproj */,
+				D532AB1739C341158C3F81B1 /* RNFIRAnalytics.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -552,10 +604,13 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				4E9005D81EB75DD300A7D79B /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* Laundree */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* LaundreeTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
+				3E41A67CF95D18DD6BA11BC2 /* Pods */,
+				3E655C8311D13323407B6666 /* Frameworks */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -577,9 +632,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "LaundreeTests" */;
 			buildPhases = (
+				648CA7B8D4B5B363E4F892FA /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
+				985B181D3F6D51EE4D2EFAC5 /* [CP] Embed Pods Frameworks */,
+				24762D3ED5DC50C423E32534 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -595,10 +653,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Laundree" */;
 			buildPhases = (
+				65B1C1C078FC8A1B25702786 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				53EE056F97787BE005698F57 /* [CP] Embed Pods Frameworks */,
+				6E2E0B07905D58848286E3FC /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -703,6 +764,10 @@
 				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+				},
+				{
+					ProductGroup = 4EC2D9451EB7509D00EED95D /* Products */;
+					ProjectRef = D532AB1739C341158C3F81B1 /* RNFIRAnalytics.xcodeproj */;
 				},
 				{
 					ProductGroup = 4E04BFC11EACE0B800710E62 /* Products */;
@@ -918,6 +983,13 @@
 			remoteRef = 4E68AA151E65A5B700CFB4EE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		4EC2D9661EB7509D00EED95D /* libRNFIRAnalytics.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFIRAnalytics.a;
+			remoteRef = 4EC2D9651EB7509D00EED95D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		4EE5A4C31EA4B20500861370 /* libRCTOneSignal.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -969,6 +1041,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				4E9005D91EB75DD300A7D79B /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -988,6 +1061,96 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
+		};
+		24762D3ED5DC50C423E32534 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LaundreeTests/Pods-LaundreeTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		53EE056F97787BE005698F57 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Laundree/Pods-Laundree-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		648CA7B8D4B5B363E4F892FA /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		65B1C1C078FC8A1B25702786 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		6E2E0B07905D58848286E3FC /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Laundree/Pods-Laundree-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		985B181D3F6D51EE4D2EFAC5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LaundreeTests/Pods-LaundreeTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1033,6 +1196,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C23E6C04EEA27165F57EB624 /* Pods-LaundreeTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1050,6 +1214,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Laundree.app/Laundree";
@@ -1058,6 +1223,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E5EBFDEB0036172112D99060 /* Pods-LaundreeTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -1072,6 +1238,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Laundree.app/Laundree";
@@ -1080,6 +1247,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1211595546F72B880C377260 /* Pods-Laundree.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Laundree/Laundree.entitlements;
@@ -1091,6 +1259,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS/**",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
+					"$(SRCROOT)/Pods/**",
 				);
 				INFOPLIST_FILE = Laundree/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1107,6 +1277,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4C1FBE6FDCE43C19B07426C1 /* Pods-Laundree.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Laundree/Laundree.entitlements;
@@ -1117,6 +1288,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS/**",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
+					"$(SRCROOT)/Pods/**",
 				);
 				INFOPLIST_FILE = Laundree/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

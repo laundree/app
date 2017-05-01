@@ -1,5 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: 'com.github.triplet.play'
+apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -141,6 +142,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-firebase-analytics')
     compile project(':react-native-i18n')
     compile project(':react-native-onesignal')
     compile project(':react-native-camera')
