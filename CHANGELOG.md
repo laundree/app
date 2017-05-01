@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [0.1.1]
+
 ### Added
  - Authentication with deep linking
  - Firebase analytics
