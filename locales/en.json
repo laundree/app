@@ -23,6 +23,8 @@
   "login.notice": "Notice: ",
   "login.notice.terms": "Terms and Conditions and Privacy Policy",
   "login.notice.text": "By signing in you accept our",
+  "offline.title": "You are offline",
+  "offline.message": "Make sure you are connected to the internet",
   "settings.laundry": "Laundry",
   "settings.logout": "Log out",
   "settings.notifications": "Notifications",

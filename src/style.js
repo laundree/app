@@ -192,6 +192,34 @@ export const loader = StyleSheet.create({
   }
 })
 
+export const offline = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  smiley: {
+     height: 210,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 30
+  },
+  smileyImage: {
+    height: 150,
+    resizeMode: 'contain'
+  },
+  offlineView: {
+    alignItems: 'center'
+  },
+  headerText: {
+    fontSize: 24
+  },
+  message: {
+    fontSize: 18,
+    padding: 10
+  }
+})
+
 export const login = StyleSheet.create({
   divider: {
     alignItems: 'center',

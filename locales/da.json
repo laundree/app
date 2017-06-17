@@ -22,6 +22,8 @@
   "login.notice": "Bemærk: ",
   "login.notice.terms": "Privatlivspolitik og Vilkår og betingelser",
   "login.notice.text": "Ved at logge ind accepterer du vores",
+  "offline.title": "Du er offline",
+  "offline.message": "Tjek at du har forbindelse til internettet",
   "settings.laundry": "Vaskeri",
   "settings.logout": "Log ud",
   "settings.notifications": "Notifikationer",
