@@ -33,7 +33,9 @@ export default class LoadingWebView extends React.Component {
           onLoadStart={this.props.onLoadStart}
           onMessage={this.props.onMessage}
           onLoadEnd={() => this.setState({loaded: true})}
-          injectedJavaScript={this.props.injectedJavaScript}/>
+          injectedJavaScript={this.props.injectedJavaScript}
+          userAgent={'beta-react-native-app-laundree-android'}
+          automaticallyAdjustContentInsets={false}/>
       </View>
     )
   }
