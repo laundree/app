@@ -47,6 +47,7 @@
  - Multilanguage support
  - Notifications can be enabled and disabled
  - Danish translations of strings
+ - Display message when offline
 
 ### Changed
 

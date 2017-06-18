@@ -2,7 +2,7 @@
 import { createStore } from 'redux'
 import { redux, Sdk } from 'laundree-sdk'
 import io from 'socket.io-client'
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage, NetInfo } from 'react-native'
 import EventEmitter from 'events'
 import config from './config'
 import OneSignal from 'react-native-onesignal'
@@ -72,6 +72,7 @@ export class StateHandler extends EventEmitter {
 
   constructor (auth: ?Auth) {
     super()
+    this._setupConnectionListener()
     this._setupAuth(auth)
   }
 
@@ -177,6 +178,22 @@ export class StateHandler extends EventEmitter {
     await Promise.all([clearUserIdAndToken(), removeOneSignalId(), removeNotificationSetting()])
     this._setupAuth()
     this.emit('authChange')
+  }
+
+  connectionChanged (isConnected: boolean) {
+    console.log('Internet connection changed', isConnected)
+    this.emit('connectionChange', isConnected)
+  }
+
+  _setupConnectionListener () {
+    console.log('Setting up connection listener')
+
+    NetInfo.isConnected.fetch().then(isConnected => {
+      console.log('First connection', isConnected)
+      this.emit('connectionChange', isConnected)
+    })
+
+    NetInfo.isConnected.addEventListener('change', (isConnected) => this.connectionChanged(isConnected))
   }
 }
 
