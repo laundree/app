@@ -26,7 +26,7 @@ export default class App extends React.Component {
 
   renderContent () {
     if (!this.state.stateHandler) return null
-    if (!this.state.isConnected) return <OfflineApp>You are offline</OfflineApp>
+    if (!this.state.isConnected) return <OfflineApp />
     if (!this.state.stateHandler.isAuthenticated) {
       return <LoginApp stateHandler={this.state.stateHandler}/>
     }
