@@ -199,7 +199,7 @@ export const offline = StyleSheet.create({
     alignItems: 'center'
   },
   smiley: {
-     height: 210,
+    height: 210,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 30

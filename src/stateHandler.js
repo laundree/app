@@ -180,7 +180,7 @@ export class StateHandler extends EventEmitter {
     this.emit('authChange')
   }
 
-  connectionChanged (isConnected) {
+  connectionChanged (isConnected: boolean) {
     console.log('Internet connection changed', isConnected)
     this.emit('connectionChange', isConnected)
   }
