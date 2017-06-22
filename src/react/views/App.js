@@ -1,5 +1,13 @@
 // @flow
 
+/**
+ * Module in charge of rendering either the scene
+ * for logging in, the logged in application, or
+ * an offline scene if there is no network connection.
+ * Also provides internationalisation through the
+ * IntlProvider wrapper.
+ */
+
 import React from 'react'
 import LoginApp from './LoginApp'
 import OfflineApp from './OfflineApp'
@@ -12,9 +20,17 @@ import type { StateHandler } from '../../stateHandler'
 import { IntlProvider } from 'react-intl'
 import locales from '../../../locales'
 
-export default class App extends React.Component {
-  state: { stateHandler: ?StateHandler, sesh: number, isConnected: boolean } = {stateHandler: null, sesh: 0, isConnected: true}
+type AppState = { stateHandler: ?StateHandler, sesh: number, isConnected: boolean }
 
+export default class App extends React.Component {
+
+  state: AppState = { stateHandler: null, sesh: 0, isConnected: true }
+
+  /**
+   * Fetches the state handler and listens for
+   * authentication and network connection.
+   * 'sesh' is only used for triggering a rerender.
+   */
   componentDidMount () {
     fetchStateHandler()
       .then(stateHandler => {
@@ -24,6 +40,11 @@ export default class App extends React.Component {
       })
   }
 
+  /**
+   * Returns either null (if state handler is not set),
+   * the offline scene (if there is no network connection),
+   * the scene for logging in, or the logged in app.
+   */
   renderContent () {
     if (!this.state.stateHandler) return null
     if (!this.state.isConnected) return <OfflineApp />
@@ -35,6 +56,10 @@ export default class App extends React.Component {
     </Provider>
   }
 
+  /**
+   * Returns the resulting view from renderContent wrapped
+   * in IntlProvider for internationalisation.
+   */
   render () {
     if (!this.state.stateHandler) return null
     const locale = this.state.stateHandler.locale

@@ -1,5 +1,7 @@
 /**
- * Sample React Native App
+ * React Native App for Laundree
+ *
+ * https://laundree.io/
  * https://github.com/facebook/react-native
  * @flow
  */

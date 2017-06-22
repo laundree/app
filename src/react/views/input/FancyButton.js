@@ -1,21 +1,25 @@
+// @flow
+
 /**
- * Created by budde on 25/02/2017.
+ * Exports a button that can be
+ * enabled and disabled
  */
+
 import React from 'react'
 import { TouchableHighlight, View } from 'react-native'
 import { fancyButton } from '../../../style'
+import type { Children } from 'react'
 
-const FancyButton = ({children, onPress, disabled, style}) => <TouchableHighlight disabled={disabled} onPress={onPress}>
-  <View style={[fancyButton.button, disabled ? fancyButton.disabled : fancyButton.enabled, style]}>
-    {children}
-  </View>
-</TouchableHighlight>
+type FancyButtonProps = { children: Children, onPress: Function, style: Object | Object[], disabled: boolean }
 
-export default FancyButton
+export default class FancyButton extends React.Component <*, FancyButtonProps, *> {
 
-FancyButton.propTypes = {
-  children: React.PropTypes.any.isRequired,
-  onPress: TouchableHighlight.propTypes.onPress,
-  style: View.propTypes.style,
-  disabled: React.PropTypes.bool
+  render () {
+    return <TouchableHighlight disabled={this.props.disabled} onPress={this.props.onPress}>
+      <View style={[fancyButton.buttonView, this.props.disabled ? fancyButton.disabledView : fancyButton.enabledView, this.props.style]}>
+            {this.props.children}
+      </View>
+      </TouchableHighlight>
+  }
+
 }

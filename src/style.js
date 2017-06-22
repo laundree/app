@@ -16,17 +16,17 @@ export const constants = {
 }
 
 export const fancyButton = StyleSheet.create({
-  button: {
+  buttonView: {
     borderRadius: 1,
     alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'center',
     height: constants.inputHeight
   },
-  enabled: {
+  enabledView: {
     backgroundColor: '#28aaba'
   },
-  disabled: {
+  disabledView: {
     backgroundColor: '#d1d1d1'
   }
 })
@@ -238,19 +238,22 @@ export const login = StyleSheet.create({
     color: constants.defaultTextColor,
     fontSize: 20
   },
-  socialLogin: {
+  optionsView: {
     alignSelf: 'stretch',
     alignItems: 'center',
     paddingBottom: 50
   },
-  socialButton: {
+  optionView: {
     width: constants.inputMaxWidth,
     paddingBottom: 15
   },
   container: {
     flex: 1
   },
-  logo: {
+  scrollView: {
+    flex: 1
+  },
+  logoView: {
     height: 200,
     alignItems: 'center',
     justifyContent: 'center'
@@ -266,11 +269,6 @@ export const login = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     justifyContent: 'center'
-  },
-  login: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5
   },
   input: {
     paddingBottom: 15,
@@ -288,25 +286,25 @@ export const login = StyleSheet.create({
     height: 50,
     backgroundColor: constants.colorYellow
   },
-  infoTitle: {
+  infoTitleText: {
     fontWeight: 'bold'
   },
-  infoTop: {
+  infoTopView: {
     flexDirection: 'row'
   },
   infoText: {
     color: '#fff',
     fontSize: 10
   },
-  infoLink: {
+  infoLinkText: {
     fontStyle: 'italic'
   },
-  hint: {
+  hintText: {
     fontSize: 12,
     color: '#fff',
     padding: 10
   },
-  authFailed: {
+  authFailedView: {
     backgroundColor: constants.colorRed,
     marginBottom: 30,
     padding: 15,
@@ -351,6 +349,12 @@ export const loginApp = StyleSheet.create({
   },
   webView: {
     backgroundColor: constants.appBackgroundColor
+  },
+  cancelView: {
+    flex: 1
+  },
+  cancelButton: {
+    backgroundColor: constants.colorRed
   }
 })
 

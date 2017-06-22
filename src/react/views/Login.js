@@ -1,5 +1,8 @@
+// @flow
+
 /**
- * Created by soeholm on 05.02.17.
+ * Main login page with social
+ * login buttons
  */
 
 import React from 'react'
@@ -18,11 +21,16 @@ import { FormattedMessage } from 'react-intl'
 import { login } from '../../style'
 
 export default class Login extends React.Component {
-  renderNotion () {
+
+  /**
+   * Renders a notice about the Terms and Conditions
+   * and Privacy Policy
+   */
+  renderNotice () {
     return (
       <View style={login.infoContainer}>
-        <View style={login.infoTop}>
-          <Text style={[login.infoText, login.infoTitle]}>
+        <View style={login.infoTopView}>
+          <Text style={[login.infoText, login.infoTitleText]}>
             <FormattedMessage id='login.notice'/>
           </Text>
           <Text style={login.infoText}>
@@ -30,9 +38,8 @@ export default class Login extends React.Component {
           </Text>
         </View>
         <TouchableOpacity
-          onPress={this.props.onOpenPrivacy}
-        >
-          <Text style={[login.infoText, login.infoLink]}>
+          onPress={this.props.onOpenPrivacy}>
+          <Text style={[login.infoText, login.infoLinkText]}>
             <FormattedMessage id='login.notice.terms'/>
           </Text>
         </TouchableOpacity>
@@ -40,43 +47,55 @@ export default class Login extends React.Component {
     )
   }
 
+  /**
+   * If authentication failed,
+   * renders error message
+   */
+  renderAuthFailed () {
+    if (!this.props.authFailed) return null
+    return <View style={login.authFailedView}>
+      <Image source={require('../../../img/error_240.png')} style={login.authFailedImage}/>
+      <Text style={login.authFailedText}>
+        <FormattedMessage id='login.authentication.failed'/>
+      </Text>
+    </View>
+  }
+
+  renderLoginOptions () {
+    return <View style={login.optionsView}>
+      <View style={login.optionView}>
+        <FancyEmailButton onPress={this.props.onOpenEmailPasswordAuth} id='login.email'/>
+      </View>
+      <View style={login.optionView}>
+        <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} id='login.facebook'/>
+      </View>
+      <View style={login.optionView}>
+        <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} id='login.google'/>
+      </View>
+      <TouchableOpacity onPress={this.props.onOpenSignUp}>
+        <Text style={login.hintText}>
+          <FormattedMessage id='login.hint'/>
+        </Text>
+      </TouchableOpacity>
+    </View>
+  }
+
+  renderLogo () {
+    return <View style={login.logoView}>
+      <Image
+        style={login.logoImage}
+        source={require('../../../img/logo_large.png')}/>
+    </View>
+  }
+
   render () {
-    return <View style={{flex: 1}}>
-    <ScrollView style={login.container}>
-      <View style={login.logo}>
-        <Image
-          style={login.logoImage}
-          source={require('../../../img/logo_large.png')}/>
-      </View>
-      {this.props.authFailed
-        ? (
-          <View style={login.authFailed}>
-            <Image source={require('../../../img/error_240.png')} style={login.authFailedImage}/>
-            <Text style={login.authFailedText}>
-              <FormattedMessage id='login.authentication.failed'/>
-            </Text>
-          </View>
-        )
-        : null
-      }
-      <View style={login.socialLogin}>
-        <View style={login.socialButton}>
-          <FancyEmailButton onPress={this.props.onOpenEmailPasswordAuth} id='login.email'/>
-        </View>
-        <View style={login.socialButton}>
-          <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} id='login.facebook'/>
-        </View>
-        <View style={login.socialButton}>
-          <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} id='login.google'/>
-        </View>
-        <TouchableOpacity onPress={this.props.onOpenSignUp}>
-          <Text style={login.hint}>
-            <FormattedMessage id='login.hint'/>
-          </Text>
-        </TouchableOpacity>
-      </View>
+    return <View style={login.container}>
+    <ScrollView style={login.scrollView}>
+      {this.renderLogo()}
+      {this.renderAuthFailed()}
+      {this.renderLoginOptions()}
     </ScrollView>
-    {this.renderNotion()}
+    {this.renderNotice()}
     </View>
   }
 

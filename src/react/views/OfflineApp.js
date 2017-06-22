@@ -1,5 +1,10 @@
 // @flow
 
+/**
+ * Scene displays a message for when
+ * there is no network connection
+ */
+
 import React from 'react'
 import {
   View,

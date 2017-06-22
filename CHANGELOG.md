@@ -48,12 +48,14 @@
  - Notifications can be enabled and disabled
  - Danish translations of strings
  - Display message when offline
+ - Script to check
 
 ### Changed
 
  - Redesign login page
  - Redesign machine name
  - Redesign settings page
+ - Comments and refactoring
 
 ## [0.0.3]
 

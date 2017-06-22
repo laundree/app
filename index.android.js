@@ -1,9 +1,11 @@
 /**
- * Sample React Native App
+ * React Native App for Laundree
+ *
+ * https://laundree.io/
  * https://github.com/facebook/react-native
  * @flow
  */
-'use strict'
+
 import React from 'react'
 import {AppRegistry} from 'react-native'
 import App from './src/react/views/App'
