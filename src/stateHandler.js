@@ -44,6 +44,9 @@ function removeNotificationSetting () {
   return AsyncStorage.removeItem(`${storageKey}:notifications`)
 }
 
+/**
+ * Retrieves auth information from phone's internal storage
+ */
 async function loadUserIdAndToken (): Promise<?Auth> {
   const values = await AsyncStorage
     .multiGet([`${storageKey}:userId`, `${storageKey}:token`])
@@ -197,7 +200,7 @@ export class StateHandler extends EventEmitter {
   }
 }
 
-export default async function fetchStateHandler () {
+export default async function fetchStateHandler (): Promise<StateHandler> {
   const credentials = await loadUserIdAndToken()
   return new StateHandler(credentials)
 }

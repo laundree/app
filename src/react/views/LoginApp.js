@@ -1,11 +1,16 @@
 // @flow
+
+/**
+ * Handles the scene for logging in
+ */
+
 import React from 'react'
 import {
   Navigator,
   View
 } from 'react-native'
 import Login from './Login'
-import { loginApp, constants } from '../../style'
+import { loginApp } from '../../style'
 import FacebookAuthWebView from './FacebookAuthWebView'
 import GoogleAuthWebView from './GoogleAuthWebView'
 import EmailPasswordAuthView from './EmailPasswordAuthView'
@@ -22,7 +27,9 @@ const PrivacyWebView = () => <LoadingWebView source={{uri: `${config.laundree.ho
 type Props = { stateHandler: StateHandler }
 type State = { authFailed: boolean }
 type Route = { index: number, cancelTitle: string, Element: any }
+
 export default class LoginApp extends Backable<Props, State> {
+
   state = {authFailed: false}
 
   static googleRoute: Route = {
@@ -61,6 +68,11 @@ export default class LoginApp extends Backable<Props, State> {
     cancelTitle: 'login.close'
   }
 
+  /**
+   * Render scene for Navigator.
+   * Renders either the scene with login buttons
+   * or the e-mail login form.
+   */
   renderScene ({index, Element, cancelTitle}: Route, navigator: Navigator) {
     switch (index) {
       case 0:
@@ -76,7 +88,7 @@ export default class LoginApp extends Backable<Props, State> {
         />
       case 1:
         this.backAction = () => navigator.pop()
-        return <View style={{flex: 1}}>
+        return <View style={loginApp.cancelView}>
           <Element
             stateHandler={this.props.stateHandler}
             onOpenForgot={() => navigator.push(LoginApp.forgotRoute)}
@@ -87,13 +99,18 @@ export default class LoginApp extends Backable<Props, State> {
             }}/>
           <FancyTextButton
             onPress={() => navigator.pop()} id={cancelTitle}
-            style={{backgroundColor: constants.colorRed}}/>
+            style={loginApp.cancelButton}/>
         </View>
       default:
         return null
     }
   }
 
+  /**
+   * Returns a Navigator that handles
+   * which scene to show; default is
+   * the scene with login buttons etc.
+   */
   render () {
     return <Navigator
       initialRoute={{index: 0}}

@@ -9,7 +9,9 @@
     "react/jsx-indent": 0,
     "generator-star-spacing": 0,
     "react/no-unused-prop-types": 0, // Es lint is not that clever
-    "no-var": "error"
+    "no-var": "error",
+    "react/prop-types": 0
+
   },
   "env": {
     "node": true

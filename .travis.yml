@@ -7,6 +7,7 @@ cache:
 install:
 - npm install -g react-native-cli
 script:
+- scripts/checkChangeLog.sh
 - npm install
 - npm test
 before_install:

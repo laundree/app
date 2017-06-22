@@ -1,10 +1,16 @@
+// @flow
+
 /**
- * Created by budde on 25/02/2017.
+ * Exports a FancyImageTextButton
+ * customised for e-mail
  */
+
 import React from 'react'
 import FancyImageTextButton from './FancyImageTextButton'
 
-const FancyEmailButton = ({id, onPress, disabled}) => <FancyImageTextButton
+type FancyEmailButtonProps = { id: string, onPress: Function, disabled?: boolean }
+
+const FancyEmailButton = ({ id, onPress, disabled }: FancyEmailButtonProps) => <FancyImageTextButton
   style={FancyEmailButton.button}
   onPress={onPress}
   id={id}
@@ -12,10 +18,3 @@ const FancyEmailButton = ({id, onPress, disabled}) => <FancyImageTextButton
   imageSource={require('../../../../img/email.png')}/>
 
 export default FancyEmailButton
-
-FancyEmailButton.propTypes = {
-  id: React.PropTypes.string.isRequired,
-  onPress: React.PropTypes.func.isRequired,
-  disabled: React.PropTypes.bool
-}
-

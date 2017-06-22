@@ -29,8 +29,7 @@ export default class App extends React.Component {
   /**
    * Fetches the state handler and listens for
    * authentication and network connection.
-   * The scene is forced to rerender, when the
-   * authentication is changed at a log in or out.
+   * 'sesh' is only used for triggering a rerender.
    */
   componentDidMount () {
     fetchStateHandler()

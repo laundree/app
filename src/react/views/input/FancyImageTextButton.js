@@ -1,13 +1,19 @@
+// @flow
+
 /**
- * Created by budde on 25/02/2017.
+ * Exports a FancyButton with
+ * Image and Text
  */
+
 import React from 'react'
 import { Text, View, Image } from 'react-native'
 import FancyButton from './FancyButton'
 import { fancyImageTextButton } from '../../../style'
 import { FormattedMessage } from 'react-intl'
 
-const FancyImageTextButton = ({id, onPress, disabled, imageSource, style}) => <FancyButton
+type FancyImageTextButtonProps = { id: string, onPress: Function, disabled?: boolean, imageSource: number, style: Object | Object[] }
+
+const FancyImageTextButton = ({id, onPress, disabled, imageSource, style}: FancyImageTextButtonProps) => <FancyButton
   onPress={onPress} disabled={disabled} style={[fancyImageTextButton.button, style]}>
   <View style={fancyImageTextButton.view}>
     <Image style={fancyImageTextButton.image} source={imageSource}/>
@@ -18,12 +24,3 @@ const FancyImageTextButton = ({id, onPress, disabled, imageSource, style}) => <F
 </FancyButton>
 
 export default FancyImageTextButton
-
-FancyImageTextButton.propTypes = {
-  imageSource: Image.propTypes.source,
-  style: FancyButton.propTypes.style,
-  id: React.PropTypes.string.isRequired,
-  onPress: React.PropTypes.func.isRequired,
-  disabled: React.PropTypes.bool
-}
-
