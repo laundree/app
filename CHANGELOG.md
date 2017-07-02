@@ -33,6 +33,7 @@
  - Disable back arrow in timetable
  - Make login scrollable
  - Scroll table when modal present
+ - Flow errors in Fancy components
 
 ### Added
  - Images
