@@ -27,7 +27,7 @@ export default class Fade extends React.Component {
     this.animation.start()
   }
 
-  findOpacity (opacity: ?number) {
+  findOpacity (opacity?: number) {
     return opacity === undefined
       ? 1
       : opacity

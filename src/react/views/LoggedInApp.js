@@ -11,9 +11,10 @@ import Backable from './Backable'
 import { loggedInApp, constants } from '../../style'
 import OneSignal from 'react-native-onesignal'
 import Fade from './animation/Fade'
-import type { User, Laundry, Col } from '../../reduxTypes'
-import type { NavigatorSceneConfig } from 'react-native'
+import type { User, Laundry } from 'laundree-sdk/lib/redux'
 import { FormattedMessage } from 'react-intl'
+
+type Col<X> = { [string]: X }
 
 type Props = {
   currentUser: ?string,
@@ -27,7 +28,7 @@ type Route = {
   id: string,
   index: number,
   hideBookings?: boolean,
-  sceneConfig?: NavigatorSceneConfig
+  sceneConfig?: *
 }
 
 export default class LoggedInApp extends Backable<Props, void> {
@@ -115,7 +116,7 @@ export default class LoggedInApp extends Backable<Props, void> {
     }
     return <View style={loggedInApp.navBarContainer}>
       <Text style={loggedInApp.navBarTitle}>
-        {title ? <FormattedMessage id={title}/> : ' '}
+        {title ? <FormattedMessage id={title} /> : ' '}
       </Text>
     </View>
   }
@@ -123,25 +124,25 @@ export default class LoggedInApp extends Backable<Props, void> {
   renderSceneElement (id: string) {
     switch (id) {
       case 'loading':
-        return <ActivityIndicator color={constants.darkTheme} size={'large'} style={loggedInApp.activityIndicator}/>
+        return <ActivityIndicator color={constants.darkTheme} size={'large'} style={loggedInApp.activityIndicator} />
       case 'qr':
-        return <QrCodeScanner onShowScanner={() => this.navigator.push(this.qrScannerRoute)}/>
+        return <QrCodeScanner onShowScanner={() => this.navigator.push(this.qrScannerRoute)} />
       case 'settings':
         return <Settings
           stateHandler={this.props.stateHandler}
-          laundry={this.laundry()}/>
+          laundry={this.laundry()} />
       case 'bookingList':
         return <BookingList
           stateHandler={this.props.stateHandler}
           user={this.user()}
-          laundry={this.laundry()}/>
+          laundry={this.laundry()} />
       case 'timetable':
         return <Timetable
           stateHandler={this.props.stateHandler}
           user={this.user()}
-          laundry={this.laundry()}/>
+          laundry={this.laundry()} />
       case 'qr-scanner':
-        return <QrCodeScannerCamera stateHandler={this.props.stateHandler}/>
+        return <QrCodeScannerCamera stateHandler={this.props.stateHandler} />
       default:
         return null
     }
@@ -183,19 +184,19 @@ export default class LoggedInApp extends Backable<Props, void> {
   }
 
   renderRightButton ({index, hideBookings}: Route) {
-    if (index > 0) return <View style={loggedInApp.navBarContainer}/>
+    if (index > 0) return <View style={loggedInApp.navBarContainer} />
     return <View style={loggedInApp.navBarContainer}>
       {hideBookings
         ? null
         : <TouchableOpacity onPress={() => this.onPressBookingList()}>
           <Image
             source={require('../../../img/list.png')}
-            style={loggedInApp.navBarIcon}/>
+            style={loggedInApp.navBarIcon} />
         </TouchableOpacity>}
       <TouchableOpacity onPress={() => this.onPressSettings()}>
         <Image
           source={require('../../../img/gear.png')}
-          style={loggedInApp.navBarIcon}/>
+          style={loggedInApp.navBarIcon} />
       </TouchableOpacity>
     </View>
   }
@@ -205,7 +206,7 @@ export default class LoggedInApp extends Backable<Props, void> {
       return null
     }
     return <View style={loggedInApp.navBarContainer}>
-      <BackButton onPress={this.backAction}/>
+      <BackButton onPress={this.backAction} />
     </View>
   }
 
@@ -238,6 +239,7 @@ type BackButtonProps = {
 type BackButtonState = {
   opacity: number
 }
+
 class BackButton extends React.Component<void, BackButtonProps, BackButtonState> {
   props: BackButtonProps
   state = {opacity: 1}
@@ -252,7 +254,7 @@ class BackButton extends React.Component<void, BackButtonProps, BackButtonState>
       <Fade duration={100} opacity={this.state.opacity}>
         <Image
           source={require('../../../img/back_240.png')}
-          style={loggedInApp.navBarIcon}/>
+          style={loggedInApp.navBarIcon} />
       </Fade>
     </TouchableOpacity>
   }

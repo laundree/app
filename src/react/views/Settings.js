@@ -12,7 +12,7 @@ import FancyTextButton from './input/FancyTextButton'
 import { settings } from '../../style'
 import { FormattedMessage } from 'react-intl'
 import type { StateHandler } from '../../stateHandler'
-import type { Col, User, Laundry } from '../../reduxTypes'
+import type { User, Laundry } from 'laundree-sdk/lib/redux'
 
 export default class Settings extends React.Component {
   state = {
@@ -21,7 +21,7 @@ export default class Settings extends React.Component {
 
   props: {
     currentUser: string,
-    users: Col<User>,
+    users: {[string]: User},
     laundry: ?Laundry,
     stateHandler: StateHandler
   }
@@ -50,7 +50,7 @@ export default class Settings extends React.Component {
     return <View style={settings.userView}>
       <Image
         style={settings.userImage}
-        source={{uri: photo}}/>
+        source={{uri: photo}} />
       <View style={settings.userNameView}>
         <Text style={settings.userName}>{displayName}</Text>
       </View>
@@ -64,7 +64,7 @@ export default class Settings extends React.Component {
         <View style={settings.settingsView}>
           <View style={settings.settingsHeaderView}>
             <Text style={settings.settingsHeader}>
-              <FormattedMessage id='settings.laundry'/>
+              <FormattedMessage id='settings.laundry' />
             </Text>
           </View>
           <View style={settings.settingsRow}>
@@ -83,16 +83,16 @@ export default class Settings extends React.Component {
     return <View style={settings.settingsView}>
       <View style={settings.settingsHeaderView}>
         <Text style={settings.settingsHeader}>
-          <FormattedMessage id='settings.notifications'/>
+          <FormattedMessage id='settings.notifications' />
         </Text>
       </View>
       <View style={settings.settingsRow}>
         <Text style={settings.settingsText}>
-          <FormattedMessage id='settings.notifications.text'/>
+          <FormattedMessage id='settings.notifications.text' />
         </Text>
         <Switch
           onValueChange={(value) => this.onToggleNotifications(value)}
-          value={this.state.notificationsEnabled}/>
+          value={this.state.notificationsEnabled} />
       </View>
     </View>
   }

@@ -16,9 +16,9 @@ type FancyImageTextButtonProps = { id: string, onPress: Function, disabled?: boo
 const FancyImageTextButton = ({id, onPress, disabled, imageSource, style}: FancyImageTextButtonProps) => <FancyButton
   onPress={onPress} disabled={disabled} style={[fancyImageTextButton.button, style]}>
   <View style={fancyImageTextButton.view}>
-    <Image style={fancyImageTextButton.image} source={imageSource}/>
+    <Image style={fancyImageTextButton.image} source={imageSource} />
     <Text style={fancyImageTextButton.text}>
-      <FormattedMessage id={id}/>
+      <FormattedMessage id={id} />
     </Text>
   </View>
 </FancyButton>

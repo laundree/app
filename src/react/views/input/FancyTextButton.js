@@ -16,7 +16,7 @@ const FancyTextButton = ({id, onPress, disabled, style}: FancyTextButtonProps) =
   style={style} onPress={onPress}
   disabled={disabled}>
   <Text style={[fancyTextButton.text, disabled ? fancyTextButton.disabled : fancyTextButton.enabled]}>
-    <FormattedMessage id={id}/>
+    <FormattedMessage id={id} />
   </Text>
 </FancyButton>
 

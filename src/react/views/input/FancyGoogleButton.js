@@ -10,7 +10,7 @@ const FancyGoogleButton = ({id, onPress, disabled}) => <FancyImageTextButton
   onPress={onPress}
   disabled={disabled}
   id={id}
-  imageSource={require('../../../../img/google.png')}/>
+  imageSource={require('../../../../img/google.png')} />
 
 export default FancyGoogleButton
 

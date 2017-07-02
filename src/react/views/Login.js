@@ -21,7 +21,6 @@ import { FormattedMessage } from 'react-intl'
 import { login } from '../../style'
 
 export default class Login extends React.Component {
-
   /**
    * Renders a notice about the Terms and Conditions
    * and Privacy Policy
@@ -31,16 +30,16 @@ export default class Login extends React.Component {
       <View style={login.infoContainer}>
         <View style={login.infoTopView}>
           <Text style={[login.infoText, login.infoTitleText]}>
-            <FormattedMessage id='login.notice'/>
+            <FormattedMessage id='login.notice' />
           </Text>
           <Text style={login.infoText}>
-            <FormattedMessage id='login.notice.text'/>
+            <FormattedMessage id='login.notice.text' />
           </Text>
         </View>
         <TouchableOpacity
           onPress={this.props.onOpenPrivacy}>
           <Text style={[login.infoText, login.infoLinkText]}>
-            <FormattedMessage id='login.notice.terms'/>
+            <FormattedMessage id='login.notice.terms' />
           </Text>
         </TouchableOpacity>
       </View>
@@ -54,9 +53,9 @@ export default class Login extends React.Component {
   renderAuthFailed () {
     if (!this.props.authFailed) return null
     return <View style={login.authFailedView}>
-      <Image source={require('../../../img/error_240.png')} style={login.authFailedImage}/>
+      <Image source={require('../../../img/error_240.png')} style={login.authFailedImage} />
       <Text style={login.authFailedText}>
-        <FormattedMessage id='login.authentication.failed'/>
+        <FormattedMessage id='login.authentication.failed' />
       </Text>
     </View>
   }
@@ -64,17 +63,17 @@ export default class Login extends React.Component {
   renderLoginOptions () {
     return <View style={login.optionsView}>
       <View style={login.optionView}>
-        <FancyEmailButton onPress={this.props.onOpenEmailPasswordAuth} id='login.email'/>
+        <FancyEmailButton onPress={this.props.onOpenEmailPasswordAuth} id='login.email' />
       </View>
       <View style={login.optionView}>
-        <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} id='login.facebook'/>
+        <FancyFacebookButton onPress={this.props.onOpenFacebookAuth} id='login.facebook' />
       </View>
       <View style={login.optionView}>
-        <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} id='login.google'/>
+        <FancyGoogleButton onPress={this.props.onOpenGoogleAuth} id='login.google' />
       </View>
       <TouchableOpacity onPress={this.props.onOpenSignUp}>
         <Text style={login.hintText}>
-          <FormattedMessage id='login.hint'/>
+          <FormattedMessage id='login.hint' />
         </Text>
       </TouchableOpacity>
     </View>
@@ -84,21 +83,20 @@ export default class Login extends React.Component {
     return <View style={login.logoView}>
       <Image
         style={login.logoImage}
-        source={require('../../../img/logo_large.png')}/>
+        source={require('../../../img/logo_large.png')} />
     </View>
   }
 
   render () {
     return <View style={login.container}>
-    <ScrollView style={login.scrollView}>
-      {this.renderLogo()}
-      {this.renderAuthFailed()}
-      {this.renderLoginOptions()}
-    </ScrollView>
-    {this.renderNotice()}
+      <ScrollView style={login.scrollView}>
+        {this.renderLogo()}
+        {this.renderAuthFailed()}
+        {this.renderLoginOptions()}
+      </ScrollView>
+      {this.renderNotice()}
     </View>
   }
-
 }
 
 Login.propTypes = {

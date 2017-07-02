@@ -24,7 +24,7 @@ export default class LoadingWebView extends React.Component {
     return (
       <View style={this.props.viewStyle}>
         <Modal transparent visible={!this.state.loaded} animationType='fade' onRequestClose={() => {}}>
-          <ActivityIndicator color={constants.darkTheme} size='large' style={loader.activityIndicator}/>
+          <ActivityIndicator color={constants.darkTheme} size='large' style={loader.activityIndicator} />
         </Modal>
         <WebView
           ref={this.props.webViewRef}
@@ -35,7 +35,7 @@ export default class LoadingWebView extends React.Component {
           onLoadEnd={() => this.setState({loaded: true})}
           injectedJavaScript={this.props.injectedJavaScript}
           userAgent={'laundree-app-android'}
-          automaticallyAdjustContentInsets={false}/>
+          automaticallyAdjustContentInsets={false} />
       </View>
     )
   }

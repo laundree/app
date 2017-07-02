@@ -10,8 +10,8 @@
     "generator-star-spacing": 0,
     "react/no-unused-prop-types": 0, // Es lint is not that clever
     "no-var": "error",
-    "react/prop-types": 0
-
+    "react/prop-types": 0,
+    "no-undef": 0
   },
   "env": {
     "node": true

@@ -10,7 +10,7 @@ const FancyFacebookButton = ({id, onPress, disabled}) => <FancyImageTextButton
   onPress={onPress}
   id={id}
   disabled={disabled}
-  imageSource={require('../../../../img/facebook.png')}/>
+  imageSource={require('../../../../img/facebook.png')} />
 
 export default FancyFacebookButton
 

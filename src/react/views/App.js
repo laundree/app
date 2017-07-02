@@ -23,7 +23,6 @@ import locales from '../../../locales'
 type AppState = { stateHandler: ?StateHandler, sesh: number, isConnected: boolean }
 
 export default class App extends React.Component {
-
   state: AppState = { stateHandler: null, sesh: 0, isConnected: true }
 
   /**
@@ -49,10 +48,10 @@ export default class App extends React.Component {
     if (!this.state.stateHandler) return null
     if (!this.state.isConnected) return <OfflineApp />
     if (!this.state.stateHandler.isAuthenticated) {
-      return <LoginApp stateHandler={this.state.stateHandler}/>
+      return <LoginApp stateHandler={this.state.stateHandler} />
     }
     return <Provider store={this.state.stateHandler.store}>
-      <LoggedInApp stateHandler={this.state.stateHandler}/>
+      <LoggedInApp stateHandler={this.state.stateHandler} />
     </Provider>
   }
 

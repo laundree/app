@@ -36,9 +36,9 @@ const DatePicker = ({onCancel, onChange, date, timezone}) => {
   if (Platform.OS === 'ios') {
     return <DatePickerIOS
       onCancel={onCancel} onChange={date => onChange(moment.tz(date, timezone))}
-      date={date.toDate()}/>
+      date={date.toDate()} />
   }
-  return <DatePickerAndroidWrapper timezone={timezone} onChange={onChange} onCancel={onCancel} date={date}/>
+  return <DatePickerAndroidWrapper timezone={timezone} onChange={onChange} onCancel={onCancel} date={date} />
 }
 
 DatePicker.propTypes = {

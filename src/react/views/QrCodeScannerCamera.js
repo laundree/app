@@ -10,7 +10,6 @@ import Camera from 'react-native-camera'
 import url from 'url'
 import { qrCodeScannerCamera } from '../../style'
 export default class QrCodeScanner extends Component {
-
   handleData (qrData) {
     if (this._working) return
     const {path} = url.parse(qrData)

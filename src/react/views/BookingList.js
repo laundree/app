@@ -14,7 +14,7 @@ import moment from 'moment-timezone'
 import { bookingList, constants } from '../../style'
 import Confirm from './modal/Confirm'
 import { FormattedDate, FormattedMessage } from 'react-intl'
-import type { Col, Booking, Machine, User, Laundry } from '../../reduxTypes'
+import type { Booking, Machine, User, Laundry } from 'laundree-sdk/lib/redux'
 import type { StateHandler } from '../../stateHandler'
 
 type RichBooking = {
@@ -46,7 +46,7 @@ class BookingList extends React.Component {
     const sortedBookings = this.getSortedBookings()
     return <View style={bookingList.container}>
       <ScrollView
-        refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()}/>}>
+        refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()} />}>
         <View style={bookingList.scroll}>
           {sortedBookings.map((booking, index) => this.renderBooking(booking, index, sortedBookings))}
         </View>
@@ -55,7 +55,7 @@ class BookingList extends React.Component {
         onConfirm={this.state.onConfirm || (() => {})}
         onCancel={() => this.setState({showModal: false})}
         visible={this.state.showModal}
-        id='general.confirm.delete'/>
+        id='general.confirm.delete' />
     </View>
   }
 
@@ -85,13 +85,13 @@ class BookingList extends React.Component {
     return <View style={bookingList.headerRow}>
       <Text style={bookingList.headerText}> {
         d.isSame(moment(), 'd')
-        ? <FormattedMessage id='timetable.today'/>
-        : d.isSame(moment().add(1, 'day'), 'd')
-          ? <FormattedMessage id='timetable.tomorrow'/>
-          : <Text>
-              <FormattedDate value={d} weekday='long'/>
+          ? <FormattedMessage id='timetable.today' />
+          : d.isSame(moment().add(1, 'day'), 'd')
+            ? <FormattedMessage id='timetable.tomorrow' />
+            : <Text>
+              <FormattedDate value={d} weekday='long' />
               <Text>{' '}</Text>
-              <FormattedDate value={d} month='numeric' day='numeric'/>
+              <FormattedDate value={d} month='numeric' day='numeric' />
             </Text>
       } </Text>
     </View>
@@ -113,9 +113,7 @@ class BookingList extends React.Component {
       return {deleted}
     })
     try {
-      await this.props.stateHandler.sdk
-        .booking(booking.id)
-        .del()
+      await this.props.stateHandler.sdk.api.booking.del(booking.id)
     } catch (_) {
       this.setState(({deleted}) => {
         deleted[booking.id] = false
@@ -132,8 +130,8 @@ export default class BookingListWrapper extends React.Component {
   props: {
     user: User,
     laundry: Laundry,
-    machines: Col<Machine>,
-    bookings: Col<Booking>,
+    machines: {[string]: Machine},
+    bookings: {[string]: Booking},
     userBookings: ?(string[]),
     stateHandler: StateHandler
   }
@@ -163,7 +161,7 @@ export default class BookingListWrapper extends React.Component {
   render () {
     const userBookings = this.props.userBookings
     if (!userBookings) {
-      return <ActivityIndicator color={constants.darkTheme} size='large' style={bookingList.activityIndicator}/>
+      return <ActivityIndicator color={constants.darkTheme} size='large' style={bookingList.activityIndicator} />
     }
     const bookings = userBookings
       .reduce((arr: RichBooking[], id: string): RichBooking[] => {
@@ -185,10 +183,10 @@ export default class BookingListWrapper extends React.Component {
     if (!bookings.length) {
       return <View style={bookingList.noBookingsView}>
         <Text style={bookingList.headerText}>
-          <FormattedMessage id='bookinglist.nobookings.title'/>
+          <FormattedMessage id='bookinglist.nobookings.title' />
         </Text>
         <Text>
-          <FormattedMessage id='bookinglist.nobookings.text'/>
+          <FormattedMessage id='bookinglist.nobookings.text' />
         </Text>
       </View>
     }
@@ -196,7 +194,6 @@ export default class BookingListWrapper extends React.Component {
       onRefresh={() => this.fetchData()}
       bookings={bookings}
       laundry={this.props.laundry}
-      stateHandler={this.props.stateHandler}/>
+      stateHandler={this.props.stateHandler} />
   }
-
 }

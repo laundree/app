@@ -58,7 +58,7 @@ class AuthWebView extends React.Component {
     return <LoadingWebView
       viewStyle={authWebView.view}
       source={this.props.source}
-      style={authWebView.webView}/>
+      style={authWebView.webView} />
   }
 }
 

@@ -20,16 +20,15 @@ import type { StateHandler } from '../../stateHandler'
 import LoadingWebView from './LoadingWebView'
 import config from '../../config'
 
-const SignUpWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/auth/sign-up`}} viewStyle={loginApp.webViewView} style={loginApp.webView}/>
-const ForgotWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/auth/forgot`}} viewStyle={loginApp.webViewView} style={loginApp.webView}/>
-const PrivacyWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/privacy`}} viewStyle={loginApp.webViewView} style={loginApp.webView}/>
+const SignUpWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/auth/sign-up`}} viewStyle={loginApp.webViewView} style={loginApp.webView} />
+const ForgotWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/auth/forgot`}} viewStyle={loginApp.webViewView} style={loginApp.webView} />
+const PrivacyWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/privacy`}} viewStyle={loginApp.webViewView} style={loginApp.webView} />
 
 type Props = { stateHandler: StateHandler }
 type State = { authFailed: boolean }
 type Route = { index: number, cancelTitle: string, Element: any }
 
 export default class LoginApp extends Backable<Props, State> {
-
   state = {authFailed: false}
 
   static googleRoute: Route = {
@@ -96,10 +95,10 @@ export default class LoginApp extends Backable<Props, State> {
             onAuthFailed={() => {
               navigator.pop()
               this.setState({authFailed: true})
-            }}/>
+            }} />
           <FancyTextButton
             onPress={() => navigator.pop()} id={cancelTitle}
-            style={loginApp.cancelButton}/>
+            style={loginApp.cancelButton} />
         </View>
       default:
         return null

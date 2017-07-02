@@ -7,7 +7,7 @@ import EventEmitter from 'events'
 import config from './config'
 import OneSignal from 'react-native-onesignal'
 import type { Store } from 'redux'
-import type { State, Action } from './reduxTypes'
+import type { State, Action } from 'laundree-sdk/lib/redux'
 import ReactNativeI18n from 'react-native-i18n'
 import Analytics from 'react-native-firebase-analytics'
 
@@ -86,7 +86,7 @@ export class StateHandler extends EventEmitter {
 
   get store (): Store<State, Action> {
     if (this._store) return this._store
-    const store = createStore(redux.reducers, {})
+    const store = createStore(redux.reducer)
     this._store = store
     return store
   }
@@ -118,7 +118,7 @@ export class StateHandler extends EventEmitter {
     Analytics.setUserId(auth && auth.userId)
     if (!auth) {
       OneSignal.setSubscription(false)
-      this.sdk.updateAuth({})
+      this.sdk.updateAuth()
       this._disconnectSocket()
       this._auth = null
       this._store = null
@@ -158,7 +158,7 @@ export class StateHandler extends EventEmitter {
     if (!this._auth) {
       return
     }
-    await this.sdk.user(this._auth.userId).addOneSignalPlayerId(id)
+    await this.sdk.api.user.addOneSignalPlayerId(this._auth.userId, id)
     saveOneSignalId(id)
     saveNotificationSetting(true)
   }

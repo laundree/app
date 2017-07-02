@@ -26,7 +26,7 @@ export default class EmailPasswordAuthView extends React.Component {
     const {email, password} = this.state
     this.setState({loading: true})
     try {
-      const {secret, owner: {id}} = await this.props.stateHandler.sdk.token
+      const {secret, owner: {id}} = await this.props.stateHandler.sdk.api.token
         .createTokenFromEmailPassword(`app-${uuid.v4()}`, email, password)
       this.props.onSuccess({secret, userId: id})
     } catch (err) {
@@ -41,22 +41,22 @@ export default class EmailPasswordAuthView extends React.Component {
       <View style={login.input}>
         <FancyTextInput
           label={'E-mail address'} keyboardType={'email-address'} value={this.state.email}
-          onChangeText={email => this.setState({email: email.trim()})}/>
+          onChangeText={email => this.setState({email: email.trim()})} />
       </View>
       <View style={login.input}>
         <FancyTextInput
           label={'Password'} secureTextEntry value={this.state.password}
-          onChangeText={password => this.setState({password})}/>
+          onChangeText={password => this.setState({password})} />
       </View>
       <View style={login.buttonInput}>
         <FancyTextButton
           disabled={this.isDisabled()}
           onPress={() => this.login()}
-          id='login.button'/>
+          id='login.button' />
       </View>
       <TouchableOpacity onPress={this.props.onOpenForgot}>
         <Text style={login.hint}>
-          <FormattedMessage id='login.forgotpassword'/>
+          <FormattedMessage id='login.forgotpassword' />
         </Text>
       </TouchableOpacity>
     </View>
@@ -65,5 +65,4 @@ export default class EmailPasswordAuthView extends React.Component {
   isDisabled () {
     return Boolean(!(this.state.email && this.state.password && !this.state.loading))
   }
-
 }

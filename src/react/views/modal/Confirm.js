@@ -15,19 +15,19 @@ const Confirm = ({id, visible, onCancel, onConfirm}) => (
   <Base visible={visible} onRequestClose={onCancel}>
     <View style={modal.title}>
       <Text style={modal.titleText}>
-        <FormattedMessage id={id}/>
+        <FormattedMessage id={id} />
       </Text>
     </View>
     <View style={modal.buttonContainer}>
       <View style={modal.button}>
         <FancyTextButton
           id='general.yes'
-          onPress={onConfirm}/>
+          onPress={onConfirm} />
       </View>
       <View style={modal.button}>
         <FancyTextButton
           style={modal.redButton} id='general.no'
-          onPress={onCancel}/>
+          onPress={onCancel} />
       </View>
     </View>
   </Base>)
