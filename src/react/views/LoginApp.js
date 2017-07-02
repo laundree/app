@@ -5,105 +5,136 @@
  */
 
 import React from 'react'
-import {
-  Navigator,
-  View
-} from 'react-native'
+import { View, Text } from 'react-native'
+
+import { StackNavigator } from 'react-navigation'
+
 import Login from './Login'
 import { loginApp } from '../../style'
 import FacebookAuthWebView from './FacebookAuthWebView'
 import GoogleAuthWebView from './GoogleAuthWebView'
 import EmailPasswordAuthView from './EmailPasswordAuthView'
 import FancyTextButton from './input/FancyTextButton'
-import Backable from './Backable'
-import type { StateHandler } from '../../stateHandler'
 import LoadingWebView from './LoadingWebView'
 import config from '../../config'
+import { FormattedMessage } from 'react-intl'
 
-const SignUpWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/auth/sign-up`}} viewStyle={loginApp.webViewView} style={loginApp.webView} />
-const ForgotWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/auth/forgot`}} viewStyle={loginApp.webViewView} style={loginApp.webView} />
-const PrivacyWebView = () => <LoadingWebView source={{uri: `${config.laundree.host}/privacy`}} viewStyle={loginApp.webViewView} style={loginApp.webView} />
-
-type Props = { stateHandler: StateHandler }
-type State = { authFailed: boolean }
-type Route = { index: number, cancelTitle: string, Element: any }
-
-export default class LoginApp extends Backable<Props, State> {
-  state = {authFailed: false}
-
-  static googleRoute: Route = {
-    index: 1,
-    cancelTitle: 'login.cancel',
-    Element: GoogleAuthWebView
+class LoginScreen extends React.Component {
+  static navigationOptions = {
+    headerTitle: (
+      <View style={loginApp.navBarContainer}>
+        <Text style={loginApp.navBarTitle}><FormattedMessage id='login.title'/></Text>
+      </View>
+    )
   }
 
-  static facebookRoute: Route = {
-    index: 1,
-    cancelTitle: 'login.cancel',
-    Element: FacebookAuthWebView
-  }
-
-  static signUpRoute: Route = {
-    index: 1,
-    cancelTitle: 'login.close',
-    Element: SignUpWebView
-  }
-
-  static privacyRoute: Route = {
-    index: 1,
-    cancelTitle: 'login.close',
-    Element: PrivacyWebView
-  }
-
-  static emailPasswordRoute: Route = {
-    index: 1,
-    Element: EmailPasswordAuthView,
-    cancelTitle: 'login.cancel'
-  }
-
-  static forgotRoute: Route = {
-    index: 1,
-    Element: ForgotWebView,
-    cancelTitle: 'login.close'
-  }
-
-  /**
-   * Render scene for Navigator.
-   * Renders either the scene with login buttons
-   * or the e-mail login form.
-   */
-  renderScene ({index, Element, cancelTitle}: Route, navigator: Navigator) {
-    switch (index) {
-      case 0:
-        this.backAction = null
-        return <Login
-          authFailed={this.state.authFailed}
-          stateHandler={this.props.stateHandler}
-          onOpenEmailPasswordAuth={() => navigator.push(LoginApp.emailPasswordRoute)}
-          onOpenGoogleAuth={() => navigator.push(LoginApp.googleRoute)}
-          onOpenFacebookAuth={() => navigator.push(LoginApp.facebookRoute)}
-          onOpenSignUp={() => navigator.push(LoginApp.signUpRoute)}
-          onOpenPrivacy={() => navigator.push(LoginApp.privacyRoute)}
+  render () {
+    const {authFailed, stateHandler} = this.props.screenProps
+    const navigate = this.props.navigation.navigate
+    return (
+      <View style={loginApp.mainContainer}>
+        <Login
+          authFailed={authFailed}
+          stateHandler={stateHandler}
+          onOpenEmailPasswordAuth={() => navigate('EmailPasswordAuth')}
+          onOpenGoogleAuth={() => navigate('GoogleAuth')}
+          onOpenFacebookAuth={() => navigate('FacebookAuth')}
+          onOpenSignUp={() => navigate('SignUp')}
+          onOpenPrivacy={() => navigate('Privacy')}
         />
-      case 1:
-        this.backAction = () => navigator.pop()
-        return <View style={loginApp.cancelView}>
-          <Element
-            stateHandler={this.props.stateHandler}
-            onOpenForgot={() => navigator.push(LoginApp.forgotRoute)}
-            onSuccess={({secret, userId}) => this.props.stateHandler.updateAuth({userId, token: secret})}
-            onAuthFailed={() => {
-              navigator.pop()
-              this.setState({authFailed: true})
-            }} />
-          <FancyTextButton
-            onPress={() => navigator.pop()} id={cancelTitle}
-            style={loginApp.cancelButton} />
-        </View>
-      default:
-        return null
+      </View>
+    )
+  }
+}
+
+class Screen extends React.Component {
+  Element: *
+  cancelTitle = 'login.cancel'
+
+  back = () => this.props.navigation.goBack()
+
+  render () {
+    const {stateHandler, onAuthFailed} = this.props.screenProps
+    return <View style={[loginApp.cancelView, loginApp.mainContainer]}>
+      <this.Element
+        stateHandler={stateHandler}
+        onOpenForgot={() => this.props.navigation.navigate('Forgot')}
+        onSuccess={({secret, userId}) => stateHandler.updateAuth({userId, token: secret})}
+        onAuthFailed={() => {
+          this.back()
+          onAuthFailed(true)
+        }}/>
+      <FancyTextButton
+        onPress={this.back}
+        id={this.cancelTitle}
+        style={loginApp.cancelButton}/>
+    </View>
+  }
+}
+
+class GoogleAuthScreen extends Screen {
+  Element = GoogleAuthWebView
+}
+
+class FacebookAuthScreen extends Screen {
+  Element = FacebookAuthWebView
+}
+
+class EmailPasswordAuthScreen extends Screen {
+  Element = EmailPasswordAuthView
+}
+
+const ForgotWebView = () => <LoadingWebView
+  source={{uri: `${config.laundree.host}/auth/forgot`}}
+  viewStyle={loginApp.webViewView} style={loginApp.webView}/>
+
+class ForgotScreen extends Screen {
+  cancelTitle = 'login.close'
+
+  Element = ForgotWebView
+}
+
+const SignUpWebView = () => <LoadingWebView
+  source={{uri: `${config.laundree.host}/auth/sign-up`}}
+  viewStyle={loginApp.webViewView} style={loginApp.webView}/>
+
+class SignUpScreen extends Screen {
+  cancelTitle = 'login.close'
+
+  Element = SignUpWebView
+}
+
+const PrivacyWebView = () => <LoadingWebView
+  source={{uri: `${config.laundree.host}/privacy`}}
+  viewStyle={loginApp.webViewView} style={loginApp.webView}/>
+
+class PrivacyScreen extends Screen {
+  cancelTitle = 'login.close'
+
+  Element = PrivacyWebView
+}
+
+const Stack = StackNavigator({
+  Login: {screen: LoginScreen},
+  GoogleAuth: {screen: GoogleAuthScreen},
+  FacebookAuth: {screen: FacebookAuthScreen},
+  EmailPasswordAuth: {screen: EmailPasswordAuthScreen},
+  Forgot: {screen: ForgotScreen},
+  Privacy: {screen: PrivacyScreen},
+  SignUp: {screen: SignUpScreen}
+}, {
+  navigationOptions: ({navigation}) => {
+    return {
+      headerStyle: loginApp.navBar,
+      headerTitleStyle: loginApp.navBarTitle,
+      headerBackTitleStyle: loginApp.navBarBack,
+      headerTintColor: '#fff'
     }
   }
+})
+
+export default class LoginApp extends React.Component {
+  state = {authFailed: false}
 
   /**
    * Returns a Navigator that handles
@@ -111,16 +142,10 @@ export default class LoginApp extends Backable<Props, State> {
    * the scene with login buttons etc.
    */
   render () {
-    return <Navigator
-      initialRoute={{index: 0}}
-      configureScene={(route, routeStack) => Navigator.SceneConfigs.FloatFromBottom}
-      renderScene={(route, navigator) => <View style={loginApp.mainContainer}>
-        {this.renderScene(route, navigator)}
-      </View>}
-    />
+    return <Stack screenProps={{
+      authFailed: this.state.authFailed,
+      stateHandler: this.props.stateHandler,
+      onAuthFailed: (authFailed) => this.setState({authFailed})
+    }}/>
   }
-}
-
-LoginApp.propTypes = {
-  stateHandler: React.PropTypes.object
 }

@@ -1,11 +1,30 @@
-/**
- * Created by budde on 25/02/2017.
- */
+// @flow
+
 import React from 'react'
 import { View, TextInput } from 'react-native'
 import { fancyTextInput, constants } from '../../../style'
 
-const FancyTextInput = ({label, value, onChangeText, keyboardType, secureTextEntry}) => <View style={fancyTextInput.container}>
+type Props = {
+  secureTextEntry?: boolean,
+  label?: string,
+  keyboardType?: 'default' |
+    'email-address' |
+    'numeric' |
+    'phone-pad' |
+    'ascii-capable' |
+    'numbers-and-punctuation' |
+    'url' |
+    'number-pad' |
+    'name-phone-pad' |
+    'decimal-pad' |
+    'twitter' |
+    'web-search',
+  onChangeText: Function,
+  value: string
+}
+
+const FancyTextInput = ({label, value, onChangeText, keyboardType, secureTextEntry}: Props) => <View
+  style={fancyTextInput.container}>
   <TextInput
     placeholder={label}
     style={fancyTextInput.textInput}
@@ -16,13 +35,5 @@ const FancyTextInput = ({label, value, onChangeText, keyboardType, secureTextEnt
     value={value}
   />
 </View>
-
-FancyTextInput.propTypes = {
-  secureTextEntry: TextInput.propTypes.secureTextEntry,
-  label: React.PropTypes.string.isRequired,
-  keyboardType: TextInput.propTypes.keyboardType,
-  onChangeText: TextInput.propTypes.onChangeText,
-  value: TextInput.propTypes.value
-}
 
 export default FancyTextInput

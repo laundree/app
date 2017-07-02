@@ -7,7 +7,7 @@
  * Also provides internationalisation through the
  * IntlProvider wrapper.
  */
-
+import {Buffer} from 'buffer/'
 import React from 'react'
 import LoginApp from './LoginApp'
 import OfflineApp from './OfflineApp'
@@ -19,6 +19,8 @@ import { app } from '../../style'
 import type { StateHandler } from '../../stateHandler'
 import { IntlProvider } from 'react-intl'
 import locales from '../../../locales'
+
+global.Buffer = Buffer
 
 type AppState = { stateHandler: ?StateHandler, sesh: number, isConnected: boolean }
 

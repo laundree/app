@@ -36,6 +36,7 @@ export default class Settings extends React.Component {
   }
 
   user () {
+    console.log(this.props)
     return this.props.users && this.props.users[this.props.currentUser]
   }
 
@@ -109,7 +110,7 @@ export default class Settings extends React.Component {
 
   render () {
     return <View style={settings.container}>
-      <ScrollView style={settings.scrollContainer}>
+      <ScrollView>
         {this.renderUser()}
         {this.renderLaundry()}
         {this.renderNotifications()}

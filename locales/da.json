@@ -13,6 +13,7 @@
   "general.qrcode": "Scan QR kode",
   "login.authentication.failed": "Du kan ikke logge ind. Prøv med andre login oplysninger eller forsøg igen senere.",
   "login.button": "Log ind",
+  "login.title": "Log ind",
   "login.cancel": "Annuller log ind",
   "login.email": "Log ind med Email og Kodeord",
   "login.facebook": "Log ind med Facebook",

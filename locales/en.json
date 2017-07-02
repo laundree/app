@@ -13,6 +13,7 @@
   "general.qrcode": "Scan QR code",
   "login.authentication.failed": "Authentication failed",
   "login.button": "Login",
+  "login.title": "Log ind",
   "login.cancel": "Cancel login",
   "login.close": "Close",
   "login.email": "Login with Email and Password",

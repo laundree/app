@@ -11,7 +11,8 @@
     "react/no-unused-prop-types": 0, // Es lint is not that clever
     "no-var": "error",
     "react/prop-types": 0,
-    "no-undef": 0
+    "no-undef": 0,
+    "react/jsx-tag-spacing": 0
   },
   "env": {
     "node": true

@@ -1,7 +1,9 @@
+// @flow
 /**
  * Created by budde on 27/02/2017.
  */
-import { StyleSheet, Platform, Navigator } from 'react-native'
+import { StyleSheet, Platform } from 'react-native'
+
 const isIos = Platform.OS === 'ios'
 export const constants = {
   colorRed: '#e55564',
@@ -150,33 +152,38 @@ export const authWebView = StyleSheet.create({
   }
 })
 
+const navBarContainer = {
+  backgroundColor: constants.colorRed,
+  justifyContent: 'center',
+  alignItems: 'center',
+  flex: 1,
+  paddingLeft: 20,
+  paddingRight: 20,
+  flexDirection: 'row',
+  minWidth: 40
+}
+
+const navBarTitle = {
+  fontSize: 20,
+  color: '#fff'
+}
+
+const navBar = {
+  backgroundColor: constants.colorRed
+}
+
 export const loggedInApp = StyleSheet.create({
   mainContainer: {
     backgroundColor: constants.appBackgroundColor,
-    flex: 1,
-    paddingTop: Navigator.NavigationBar.Styles.General.NavBarHeight + constants.statusBarHeight
-
+    flex: 1
   },
-  navigationBar: {
-    backgroundColor: constants.colorRed
-  },
-  navBarContainer: {
-    backgroundColor: constants.colorRed,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    minWidth: 40
-  },
-  navBarTitle: {
-    fontSize: 20,
-    color: '#fff'
-  },
+  navBar,
+  navBarContainer,
+  navBarTitle,
   navBarIcon: {
     width: 20,
     height: 20,
-    marginRight: 10,
-    marginLeft: 10
+    marginLeft: 20
   },
   content: {
     borderWidth: 1
@@ -212,10 +219,10 @@ export const offline = StyleSheet.create({
     alignItems: 'center'
   },
   headerText: {
-    fontSize: 24
+    fontSize: 20
   },
   message: {
-    fontSize: 18,
+    fontSize: 12,
     padding: 10
   }
 })
@@ -326,23 +333,15 @@ export const login = StyleSheet.create({
 
 export const loginApp = StyleSheet.create({
   mainContainer: {
-    paddingTop: constants.statusBarHeight,
     backgroundColor: constants.appBackgroundColor,
     flex: 1
   },
-  navigationBar: {
-    backgroundColor: constants.colorRed
-  },
-  navBarContainer: {
-    backgroundColor: constants.colorRed,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-    minWidth: 40
-  },
-  navBarTitle: {
-    fontSize: 20,
-    color: '#fff'
+  navBar,
+  navBarContainer,
+  navBarTitle,
+  navBarBack: {
+    color: '#fff',
+    fontSize: 16
   },
   webViewView: {
     flex: 1

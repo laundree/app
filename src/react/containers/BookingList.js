@@ -1,6 +1,5 @@
-/**
- * Created by soeholm on 06.04.17.
- */
+// @flow
+
 import { connect } from 'react-redux'
 import BookingList from '../views/BookingList'
 

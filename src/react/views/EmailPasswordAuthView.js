@@ -55,7 +55,7 @@ export default class EmailPasswordAuthView extends React.Component {
           id='login.button' />
       </View>
       <TouchableOpacity onPress={this.props.onOpenForgot}>
-        <Text style={login.hint}>
+        <Text style={login.hintText}>
           <FormattedMessage id='login.forgotpassword' />
         </Text>
       </TouchableOpacity>

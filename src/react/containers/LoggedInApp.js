@@ -1,6 +1,5 @@
-/**
- * Created by budde on 22/02/2017.
- */
+// @flow
+
 import { connect } from 'react-redux'
 import LoggedInApp from '../views/LoggedInApp'
 

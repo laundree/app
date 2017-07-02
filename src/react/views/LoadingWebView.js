@@ -11,12 +11,13 @@ type Event = { nativeEvent: { url: string, data: string } }
 export default class LoadingWebView extends React.Component {
   state: { loaded: boolean } = {loaded: false}
   props: {
+    fakeUserAgent?: boolean,
     injectedJavaScript?: string,
-    viewStyle?: {},
+    viewStyle?: number,
     webViewRef?: () => WebView,
     onMessage?: (evt: Event) => any,
     onLoadStart?: (evt: Event) => any,
-    style?: {},
+    style?: number,
     source?: {}
   }
 
@@ -34,7 +35,7 @@ export default class LoadingWebView extends React.Component {
           onMessage={this.props.onMessage}
           onLoadEnd={() => this.setState({loaded: true})}
           injectedJavaScript={this.props.injectedJavaScript}
-          userAgent={'laundree-app-android'}
+          userAgent={this.props.fakeUserAgent ? 'Mozilla/5.0' : undefined}
           automaticallyAdjustContentInsets={false} />
       </View>
     )

@@ -1,11 +1,10 @@
-/**
- * Created by budde on 25/02/2017.
- */
+// @flow
+
 import React from 'react'
 import FancyImageTextButton from './FancyImageTextButton'
 import { fancyGoogleButton } from '../../../style'
 
-const FancyGoogleButton = ({id, onPress, disabled}) => <FancyImageTextButton
+const FancyGoogleButton = ({id, onPress, disabled}: {id: string, onPress: Function, disabled?: boolean}) => <FancyImageTextButton
   style={fancyGoogleButton.button}
   onPress={onPress}
   disabled={disabled}
@@ -13,10 +12,3 @@ const FancyGoogleButton = ({id, onPress, disabled}) => <FancyImageTextButton
   imageSource={require('../../../../img/google.png')} />
 
 export default FancyGoogleButton
-
-FancyGoogleButton.propTypes = {
-  onPress: React.PropTypes.func.isRequired,
-  id: React.PropTypes.string.isRequired,
-  disabled: React.PropTypes.bool
-}
-

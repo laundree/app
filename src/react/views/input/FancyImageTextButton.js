@@ -11,7 +11,7 @@ import FancyButton from './FancyButton'
 import { fancyImageTextButton } from '../../../style'
 import { FormattedMessage } from 'react-intl'
 
-type FancyImageTextButtonProps = { id: string, onPress: Function, disabled?: boolean, imageSource: number, style?: Object | Object[] }
+type FancyImageTextButtonProps = { id: string, onPress: Function, disabled?: boolean, imageSource: number, style?: * }
 
 const FancyImageTextButton = ({id, onPress, disabled, imageSource, style}: FancyImageTextButtonProps) => <FancyButton
   onPress={onPress} disabled={disabled} style={[fancyImageTextButton.button, style]}>
