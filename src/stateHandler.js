@@ -1,8 +1,8 @@
 // @flow
+import { AsyncStorage, NetInfo } from 'react-native'
 import { createStore } from 'redux'
 import { redux, Sdk } from 'laundree-sdk'
 import io from 'socket.io-client'
-import { AsyncStorage, NetInfo } from 'react-native'
 import EventEmitter from 'events'
 import config from './config'
 import OneSignal from 'react-native-onesignal'

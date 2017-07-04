@@ -19,8 +19,11 @@ import { app } from '../../style'
 import type { StateHandler } from '../../stateHandler'
 import { IntlProvider } from 'react-intl'
 import locales from '../../../locales'
-
 global.Buffer = Buffer
+// $FlowFixMe We are going to set this and thats final!
+console.ignoredYellowBox = [
+  'Setting a timer' // TODO remove this when https://github.com/facebook/react-native/issues/12981 has been resolved
+]
 
 type AppState = { stateHandler: ?StateHandler, sesh: number, isConnected: boolean }
 
