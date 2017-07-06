@@ -1,19 +1,19 @@
 // @flow
 
 import React from 'react'
-import { View, Text, Navigator, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { StackNavigator, NavigationActions } from 'react-navigation'
+import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import Timetable from '../containers/Timetable'
 import Settings from './../containers/Settings'
 import BookingList from '../containers/BookingList'
 import QrCodeScanner from './QrCodeScanner'
 import QrCodeScannerCamera from './QrCodeScannerCamera'
-import Backable from './Backable'
 import { loggedInApp, constants } from '../../style'
 import OneSignal from 'react-native-onesignal'
-import Fade from './animation/Fade'
-import type { User, Laundry, Col } from '../../reduxTypes'
-import type { NavigatorSceneConfig } from 'react-native'
+import type { User, Laundry } from 'laundree-sdk/lib/redux'
 import { FormattedMessage } from 'react-intl'
+
+type Col<X> = { [string]: X }
 
 type Props = {
   currentUser: ?string,
@@ -27,12 +27,238 @@ type Route = {
   id: string,
   index: number,
   hideBookings?: boolean,
-  sceneConfig?: NavigatorSceneConfig
+  sceneConfig?: *
 }
 
-export default class LoggedInApp extends Backable<Props, void> {
-  navigator: Navigator
+class Screen extends React.Component {
+  Element: *
+  redirecting = false
 
+  isLoading () {
+    return false
+  }
+
+  check (user) {
+    return null
+  }
+
+  checkRedirect (user) {
+    const route = this.check(user)
+    if (!route) {
+      return
+    }
+    if (route === this.props.navigation.state.routeName) {
+      return
+    }
+    if (this.redirecting) {
+      return
+    }
+    this.redirecting = true
+    this.props.navigation.dispatch(NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({routeName: route})
+      ]
+    }))
+  }
+
+  componentDidMount () {
+    this.checkRedirect(this.props.screenProps.user)
+  }
+
+  componentWillReceiveProps (props) {
+    if (props.screenProps.user === this.props.screenProps.user) {
+      return
+    }
+    this.checkRedirect(props.screenProps.user)
+  }
+
+  render () {
+    const {user, laundry, stateHandler} = this.props.screenProps
+    if (this.isLoading()) {
+      return (
+        <View style={loggedInApp.mainContainer}>
+          <ActivityIndicator color={constants.darkTheme} size={'large'} style={loggedInApp.activityIndicator}/>
+        </View>
+      )
+    }
+    return (
+      <View style={loggedInApp.mainContainer}>
+        <this.Element
+          user={user}
+          laundry={laundry}
+          stateHandler={stateHandler}
+          onShowScanner={() => this.props.navigation.dispatch(NavigationActions.reset({
+            index: 1,
+            actions: [
+              NavigationActions.navigate({routeName: 'QrCodeScanner'}),
+              NavigationActions.navigate({routeName: 'QrCodeScannerCamera'})
+            ]
+          }))}
+        />
+      </View>
+    )
+  }
+}
+
+class TimetableScreen extends Screen {
+  Element = Timetable
+
+  static navigationOptions = {
+    headerTitle: (
+      <View style={loggedInApp.navBarContainer}>
+        <Text style={loggedInApp.navBarTitle}><FormattedMessage id='general.timetable'/></Text>
+      </View>
+    )
+  }
+
+  componentDidMount () {
+    super.componentDidMount()
+    this.props.screenProps.stateHandler.sdk.listLaundries()
+  }
+
+  check (user) {
+    return user && user.laundries.length === 0 && 'QrCodeScanner'
+  }
+
+  isLoading () {
+    return !(this.props.screenProps.user && this.props.screenProps.laundry)
+  }
+}
+
+class SettingsScreen extends Screen {
+  Element = Settings
+
+  static navigationOptions = {
+    headerTitle: (
+      <View style={loggedInApp.navBarContainer}>
+        <Text style={loggedInApp.navBarTitle}><FormattedMessage id='general.settings'/></Text>
+      </View>
+    )
+  }
+}
+
+class BookingsScreen extends Screen {
+  Element = BookingList
+
+  static navigationOptions = {
+    headerTitle: (
+      <View style={loggedInApp.navBarContainer}>
+        <Text style={loggedInApp.navBarTitle}><FormattedMessage id='general.yourbookings'/></Text>
+      </View>
+    )
+  }
+
+  check (user) {
+    return user && user.laundries.length === 0 && 'QrCodeScanner'
+  }
+
+  isLoading () {
+    return !(this.props.screenProps.user && this.props.screenProps.laundry)
+  }
+}
+
+class QrCodeScannerScreen extends Screen {
+  static navigationOptions = {
+    headerTitle: (
+      <View style={loggedInApp.navBarContainer}>
+        <Text style={loggedInApp.navBarTitle}><FormattedMessage id='general.add.laundry'/></Text>
+      </View>
+    )
+  }
+
+  check (user) {
+    return user && user.laundries.length > 0 && 'Timetable'
+  }
+
+  Element = QrCodeScanner
+
+  isLoading () {
+    return !this.props.screenProps.user
+  }
+}
+
+class QrCodeScannerCameraScreen extends Screen {
+  static navigationOptions = {
+    headerTitle: (
+      <View style={loggedInApp.navBarContainer}>
+        <Text style={loggedInApp.navBarTitle}><FormattedMessage id='general.qrcode'/></Text>
+      </View>
+    )
+  }
+
+  check (user) {
+    return user && user.laundries.length > 0 && 'Timetable'
+  }
+
+  Element = QrCodeScannerCamera
+
+  isLoading () {
+    return !this.props.screenProps.user
+  }
+}
+
+class NoopScreen extends Screen {
+  Element = () => null
+
+  isLoading () {
+    return true
+  }
+
+  check (user) {
+    return user && ((user.laundries.length === 0 && 'QrCodeScanner') || 'Timetable')
+  }
+}
+
+function renderRightButton (navigation, user) {
+  if (navigation.state.routeName !== 'Timetable' && navigation.state.routeName !== 'QrCodeScanner') {
+    return null
+  }
+  const bookingsView = <TouchableOpacity
+    onPress={() => navigation.dispatch(NavigationActions.reset({
+      index: 1,
+      actions: [
+        NavigationActions.navigate({routeName: navigation.state.routeName}),
+        NavigationActions.navigate({routeName: 'Bookings'})
+      ]
+    }))}>
+    <Image
+      source={require('../../../img/list.png')}
+      style={loggedInApp.navBarIcon}/>
+  </TouchableOpacity>
+  return <View style={loggedInApp.navBarContainer}>
+    {(user && user.laundries.length > 0 && bookingsView) || null}
+    <TouchableOpacity onPress={() => navigation.dispatch(NavigationActions.reset({
+      index: 1,
+      actions: [
+        NavigationActions.navigate({routeName: navigation.state.routeName}),
+        NavigationActions.navigate({routeName: 'Settings'})
+      ]
+    }))}>
+      <Image
+        source={require('../../../img/gear.png')}
+        style={loggedInApp.navBarIcon}/>
+    </TouchableOpacity>
+  </View>
+}
+
+const Stack = StackNavigator({
+  Noop: {screen: NoopScreen},
+  Timetable: {screen: TimetableScreen},
+  Settings: {screen: SettingsScreen},
+  Bookings: {screen: BookingsScreen},
+  QrCodeScanner: {screen: QrCodeScannerScreen},
+  QrCodeScannerCamera: {screen: QrCodeScannerCameraScreen}
+}, {
+  navigationOptions: ({navigation, screenProps}) => ({
+    headerStyle: loggedInApp.navBar,
+    headerTitleStyle: loggedInApp.navBarTitle,
+    headerTintColor: '#fff',
+    headerRight: renderRightButton(navigation, screenProps.user)
+  })
+})
+
+export default class LoggedInApp extends React.Component {
   onIds = (device: { userId: string }) => {
     console.log('Got id', device.userId)
     this.props.stateHandler.updateOneSignalId(device.userId)
@@ -49,104 +275,6 @@ export default class LoggedInApp extends Backable<Props, void> {
     OneSignal.removeEventListener('ids', this.onIds)
   }
 
-  findInitialRoute (u: ?User = null): Route {
-    const user = u || (this.props.currentUser && this.props.users[this.props.currentUser])
-    if (!user) return this.loadingRoute
-    return user.laundries.length ? this.timetableRoute : this.qrRoute
-  }
-
-  refresh (users: Col<User>, currentUser?: string = '') {
-    this.navigator.resetTo(this.findInitialRoute(users[currentUser]))
-  }
-
-  componentWillReceiveProps ({currentUser, users, laundries}: Props): void {
-    if (!this.props.currentUser && currentUser) {
-      return this.refresh(users, currentUser)
-    }
-    const user = this.user()
-    if (!user || !currentUser) return
-    if (user.laundries.length !== users[currentUser].laundries.length) {
-      this.props.stateHandler.refresh()
-      this.navigator.replace(this.loadingRoute)
-    }
-    if (this.findLaundries().length === this.findLaundries(users[currentUser], laundries).length) return
-    this.refresh(users, currentUser)
-  }
-
-  findLaundries (user?: User, laundries?: Col<Laundry>): Laundry[] {
-    const ls = laundries || this.props.laundries
-    return (user || this.user() || {laundries: []}).laundries.map(id => ls[id]).filter(l => l)
-  }
-
-  loadingRoute = {title: '', id: 'loading', index: 0, hideBookings: true}
-
-  timetableRoute = {title: 'general.timetable', id: 'timetable', index: 0}
-
-  bookingListRoute = {
-    title: 'general.yourbookings',
-    id: 'bookingList',
-    index: 1
-  }
-
-  settingsRoute = {
-    title: 'general.settings',
-    id: 'settings',
-    index: 1
-  }
-
-  qrRoute = {
-    index: 0,
-    hideBookings: true,
-    title: 'general.add.laundry',
-    id: 'qr'
-  }
-
-  qrScannerRoute = {
-    index: 1,
-    title: 'general.qrcode',
-    id: 'qr-scanner',
-    hideBookings: true,
-    sceneConfig: Navigator.SceneConfigs.FloatFromBottom
-  }
-
-  static renderTitle ({title}: Route) {
-    if (!title) {
-      return null
-    }
-    return <View style={loggedInApp.navBarContainer}>
-      <Text style={loggedInApp.navBarTitle}>
-        {title ? <FormattedMessage id={title}/> : ' '}
-      </Text>
-    </View>
-  }
-
-  renderSceneElement (id: string) {
-    switch (id) {
-      case 'loading':
-        return <ActivityIndicator color={constants.darkTheme} size={'large'} style={loggedInApp.activityIndicator}/>
-      case 'qr':
-        return <QrCodeScanner onShowScanner={() => this.navigator.push(this.qrScannerRoute)}/>
-      case 'settings':
-        return <Settings
-          stateHandler={this.props.stateHandler}
-          laundry={this.laundry()}/>
-      case 'bookingList':
-        return <BookingList
-          stateHandler={this.props.stateHandler}
-          user={this.user()}
-          laundry={this.laundry()}/>
-      case 'timetable':
-        return <Timetable
-          stateHandler={this.props.stateHandler}
-          user={this.user()}
-          laundry={this.laundry()}/>
-      case 'qr-scanner':
-        return <QrCodeScannerCamera stateHandler={this.props.stateHandler}/>
-      default:
-        return null
-    }
-  }
-
   user (): ?User {
     return this.props.users[this.props.currentUser || '']
   }
@@ -156,105 +284,10 @@ export default class LoggedInApp extends Backable<Props, void> {
     return user && this.props.laundries[user.laundries[0]]
   }
 
-  back () {
-    this.navigator.pop()
-  }
-
-  renderScene ({id, index}: Route) {
-    this.backAction = index > 0 ? () => this.back() : null
-    return <View style={loggedInApp.mainContainer}>
-      {this.renderSceneElement(id)}
-    </View>
-  }
-
-  onPressBookingList () {
-    // Checking if the booking list button has not already been clicked
-    if (this.navigator.getCurrentRoutes().length < 2) {
-      this.navigator.push(this.bookingListRoute)
-    }
-  }
-
-  onPressSettings () {
-    // Checking if the settings button has not already been clicked
-    console.log(this.navigator.getCurrentRoutes())
-    if (this.navigator.getCurrentRoutes().length < 2) {
-      this.navigator.push(this.settingsRoute)
-    }
-  }
-
-  renderRightButton ({index, hideBookings}: Route) {
-    if (index > 0) return <View style={loggedInApp.navBarContainer}/>
-    return <View style={loggedInApp.navBarContainer}>
-      {hideBookings
-        ? null
-        : <TouchableOpacity onPress={() => this.onPressBookingList()}>
-          <Image
-            source={require('../../../img/list.png')}
-            style={loggedInApp.navBarIcon}/>
-        </TouchableOpacity>}
-      <TouchableOpacity onPress={() => this.onPressSettings()}>
-        <Image
-          source={require('../../../img/gear.png')}
-          style={loggedInApp.navBarIcon}/>
-      </TouchableOpacity>
-    </View>
-  }
-
-  renderLeftButton () {
-    if (!this.backAction) {
-      return null
-    }
-    return <View style={loggedInApp.navBarContainer}>
-      <BackButton onPress={this.backAction}/>
-    </View>
-  }
-
-  configureScene ({sceneConfig}: Route) {
-    return sceneConfig || Navigator.SceneConfigs.PushFromRight
-  }
-
   render () {
-    return <Navigator
-      configureScene={route => this.configureScene(route)}
-      ref={navigator => { this.navigator = navigator }}
-      initialRoute={this.findInitialRoute()}
-      renderScene={(route, navigator) => this.renderScene(route, navigator)}
-      navigationBar={<Navigator.NavigationBar
-        routeMapper={{
-          LeftButton: (route, navigator) => this.renderLeftButton(),
-          Title: route => LoggedInApp.renderTitle(route),
-          RightButton: (route, navigator) => this.renderRightButton(route)
-
-        }}
-        style={loggedInApp.navigationBar}
-      />}
-    />
+    return (
+      <Stack
+        screenProps={{user: this.user(), laundry: this.laundry(), stateHandler: this.props.stateHandler}}/>
+    )
   }
 }
-
-type BackButtonProps = {
-  onPress: () => void
-}
-type BackButtonState = {
-  opacity: number
-}
-class BackButton extends React.Component<void, BackButtonProps, BackButtonState> {
-  props: BackButtonProps
-  state = {opacity: 1}
-
-  onPress () {
-    this.props.onPress()
-    this.setState({opacity: 0})
-  }
-
-  render () {
-    return <TouchableOpacity onPress={() => this.onPress()}>
-      <Fade duration={100} opacity={this.state.opacity}>
-        <Image
-          source={require('../../../img/back_240.png')}
-          style={loggedInApp.navBarIcon}/>
-      </Fade>
-    </TouchableOpacity>
-  }
-}
-

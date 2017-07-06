@@ -15,7 +15,7 @@ type FancyImageButtonProps = { onPress: Function, disabled?: boolean, imageSourc
 const FancyImageButton = ({onPress, disabled, imageSource, style}: FancyImageButtonProps) => <FancyButton
   onPress={onPress} disabled={disabled} style={[fancyImageButton.button, style]}>
   <View style={fancyImageButton.view}>
-    <Image style={fancyImageButton.image} source={imageSource}/>
+    <Image style={fancyImageButton.image} source={imageSource} />
   </View>
 </FancyButton>
 

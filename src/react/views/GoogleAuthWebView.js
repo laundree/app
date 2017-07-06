@@ -7,6 +7,7 @@ type Props = { onAuthFailed: () => void, onSuccess: () => void }
 const GoogleAuthWebView = ({onAuthFailed, onSuccess}: Props) => <AuthWebView
   onSuccess={onSuccess}
   onAuthFailed={onAuthFailed}
-  source={{uri: `${config.laundree.host}/auth/google?mode=native-app-v2`}}/>
+  fakeUserAgent
+  source={{uri: `${config.laundree.host}/auth/google?mode=native-app-v2`}} />
 
 export default GoogleAuthWebView

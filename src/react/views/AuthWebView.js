@@ -8,6 +8,7 @@ import url from 'url'
 class AuthWebView extends React.Component {
   state: { onMessage: ?() => void } = {onMessage: null}
   props: {
+    fakeUserAgent?: boolean,
     source: {
       uri: string
     },
@@ -56,9 +57,10 @@ class AuthWebView extends React.Component {
 
   render () {
     return <LoadingWebView
+      fakeUserAgent={this.props.fakeUserAgent}
       viewStyle={authWebView.view}
       source={this.props.source}
-      style={authWebView.webView}/>
+      style={authWebView.webView} />
   }
 }
 

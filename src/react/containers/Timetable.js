@@ -1,6 +1,5 @@
-/**
- * Created by soeholm on 22.02.17.
- */
+// @flow
+
 import { connect } from 'react-redux'
 import Timetable from '../views/Timetable'
 

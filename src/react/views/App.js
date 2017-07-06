@@ -7,7 +7,7 @@
  * Also provides internationalisation through the
  * IntlProvider wrapper.
  */
-
+import {Buffer} from 'buffer/'
 import React from 'react'
 import LoginApp from './LoginApp'
 import OfflineApp from './OfflineApp'
@@ -19,11 +19,15 @@ import { app } from '../../style'
 import type { StateHandler } from '../../stateHandler'
 import { IntlProvider } from 'react-intl'
 import locales from '../../../locales'
+global.Buffer = Buffer
+// $FlowFixMe We are going to set this and thats final!
+console.ignoredYellowBox = [
+  'Setting a timer' // TODO remove this when https://github.com/facebook/react-native/issues/12981 has been resolved
+]
 
 type AppState = { stateHandler: ?StateHandler, sesh: number, isConnected: boolean }
 
 export default class App extends React.Component {
-
   state: AppState = { stateHandler: null, sesh: 0, isConnected: true }
 
   /**
@@ -49,10 +53,10 @@ export default class App extends React.Component {
     if (!this.state.stateHandler) return null
     if (!this.state.isConnected) return <OfflineApp />
     if (!this.state.stateHandler.isAuthenticated) {
-      return <LoginApp stateHandler={this.state.stateHandler}/>
+      return <LoginApp stateHandler={this.state.stateHandler} />
     }
     return <Provider store={this.state.stateHandler.store}>
-      <LoggedInApp stateHandler={this.state.stateHandler}/>
+      <LoggedInApp stateHandler={this.state.stateHandler} />
     </Provider>
   }
 

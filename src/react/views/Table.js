@@ -10,14 +10,14 @@ import {
 } from 'react-native'
 import { range } from '../../utils/array'
 import moment from 'moment-timezone'
-import type { Col, Booking, Machine, User, Laundry } from '../../reduxTypes'
+import type { Booking, Machine, User, Laundry } from 'laundree-sdk/lib/redux'
 import type { StateHandler } from '../../stateHandler'
 
 type Props = {
   stateHandler: StateHandler,
-  bookings: Col<Booking>,
+  bookings: { [string]: Booking },
   laundry: Laundry,
-  machines: Col<Machine>,
+  machines: { [string]: Machine },
   date: moment,
   currentUser: User,
   offset: number,
@@ -34,7 +34,6 @@ type State = {
 }
 
 export default class Table extends React.Component<void, Props, State> {
-
   state: State
   timer: number
 
@@ -58,8 +57,8 @@ export default class Table extends React.Component<void, Props, State> {
       minute: fromDate.minute()
     }
     const to = {...from, hour: from.minute === 0 ? from.hour : from.hour + 1, minute: from.minute === 30 ? 0 : 30}
-    return this.props.stateHandler.sdk.machine(id)
-      .createBooking(from, to)
+    return this.props.stateHandler.sdk.api.machine
+      .createBooking(id, from, to)
   }
 
   componentWillReceiveProps (props: Props) {
@@ -128,8 +127,8 @@ export default class Table extends React.Component<void, Props, State> {
   renderIndicator () {
     const indicatorPosition = this.calculateIndicatorPosition()
     return [
-      <View key='1' style={[timetableTable.shadowIndicator, {height: indicatorPosition + (10 / 30 * 50)}]}/>,
-      <View key='2' style={[timetableTable.indicator, {top: indicatorPosition}]}/>
+      <View key='1' style={[timetableTable.shadowIndicator, {height: indicatorPosition + (10 / 30 * 50)}]} />,
+      <View key='2' style={[timetableTable.indicator, {top: indicatorPosition}]} />
     ]
   }
 
@@ -163,7 +162,7 @@ export default class Table extends React.Component<void, Props, State> {
     return <BookingButton
       deleted={this.props.deleted}
       data={data} onCreate={() => this.createBooking(data.machineId, time)}
-      onDelete={this.props.onDelete}/>
+      onDelete={this.props.onDelete} />
   }
 
   calculateTooLateKey (tooLate: moment) {
@@ -274,9 +273,8 @@ class BookingButton extends React.Component {
           activeOpacity={0}
           onPress={this.generateBookingHandler(this.props.data)}
           style={this.renderCellStyle(this.props.data)}
-          disabled={this.props.data.disabled && !this.props.data.booking}/>
+          disabled={this.props.data.disabled && !this.props.data.booking} />
       </View>
     )
   }
-
 }

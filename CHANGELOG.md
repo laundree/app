@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Update dependencies
+- Use new routing
+- Var. bug fixes
+
 ## [0.1.1]
 
 ### Added

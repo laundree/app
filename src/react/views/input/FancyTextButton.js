@@ -10,13 +10,13 @@ import FancyButton from './FancyButton'
 import { fancyTextButton } from '../../../style'
 import { FormattedMessage } from 'react-intl'
 
-type FancyTextButtonProps = { id: string, onPress: Function, disabled?: boolean, style?: Object | Object[] }
+type FancyTextButtonProps = { id: string, onPress: Function, disabled?: boolean, style?: number }
 
 const FancyTextButton = ({id, onPress, disabled, style}: FancyTextButtonProps) => <FancyButton
   style={style} onPress={onPress}
   disabled={disabled}>
   <Text style={[fancyTextButton.text, disabled ? fancyTextButton.disabled : fancyTextButton.enabled]}>
-    <FormattedMessage id={id}/>
+    <FormattedMessage id={id} />
   </Text>
 </FancyButton>
 

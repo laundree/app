@@ -7,7 +7,6 @@ import {
 import { loader, constants } from '../../style'
 
 export default class Loader extends React.Component {
-
   props: { loader: () => Promise<*>, children?: React.Element<*>, style?: {} }
   state: { loaded: boolean } = {loaded: false}
 
@@ -20,7 +19,7 @@ export default class Loader extends React.Component {
       {
         this.state.loaded
           ? this.props.children
-          : <ActivityIndicator color={constants.darkTheme} size={'large'} style={loader.activityIndicator}/>
+          : <ActivityIndicator color={constants.darkTheme} size={'large'} style={loader.activityIndicator} />
       }
     </View>
   }

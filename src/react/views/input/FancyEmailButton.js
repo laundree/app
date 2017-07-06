@@ -15,6 +15,6 @@ const FancyEmailButton = ({ id, onPress, disabled }: FancyEmailButtonProps) => <
   onPress={onPress}
   id={id}
   disabled={disabled}
-  imageSource={require('../../../../img/email.png')}/>
+  imageSource={require('../../../../img/email.png')} />
 
 export default FancyEmailButton

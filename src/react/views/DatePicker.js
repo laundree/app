@@ -1,16 +1,28 @@
-/**
- * Created by budde on 26/03/2017.
- */
+// @flow
+
 import React from 'react'
 import DatePickerIOS from './modal/DatePickerIOS'
 import {
   Platform,
   DatePickerAndroid
 } from 'react-native'
+
 const moment = require('moment-timezone')
+type DatePickerProps = {
+  onChange: Function,
+  onCancel: Function,
+  timezone: string,
+  date: moment
+}
 
 class DatePickerAndroidWrapper extends React.Component {
-  async componentDidMount () {
+  props: DatePickerProps
+
+  componentDidMount () {
+    this.aComponentDidMount()
+  }
+
+  async aComponentDidMount () {
     const {action, year, month, day} = await DatePickerAndroid.open({
       date: this.props.date.toDate(),
       minDate: new Date()
@@ -25,27 +37,14 @@ class DatePickerAndroidWrapper extends React.Component {
     return null
   }
 }
-DatePickerAndroidWrapper.propTypes = {
-  onChange: React.PropTypes.func.isRequired,
-  onCancel: React.PropTypes.func.isRequired,
-  timezone: React.PropTypes.string.isRequired,
-  date: React.PropTypes.object.isRequired
-}
 
-const DatePicker = ({onCancel, onChange, date, timezone}) => {
+const DatePicker = ({onCancel, onChange, date, timezone}: DatePickerProps) => {
   if (Platform.OS === 'ios') {
     return <DatePickerIOS
       onCancel={onCancel} onChange={date => onChange(moment.tz(date, timezone))}
       date={date.toDate()}/>
   }
   return <DatePickerAndroidWrapper timezone={timezone} onChange={onChange} onCancel={onCancel} date={date}/>
-}
-
-DatePicker.propTypes = {
-  onCancel: React.PropTypes.func.isRequired,
-  onChange: React.PropTypes.func.isRequired,
-  date: React.PropTypes.object.isRequired,
-  timezone: React.PropTypes.string.isRequired
 }
 
 export default DatePicker

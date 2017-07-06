@@ -11,7 +11,6 @@ import {
 import Base from './Base'
 
 class Picker extends React.Component {
-
   constructor (props) {
     super(props)
     this.state = {
@@ -23,21 +22,21 @@ class Picker extends React.Component {
     return <Base visible onRequestClose={this.props.onCancel}>
       <DatePickerIOS
         minimumDate={new Date()}
-        mode='date' date={this.state.date} onDateChange={date => this.setState({date})}/>
+        mode='date' date={this.state.date} onDateChange={date => this.setState({date})} />
       <View style={modal.button}>
         <FancyTextButton
           disabled={new Date(this.state.date).setHours(0, 0, 0, 0) === new Date().setHours(0, 0, 0, 0)}
-          id='timetable.today' onPress={() => this.setState({date: new Date()})}/>
+          id='timetable.today' onPress={() => this.setState({date: new Date()})} />
       </View>
 
       <View style={modal.buttonContainer}>
         <View style={modal.button}>
           <FancyTextButton
-            id='timetable.select' onPress={() => this.props.onChange(this.state.date)}/>
+            id='timetable.select' onPress={() => this.props.onChange(this.state.date)} />
         </View>
         <View style={modal.button}>
           <FancyTextButton
-            style={modal.redButton} id='general.cancel' onPress={this.props.onCancel}/>
+            style={modal.redButton} id='general.cancel' onPress={this.props.onCancel} />
         </View>
       </View>
     </Base>
