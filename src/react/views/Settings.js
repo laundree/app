@@ -36,7 +36,6 @@ export default class Settings extends React.Component {
   }
 
   user () {
-    console.log(this.props)
     return this.props.users && this.props.users[this.props.currentUser]
   }
 
