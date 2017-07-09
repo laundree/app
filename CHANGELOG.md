@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Bug when adding to new laundry
 - Update dependencies
 - Use new routing
 - Var. bug fixes
