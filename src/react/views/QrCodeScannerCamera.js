@@ -20,11 +20,9 @@ export default class QrCodeScanner extends Component {
     const matches = path && path.match(pathPattern)
     const laundryid = matches && matches[1]
     const code = laundryid && matches[2]
-    console.log(code, laundryid)
     if (!laundryid || !code) return
     this._working = true
-    const result = await this.props.stateHandler.sdk.api.laundry.addFromCode(laundryid, code)
-    console.log(result)
+    return this.props.stateHandler.sdk.api.laundry.addFromCode(laundryid, code)
   }
 
   render () {
