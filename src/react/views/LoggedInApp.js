@@ -114,7 +114,12 @@ class TimetableScreen extends Screen {
 
   componentDidMount () {
     super.componentDidMount()
-    this.props.screenProps.stateHandler.sdk.listLaundries()
+    const laundryId = this.props.screenProps.user && this.props.screenProps.user.laundries[0]
+    if (!laundryId) {
+      return
+    }
+    console.log('Fetching laundry with id', laundryId)
+    this.props.screenProps.stateHandler.sdk.fetchLaundry(laundryId)
   }
 
   check (user) {
