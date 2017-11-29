@@ -18,7 +18,7 @@ import { Provider } from 'react-redux'
 import { app } from '../../style'
 import type { StateHandler } from '../../stateHandler'
 import { IntlProvider } from 'react-intl'
-import locales from '../../../locales'
+import {messages} from '../../../locales'
 global.Buffer = Buffer
 // $FlowFixMe We are going to set this and thats final!
 console.ignoredYellowBox = [
@@ -67,7 +67,7 @@ export default class App extends React.Component {
   render () {
     if (!this.state.stateHandler) return null
     const locale = this.state.stateHandler.locale
-    return <IntlProvider locale={locale} messages={locales[locale].messages} textComponent={Text}>
+    return <IntlProvider locale={locale} messages={messages[locale]} textComponent={Text}>
       <View style={app.mainContainer}>{this.renderContent()}</View>
     </IntlProvider>
   }

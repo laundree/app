@@ -1,5 +1,7 @@
 # Changelog
 
+- Bug when using unsupported locales. Fallback is now english.
+
 ## [0.2.0]
 
 - Bug when adding to new laundry
