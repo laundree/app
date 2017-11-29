@@ -5,16 +5,27 @@ import 'intl'
 import 'intl/locale-data/jsonp/en.js'
 import 'intl/locale-data/jsonp/da.js'
 import en from './en.json'
-import da from './da.json'
+import daJson from './da.json'
 import daLocale from 'react-intl/locale-data/da'
 import enLocale from 'react-intl/locale-data/en'
 import { addLocaleData } from 'react-intl'
-const fallbackDa = Object.assign({}, en, da)
+
+const da = Object.assign({}, en, daJson)
 
 addLocaleData(daLocale.concat(enLocale))
 
-export default {
-  en: {name: 'English', messages: en},
-  da: {name: 'Dansk', messages: fallbackDa},
-  supported: ['en', 'da']
+export type LocaleType = 'en' | 'da'
+
+export const supported: LocaleType[] = ['en', 'da']
+
+export const messages: {LocaleType: {[string]: string}} = {en, da}
+
+export function toLocaleType (l: string, def: LocaleType): LocaleType {
+  switch (l) {
+    case 'en':
+    case 'da':
+      return l
+    default:
+      return def
+  }
 }

@@ -10,6 +10,8 @@ import type { Store } from 'redux'
 import type { State, Action } from 'laundree-sdk/lib/redux'
 import ReactNativeI18n from 'react-native-i18n'
 import Analytics from 'react-native-firebase-analytics'
+import type {LocaleType} from '../locales'
+import { toLocaleType } from '../locales'
 
 const storageKey = '@LaundreeStorage'
 
@@ -79,9 +81,10 @@ export class StateHandler extends EventEmitter {
     this._setupAuth(auth)
   }
 
-  get locale (): string {
+  get locale (): LocaleType {
     if (!ReactNativeI18n.locale) return 'en'
-    return ReactNativeI18n.locale.split('-')[0]
+    const localeCandidate = ReactNativeI18n.locale.split('-')[0]
+    return toLocaleType(localeCandidate, 'en')
   }
 
   get store (): Store<State, Action> {
