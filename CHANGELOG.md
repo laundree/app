@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [0.2.2]
+
 - Add new IOS assets
 
 ## [0.2.1]
