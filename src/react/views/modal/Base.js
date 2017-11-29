@@ -1,6 +1,4 @@
-/**
- * Created by budde on 26/03/2017.
- */
+// @flow
 import React from 'react'
 import { modal } from '../../../style'
 import {
@@ -8,7 +6,14 @@ import {
   Modal
 } from 'react-native'
 
-const Base = ({children, visible, onRequestClose}) => (
+type BaseProps = {
+  onRequestClose: Function,
+  visible: boolean,
+  children: *
+
+}
+
+const Base = ({children, visible, onRequestClose}: BaseProps) => (
   <Modal visible={visible} transparent onRequestClose={onRequestClose || (() => {})}>
     <View style={modal.base}>
       <View style={modal.window}>
@@ -16,11 +21,5 @@ const Base = ({children, visible, onRequestClose}) => (
       </View>
     </View>
   </Modal>)
-
-Base.propTypes = {
-  onRequestClose: Modal.propTypes.onRequestClose,
-  visible: React.PropTypes.bool,
-  children: React.PropTypes.any
-}
 
 export default Base

@@ -6,7 +6,7 @@ import React from 'react'
 import {
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity, FlatList
 } from 'react-native'
 import { range } from '../../utils/array'
 import moment from 'moment-timezone'
@@ -33,7 +33,7 @@ type State = {
   rowData: Row[]
 }
 
-export default class Table extends React.Component<void, Props, State> {
+export default class Table extends React.PureComponent<void, Props, State> {
   state: State
   timer: number
 
@@ -75,6 +75,7 @@ export default class Table extends React.Component<void, Props, State> {
   }
 
   updateData (props: Props) {
+    console.log('Updating data')
     return this.setState({
       rowData: this.generateRows(props),
       now: moment.tz(props.laundry.timezone)
@@ -134,7 +135,7 @@ export default class Table extends React.Component<void, Props, State> {
 
   renderRows () {
     return <View>
-      {this.state.rowData.map(data => this.renderRow(data))}
+      <FlatList data={this.state.rowData} keyExtractor={({index}) => index} renderItem={({item}) => this.renderRow(item)}/>
       {this.renderIndicator()}
     </View>
   }

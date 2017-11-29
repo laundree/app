@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.facebook.react.ReactApplication;
 import com.evollu.react.fa.FIRAnalyticsPackage;
-import com.i18n.reactnativei18n.ReactNativeI18n;
+import com.AlexanderZaytsev.RNI18n.RNI18nPackage; // <-- Add to ReactNativeI18n to the imports
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.facebook.react.ReactInstanceManager;
@@ -30,7 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new FIRAnalyticsPackage(),
-            new ReactNativeI18n(),
+            new RNI18nPackage(),
             new ReactNativeOneSignalPackage(),
             new RCTCameraPackage()
       );

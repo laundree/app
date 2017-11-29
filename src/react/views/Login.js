@@ -19,8 +19,19 @@ import FancyEmailButton from './input/FancyEmailButton'
 import { FormattedMessage } from 'react-intl'
 
 import { login } from '../../style'
+import type { StateHandler } from '../../stateHandler'
 
-export default class Login extends React.Component {
+type LoginProps = {
+  stateHandler: StateHandler,
+  onOpenGoogleAuth: Function,
+  onOpenFacebookAuth: Function,
+  onOpenSignUp: Function,
+  onOpenEmailPasswordAuth: Function,
+  onOpenPrivacy: Function,
+  authFailed: boolean
+}
+
+export default class Login extends React.Component<LoginProps> {
   /**
    * Renders a notice about the Terms and Conditions
    * and Privacy Policy
@@ -97,14 +108,4 @@ export default class Login extends React.Component {
       {this.renderNotice()}
     </View>
   }
-}
-
-Login.propTypes = {
-  stateHandler: React.PropTypes.object.isRequired,
-  onOpenGoogleAuth: React.PropTypes.func.isRequired,
-  onOpenFacebookAuth: React.PropTypes.func.isRequired,
-  onOpenSignUp: React.PropTypes.func.isRequired,
-  onOpenEmailPasswordAuth: React.PropTypes.func.isRequired,
-  onOpenPrivacy: React.PropTypes.func.isRequired,
-  authFailed: React.PropTypes.bool
 }
