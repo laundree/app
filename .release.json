@@ -1,5 +1,7 @@
 {
-  "src": {
-    "beforeStageCommand": "./tools/prepare_release.sh"
+  "pkgFiles": ["package.json", "package-lock.json"],
+  "buildCommand": "./tools/prepare_release.sh",
+  "dist": {
+    "baseDir": false
   }
 }
