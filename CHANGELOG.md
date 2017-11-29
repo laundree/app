@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add new IOS assets
+
 ## [0.2.1]
 
 - Bug when using unsupported locales. Fallback is now english.
