@@ -3,7 +3,6 @@
 /**
  * Handles the scene for logging in
  */
-
 import React from 'react'
 import { View, Text } from 'react-native'
 

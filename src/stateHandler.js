@@ -199,7 +199,7 @@ export class StateHandler extends EventEmitter {
       this.emit('connectionChange', isConnected)
     })
 
-    NetInfo.isConnected.addEventListener('change', (isConnected) => this.connectionChanged(isConnected))
+    NetInfo.isConnected.addEventListener('connectionChange', (isConnected) => this.connectionChanged(isConnected))
   }
 }
 

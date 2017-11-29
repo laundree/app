@@ -10,14 +10,13 @@ import {
   ActivityIndicator,
   InteractionManager,
   RefreshControl,
-  Platform
+  Platform, FlatList
 } from 'react-native'
 import moment from 'moment-timezone'
 import Table from './Table'
 import { timetable, loader, constants } from '../../style'
 import DatePicker from './DatePicker'
 import { range } from '../../utils/array'
-import ViewPager from 'react-native-viewpager'
 import Confirm from './modal/Confirm'
 import type { User, Machine, Laundry, Booking } from 'laundree-sdk/lib/redux'
 import type { StateHandler } from '../../stateHandler'
@@ -31,7 +30,6 @@ type TimetableState = {
   now: moment,
   offset: number,
   end: number,
-  data: ViewPager.DataSource,
   onConfirm?: () => void,
   refreshing: boolean,
   deleted: { [string]: boolean }
@@ -48,7 +46,6 @@ class Timetable extends React.Component {
     bookings: { [string]: Booking },
     user: User
   }
-  ds = new ViewPager.DataSource({pageHasChanged: (r1, r2) => r1.isSame(r2, 'd')})
   state: TimetableState
   viewPager: ViewPager
   scrollView: ScrollView
@@ -66,7 +63,6 @@ class Timetable extends React.Component {
       now,
       offset: this.calculateTimesOffset(props),
       end: this.calculateTimesEnd(props),
-      data: this.ds.cloneWithPages(this.generateDays(now)),
       deleted: {}
     }
   }
@@ -88,31 +84,6 @@ class Timetable extends React.Component {
         </View>
       ))}
     </View>
-  }
-
-  componentWillReceiveProps (props) {
-    const {date, laundry} = props
-    if (laundry !== this.props.laundry) {
-      this.setState({
-        offset: this.calculateTimesOffset(props),
-        end: this.calculateTimesEnd(props)
-      })
-    }
-    if (date.isSame(this.props.date, 'd')) {
-      return
-    }
-    this
-      .setState({data: this.ds.cloneWithPages(this.generateDays(this.state.now, date))},
-        () => {
-          if (!this.viewPager) {
-            return
-          }
-          const shouldViewPage = this.props.date.clone().add(1, 'h').diff(this.state.now, 'd')
-          if (this.viewPager.getCurrentPage() === shouldViewPage) {
-            return
-          }
-          InteractionManager.runAfterInteractions(() => this.viewPager.goToPage(shouldViewPage, false), 0)
-        })
   }
 
   scrollTo (layout) {
@@ -138,86 +109,72 @@ class Timetable extends React.Component {
   }
 
   render () {
-    return <View style={timetable.container}>
-      {this.renderPicker()}
-      {this.renderTitle()}
-      {this.renderHeader()}
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()} />}
-        ref={r => (this.scrollView = r)} onLayout={evt => this.scrollTo(evt.nativeEvent.layout)}>
-        <ViewPager
-          ref={r => (this.viewPager = r)}
-          onChangePage={pageNum => {
-            console.log('Change page to', pageNum)
-            this.props.onChangeDate(this.state.data.getPageData(pageNum))
-          }}
-          renderPageIndicator={false}
-          style={{flex: 1}}
-          dataSource={this.state.data}
-          renderPage={d => (
-            <View style={{flex: 1}}>
-              {this.renderTable(d)}
-            </View>
-          )}
-        />
-      </ScrollView>
-      <Confirm
-        onConfirm={this.state.onConfirm || (() => {})}
-        onCancel={() => this.setState({showModal: false})}
-        visible={this.state.showModal}
-        id='general.confirm.delete' />
-    </View>
+    return (
+      <View style={timetable.container}>
+        {this.renderPicker()}
+        {this.renderTitle()}
+        {this.renderHeader()}
+        {this.renderTable(this.props.date)}
+        <Confirm
+          onConfirm={this.state.onConfirm || (() => {})}
+          onCancel={() => this.setState({showModal: false})}
+          visible={this.state.showModal}
+          id='general.confirm.delete' />
+      </View>
+    )
   }
 
   renderPicker () {
     if (!this.state.showPicker) {
       return null
     }
-    return <DatePicker
-      timezone={this.props.laundry.timezone}
-      date={this.props.date}
-      onCancel={() => this.setState({showPicker: false})}
-      onChange={date => {
-        this.setState({showPicker: false})
-        this.props.onChangeDate(date)
-      }} />
+    return (
+      <DatePicker
+        timezone={this.props.laundry.timezone}
+        date={this.props.date}
+        onCancel={() => this.setState({showPicker: false})}
+        onChange={date => {
+          this.setState({showPicker: false})
+          this.props.onChangeDate(date)
+        }} />)
   }
 
   renderTitle (d: ?moment) {
     d = d || this.props.date
     const backDisabled = d.isSame(moment(), 'd')
-    return <View style={timetable.titleContainer}>
-      <View style={timetable.dateView}>
-        <TouchableOpacity
-          disabled={backDisabled}
-          style={timetable.dateNavigator}
-          onPress={(event) => this.onPressLeft(event)}>
-          <Image
-            style={[timetable.arrowHeader, backDisabled ? timetable.arrowHeaderDisabled : null]}
-            source={require('../../../img/back_240_dark.png')} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.setState({showPicker: true})} style={timetable.dateHeaderTouch}>
-          <Image
-            style={timetable.dateHeaderImage}
-            source={require('../../../img/calendar_240.png')} />
+    return (
+      <View style={timetable.titleContainer}>
+        <View style={timetable.dateView}>
+          <TouchableOpacity
+            disabled={backDisabled}
+            style={timetable.dateNavigator}
+            onPress={(event) => this.onPressLeft(event)}>
+            <Image
+              style={[timetable.arrowHeader, backDisabled ? timetable.arrowHeaderDisabled : null]}
+              source={require('../../../img/back_240_dark.png')} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => this.setState({showPicker: true})} style={timetable.dateHeaderTouch}>
+            <Image
+              style={timetable.dateHeaderImage}
+              source={require('../../../img/calendar_240.png')} />
 
-          <Text style={timetable.dateHeader}>
-            {d.isSame(moment(), 'd') ? <FormattedMessage id='timetable.today' />
-              : d.isSame(moment().add(1, 'day'), 'd') ? <FormattedMessage id='timetable.tomorrow' />
-                : <Text>
-                  <FormattedDate value={d} weekday='long' />
-                  <Text>{' '}</Text>
-                  <FormattedDate value={d} month='numeric' day='numeric' />
-                </Text>}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={timetable.dateNavigator}
-          onPress={(event) => this.onPressRight(event)}>
-          <Image style={timetable.arrowHeader} source={require('../../../img/forward_240.png')} />
-        </TouchableOpacity>
-      </View>
-    </View>
+            <Text style={timetable.dateHeader}>
+              {d.isSame(moment(), 'd') ? <FormattedMessage id='timetable.today' />
+                : d.isSame(moment().add(1, 'day'), 'd') ? <FormattedMessage id='timetable.tomorrow' />
+                  : <Text>
+                    <FormattedDate value={d} weekday='long' />
+                    <Text>{' '}</Text>
+                    <FormattedDate value={d} month='numeric' day='numeric' />
+                  </Text>}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={timetable.dateNavigator}
+            onPress={(event) => this.onPressRight(event)}>
+            <Image style={timetable.arrowHeader} source={require('../../../img/forward_240.png')} />
+          </TouchableOpacity>
+        </View>
+      </View>)
   }
 
   onPressLeft () {
@@ -231,18 +188,19 @@ class Timetable extends React.Component {
   }
 
   renderTable (d: moment) {
-    return <Table
-      deleted={this.state.deleted}
-      stateHandler={this.props.stateHandler}
-      currentUser={this.props.user}
-      bookings={this.props.bookings}
-      laundry={this.props.laundry}
-      machines={this.props.machines}
-      date={d}
-      offset={this.state.offset}
-      end={this.state.end}
-      onDelete={(booking: string) => this.confirmDeleteBooking(booking)}
-    />
+    return (
+      <Table
+        deleted={this.state.deleted}
+        stateHandler={this.props.stateHandler}
+        currentUser={this.props.user}
+        bookings={this.props.bookings}
+        laundry={this.props.laundry}
+        machines={this.props.machines}
+        date={d}
+        offset={this.state.offset}
+        end={this.state.end}
+        onDelete={(booking: string) => this.confirmDeleteBooking(booking)}
+      />)
   }
 
   confirmDeleteBooking (bookingId: string) {
@@ -296,10 +254,10 @@ class Timetable extends React.Component {
 type TimetableWrapperProps = {
   laundry: Laundry,
   stateHandler: StateHandler,
-  machines: {[string]: Machine},
+  machines: { [string]: Machine },
   user: User,
   onInitialLoad: () => void,
-  bookings: {[string]: Booking}
+  bookings: { [string]: Booking }
 }
 
 export default class TimetableWrapper extends React.Component {

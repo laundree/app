@@ -1,6 +1,4 @@
-/**
- * Created by budde on 26/03/2017.
- */
+// @flow
 import React from 'react'
 import FancyTextButton from './../input/FancyTextButton'
 import { modal } from '../../../style'
@@ -10,7 +8,13 @@ import {
 } from 'react-native'
 import Base from './Base'
 
-class Picker extends React.Component {
+type PickerProps = {
+  onChange: Function,
+  onCancel: Function,
+  date: Date
+}
+
+class Picker extends React.Component<PickerProps> {
   constructor (props) {
     super(props)
     this.state = {
@@ -41,12 +45,6 @@ class Picker extends React.Component {
       </View>
     </Base>
   }
-}
-
-Picker.propTypes = {
-  onChange: React.PropTypes.func.isRequired,
-  onCancel: React.PropTypes.func.isRequired,
-  date: React.PropTypes.object.isRequired
 }
 
 export default Picker
