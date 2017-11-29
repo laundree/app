@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+## [0.2.1]
+
 - Bug when using unsupported locales. Fallback is now english.
 
 ## [0.2.0]
