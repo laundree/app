@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -e
 . secrets/android/release.conf
 
 NPM_VERSION=$(node -p -e "require('./package.json').version")
