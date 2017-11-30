@@ -1,11 +1,11 @@
 {
   "laundree": {
-    "host": "https://beta.laundree.io"
+    "host": "https://laundree.io"
   },
   "api": {
-    "host": "https://api.beta.laundree.io"
+    "host": "https://api.laundree.io"
   },
   "socket": {
-    "host": "https://socket.beta.laundree.io"
+    "host": "https://socket.laundree.io"
   }
 }

@@ -487,7 +487,6 @@ export const timetableTable = StyleSheet.create({
   },
   cellBg: {
     flex: 1,
-    height: 50,
     borderWidth: 1,
     flexDirection: 'row',
     borderColor: constants.appBackgroundColor,
@@ -513,7 +512,7 @@ export const timetableTable = StyleSheet.create({
   },
   marker: {
     width: 20,
-    top: -59,
+    top: 41,
     height: 20,
     position: 'absolute',
     backgroundColor: constants.darkTheme,
