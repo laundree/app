@@ -8,11 +8,10 @@ import config from './config'
 import OneSignal from 'react-native-onesignal'
 import type { Store } from 'redux'
 import type { State, Action } from 'laundree-sdk/lib/redux'
-import ReactNativeI18n from 'react-native-i18n'
+import {getLanguages} from 'react-native-i18n'
 import Analytics from 'react-native-firebase-analytics'
-import type {LocaleType} from '../locales'
+import type { LocaleType } from '../locales'
 import { toLocaleType } from '../locales'
-
 const storageKey = '@LaundreeStorage'
 
 function updateUserIdAndToken (auth: ?Auth): Promise<*> {
@@ -22,6 +21,7 @@ function updateUserIdAndToken (auth: ?Auth): Promise<*> {
   const {userId, token} = auth
   return AsyncStorage.multiSet([[`${storageKey}:userId`, userId], [`${storageKey}:token`, token]])
 }
+
 function saveOneSignalId (id) {
   return AsyncStorage.setItem(`${storageKey}:oneSignalId`, id)
 }
@@ -82,6 +82,10 @@ export class StateHandler extends EventEmitter {
   }
 
   get locale (): LocaleType {
+    console.log('lOLOL')
+    console.log(getLanguages())
+    return 'en'
+
     if (!ReactNativeI18n.locale) return 'en'
     const localeCandidate = ReactNativeI18n.locale.split('-')[0]
     return toLocaleType(localeCandidate, 'en')
@@ -94,9 +98,17 @@ export class StateHandler extends EventEmitter {
     return store
   }
 
+  authenticator = async () => {
+    if (this._auth) {
+      return {type: 'basic', username: this._auth.userId, password: this._auth.token}
+    } else {
+      return {type: 'unauthenticated'}
+    }
+  }
+
   get sdk (): Sdk {
     if (this._sdk) return this._sdk
-    this._sdk = new Sdk(config.laundree.host)
+    this._sdk = new Sdk(config.api.host, this.authenticator)
     return this._sdk
   }
 
@@ -121,19 +133,18 @@ export class StateHandler extends EventEmitter {
     Analytics.setUserId(auth && auth.userId)
     if (!auth) {
       OneSignal.setSubscription(false)
-      this.sdk.updateAuth()
       this._disconnectSocket()
       this._auth = null
       this._store = null
       return
     }
-    this.sdk.updateAuth(auth)
     const {userId, token} = auth
     this._disconnectSocket()
-    const path = `${config.laundree.host}/redux?userId=${userId}&token=${token}`
+    const path = `${config.socket.host}/redux?userId=${userId}&token=${token}`
     console.log('Connecting socket to path', path)
     this._socket = io(path)
     this._socket.on('actions', actions => {
+      // $FlowFixMe This is right
       actions.forEach(action => action && this.store.dispatch(action))
     })
     this._socket.on('disconnect', () => {
@@ -161,7 +172,7 @@ export class StateHandler extends EventEmitter {
     if (!this._auth) {
       return
     }
-    await this.sdk.api.user.addOneSignalPlayerId(this._auth.userId, id)
+    await this.sdk.api.user.addOneSignalPlayerId(this._auth.userId, {playerId: id})
     saveOneSignalId(id)
     saveNotificationSetting(true)
   }

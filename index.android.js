@@ -8,7 +8,7 @@
 
 import React from 'react'
 import {AppRegistry} from 'react-native'
-import App from './src/react/views/App'
+import App from './src/react/App'
 
 const Laundree = () => <App />
 
