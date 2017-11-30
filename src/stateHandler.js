@@ -8,10 +8,10 @@ import config from './config'
 import OneSignal from 'react-native-onesignal'
 import type { Store } from 'redux'
 import type { State, Action } from 'laundree-sdk/lib/redux'
-import {getLanguages} from 'react-native-i18n'
 import Analytics from 'react-native-firebase-analytics'
 import type { LocaleType } from '../locales'
 import { toLocaleType } from '../locales'
+import ReactNativeI18n from 'react-native-i18n'
 const storageKey = '@LaundreeStorage'
 
 function updateUserIdAndToken (auth: ?Auth): Promise<*> {
@@ -82,10 +82,6 @@ export class StateHandler extends EventEmitter {
   }
 
   get locale (): LocaleType {
-    console.log('lOLOL')
-    console.log(getLanguages())
-    return 'en'
-
     if (!ReactNativeI18n.locale) return 'en'
     const localeCandidate = ReactNativeI18n.locale.split('-')[0]
     return toLocaleType(localeCandidate, 'en')
