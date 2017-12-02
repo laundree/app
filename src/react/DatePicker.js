@@ -17,11 +17,7 @@ type DatePickerProps = {
 
 class DatePickerAndroidWrapper extends React.PureComponent<DatePickerProps> {
 
-  componentDidMount () {
-    this.aComponentDidMount()
-  }
-
-  async aComponentDidMount () {
+  async componentDidMount () {
     const {action, year, month, day} = await DatePickerAndroid.open({
       date: this.props.date.toDate(),
       minDate: new Date()
@@ -39,11 +35,12 @@ class DatePickerAndroidWrapper extends React.PureComponent<DatePickerProps> {
 
 const DatePicker = ({onCancel, onChange, date, timezone}: DatePickerProps) => {
   if (Platform.OS === 'ios') {
-    return <DatePickerIOS
-      onCancel={onCancel} onChange={date => onChange(moment.tz(date, timezone))}
-      date={date.toDate()}/>
+    return (
+      <DatePickerIOS
+        onCancel={onCancel} onChange={date => onChange(moment.tz(date, timezone))}
+        date={date.toDate()} />)
   }
-  return <DatePickerAndroidWrapper timezone={timezone} onChange={onChange} onCancel={onCancel} date={date}/>
+  return <DatePickerAndroidWrapper timezone={timezone} onChange={onChange} onCancel={onCancel} date={date} />
 }
 
 export default DatePicker

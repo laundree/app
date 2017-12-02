@@ -10,12 +10,14 @@ import {
   TouchableOpacity,
   Platform,
   ActivityIndicator,
-  InteractionManager
+  InteractionManager,
+  Image
 } from 'react-native'
 import { constants, loader, timetable, timetableTable } from '../style'
 import { StateHandler } from '../stateHandler'
-import { FormattedMessage } from 'react-intl'
-import { DateTime } from 'luxon'
+import { FormattedDate, FormattedMessage } from 'react-intl'
+import moment from 'moment-timezone'
+import DatePicker from './DatePicker'
 
 const cellHeight = 100
 
@@ -88,24 +90,22 @@ class BookingButton extends React.PureComponent<BookingButtonProps, { created: b
 
 type TableProps = {
   offset: number,
-  date: string,
   laundry: Laundry,
-  stateHandler: StateHandler,
   deleted: { [string]: boolean },
   machines: Machine[],
   onDelete: (string) => void,
+  onCreate: (id: string, h: number) => Promise<void>,
   onScroll: (number) => void
 }
 
 class Table extends React.PureComponent<TableProps> {
   _ref: ?FlatList<*>
-
   _renderCell = (machineId: string, time: number) => {
     return (
       <View style={{height: (cellHeight / 2)}}>
         <BookingButton
           deleted={this.props.deleted}
-          onCreate={this._generateCreateBookingHandler(machineId, time)}
+          onCreate={() => this.props.onCreate(machineId, time)}
           onDelete={this.props.onDelete}
           data={{}} />
       </View>
@@ -113,28 +113,37 @@ class Table extends React.PureComponent<TableProps> {
     )
   }
 
-  _generateCreateBookingHandler (id: string, h: number) {
-    return async () => {
-      console.log('Creating booking at time ' + h)
-      const today = DateTime.fromISO(this.props.date)
-      const fromHh = h
-      const minute = (fromHh % 2) && 30
-      const hour = (fromHh - (fromHh % 2)) / 2
-      const fromDate = today.set({hour, minute})
-      const from = {
-        year: fromDate.year,
-        month: fromDate.month,
-        day: fromDate.day,
-        hour: fromDate.hour,
-        minute: fromDate.minute
-      }
-      const to = {...from, hour: from.minute === 0 ? from.hour : from.hour + 1, minute: from.minute === 30 ? 0 : 30}
-      try {
-        await this.props.stateHandler.sdk.api.machine.createBooking(id, {from, to})
-      } catch (err) {
-        console.log(err.message, err.response.body, {from, to})
+  /*
+    _generateCreateBookingHandler (id: string, h: number) {
+      return async () => {
+        console.log('Creating booking at time ' + h)
+        const today = DateTime.fromISO(this.props.date)
+        const fromHh = h
+        const minute = (fromHh % 2) && 30
+        const hour = (fromHh - (fromHh % 2)) / 2
+        const fromDate = today.set({hour, minute})
+        const from = {
+          year: fromDate.year,
+          month: fromDate.month,
+          day: fromDate.day,
+          hour: fromDate.hour,
+          minute: fromDate.minute
+        }
+        const to = {...from, hour: from.minute === 0 ? from.hour : from.hour + 1, minute: from.minute === 30 ? 0 : 30}
+        try {
+          await this.props.stateHandler.sdk.api.machine.createBooking(id, {from, to})
+        } catch (err) {
+          console.log(err.message, err.response.body, {from, to})
+        }
       }
     }
+  */
+
+  componentDidMount () {
+    setTimeout(() => {
+      if (!this._ref) return
+      this._ref.scrollToOffset({offset: this.props.offset, animated: false}), 0
+    })
   }
 
   _renderRow = ({item: {hour, key}}) => {
@@ -179,18 +188,22 @@ class Table extends React.PureComponent<TableProps> {
     hour: key * 2 - 1
   }))
 
+  _getItemLayout = (data, index) => ({
+    length: cellHeight * (index && index < 24 ? 1 : 0.5),
+    offset: cellHeight * (index ? index - 0.5 : 0),
+    index
+  })
+
   render () {
     return (
-      <FlatList
-        ref={this._refPuller}
-        onMomentumScrollEnd={this._scrollEnd}
-        getItemLayout={(data, index) => ({
-          length: cellHeight * (index && index < 24 ? 1 : 0.5),
-          offset: cellHeight * (index ? index - 0.5 : 0),
-          index
-        })}
-        renderItem={this._renderRow}
-        data={this._data} />
+      <View style={{flex: 1}}>
+        <FlatList
+          ref={this._refPuller}
+          onMomentumScrollEnd={this._scrollEnd}
+          getItemLayout={this._getItemLayout}
+          renderItem={this._renderRow}
+          data={this._data} />
+      </View>
     )
   }
 }
@@ -202,132 +215,238 @@ type TimetableProps = {
   bookings: { [string]: Booking },
   user: User
 }
-
-type TimetableState = {
-  width: number,
-  i: number,
-  date: DateTime,
-  loaded: boolean,
-  rowOffset: number
-}
 type Data = { i: number, key: string }
 
-const data: Data[] = Array(356).fill(0).map((z, i: number) => ({i, key: i.toString()}))
+type TimetableState = {
+  i: number,
+  date: moment,
+  extraData: {
+    deleted: { [string]: boolean },
+    width: number,
+    rowOffset: number,
+    laundry: Laundry,
+    machines: Machine[]
+  },
+  showPicker: boolean,
+  data: Data[],
+}
 
 class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
   _ref: ?FlatList<*>
   state = {
-    width: Dimensions.get('window').width,
+    extraData: {
+      deleted: {},
+      laundry: this.props.laundry,
+      width: Dimensions.get('window').width,
+      rowOffset: 0,
+      machines: Timetable._buildMachines(this.props.laundry, this.props.machines),
+    },
+    date: moment.tz(this.props.laundry.timezone).startOf('day'),
     i: 0,
-    loaded: false,
-    rowOffset: 0,
-    date: DateTime.fromObject({timeZone: this.props.laundry.timezone}).startOf('day')
+    showPicker: false,
+    data: Timetable.generateData(0),
+  }
+
+  static _buildMachines (laundry: Laundry, machines: { [string]: Machine }): Machine[] {
+    return laundry.machines.reduce((acc, id) => {
+      const m = machines[id]
+      return m ? acc.concat(m) : acc
+    }, [])
   }
 
   _listener = () => {
     const width = Dimensions.get('window').width
-    this.setState({width}, this._resetScroll)
+    this.setState(({extraData}) => ({extraData: {...extraData, width}}))
+    this._resetScroll()
   }
-  _loader = () => this.load()
 
-  async load () {
+  _load = () => InteractionManager.runAfterInteractions(async () => {
     console.log('Loading bookings...')
-    const today = this.state.date.plus({days: this.state.i})
-    const tomorrow = today.plus({days: 1})
-    console.log({
-      year: today.year,
-      month: today.month,
-      day: today.day
-    }, {
-      year: tomorrow.year,
-      month: tomorrow.month,
-      day: tomorrow.day
-    })
+    const activeDay = this.state.date.clone().add(this.state.i, 'd')
+    const activeDayPlusOne = activeDay.clone().add(1, 'd')
     await this.props.stateHandler.sdk.listBookingsInTime(this.props.laundry.id, {
-      year: today.year,
-      month: today.month,
-      day: today.day
+      year: activeDay.year,
+      month: activeDay.month,
+      day: activeDay.day
     }, {
-      year: tomorrow.year,
-      month: tomorrow.month,
-      day: tomorrow.day
+      year: activeDayPlusOne.year,
+      month: activeDayPlusOne.month,
+      day: activeDayPlusOne.day
     })
     console.log('... Bookings Loaded')
-    this.setState({loaded: true})
+  })
+
+  static generateData (i: number) {
+    return [-1, 0, 1].map(i => ({i, key: i.toString()}))
   }
 
   componentDidMount () {
-    this.load().catch(err => console.log(err))
-    this.props.stateHandler.on('connected', this._loader)
+    this._load()
+    this.props.stateHandler.on('connected', this._load)
     Dimensions.addEventListener('change', this._listener)
-    setTimeout(this._resetScroll, 0)
+    setTimeout(() => this._resetScroll(true), 0)
+  }
+
+  componentWillReceiveProps ({laundry, machines}) {
+    if (laundry !== this.props.laundry || machines !== this.props.machines) {
+      this.setState(({extraData}) => ({
+        extraData: {
+          ...extraData,
+          laundry,
+          machines: Timetable._buildMachines(laundry, machines)
+        }
+      }))
+    }
   }
 
   componentWillUnmount () {
-    this.props.stateHandler.removeListener('connected', this._loader)
+    this.props.stateHandler.removeListener('connected', this._load)
     Dimensions.removeEventListener('change', this._listener)
   }
 
-  _resetScroll = () => {
+  _resetScroll = (animated = false) => {
     if (!this._ref) return
-    this._ref.scrollToIndex({index: this.state.i})
+    this._ref.scrollToIndex(Platform.OS === 'ios'
+      ? {index: 1, animated: false}
+      : {index: 1, animated: true})
   }
 
   _slide = (e) => {
     const x = e.nativeEvent.contentOffset.x
-    const i = Math.round(x / this.state.width)
-    this.setState({i}, () => InteractionManager.runAfterInteractions(() => this.load()))
+    const change = (Math.round(x / this.state.extraData.width)) - 1
+    if (!change) {
+      return
+    }
+    this._changeDay(change)
+    this._resetScroll()
   }
 
-  _renderItem (d: Data) {
-    const iso: string = this.state.date.plus({days: d.i}).toISO()
+  _changeDay (change) {
+    this.setState(({i}) => ({i: i + change}), this._load)
+  }
+
+  _onScroll = (rowOffset) => {
+    this.setState(({extraData}) => ({extraData: {...extraData, rowOffset}}))
+  }
+  _onDelete = () => {console.log('DELETING')}
+
+  _onCreate = async () => {console.log('CREATING')}
+
+  _renderItem = () => {
     return (
-      <View style={{flex: 1, width: this.state.width}}>
-        {this.renderHeader()}
+      <View style={{flex: 1, width: this.state.extraData.width}}>
+        <MachineTitle machines={this.state.extraData.machines} />
         <Table
-          onDelete={() => {}}
-          laundry={this.props.laundry}
-          deleted={{}}
-          date={iso}
-          stateHandler={this.props.stateHandler}
-          machines={this.props.laundry.machines.map(id => this.props.machines[id])}
-          onScroll={(rowOffset) => this.setState({rowOffset})}
-          offset={this.state.rowOffset} />
+          laundry={this.state.extraData.laundry}
+          onDelete={this._onDelete}
+          deleted={this.state.extraData.deleted}
+          onCreate={this._onCreate}
+          machines={this.state.extraData.machines}
+          onScroll={this._onScroll}
+          offset={this.state.extraData.rowOffset} />
       </View>
     )
   }
 
-  renderHeader () {
-    return (
-      <View style={[timetable.headerRow]}>
-        {this.props.laundry.machines.map(id => (
-          <View style={[timetable.headerCell]} key={id}>
-            <Text
-              style={timetable.headerText} numberOfLines={1}
-              ellipsizeMode={Platform.OS === 'ios' ? 'clip' : 'tail'}>
-              {(this.props.machines[id] && this.props.machines[id].name) || ''}
-            </Text>
-          </View>
-        ))}
-      </View>)
+  _getItemLayout = (data, i) => ({length: this.state.extraData.width, offset: i * this.state.extraData.width, index: i})
+
+  _onGoBack = () => this._changeDay(-1)
+  _onGoForward = () => this._changeDay(1)
+  _onShowPicker = () => this.setState({showPicker: true})
+  _onHidePicker = () => this.setState({showPicker: false})
+  _onPickerDateChange = date => {
+    this.setState(({date: oldDate}) => {
+      const newI = date.diff(oldDate.clone(), 'd')
+      return {i: newI, showPicker: false, data: Timetable.generateData(newI)}
+    }, this._load)
+  }
+
+  _renderPicker () {
+    if (!this.state.showPicker) {
+      return null
+    }
+    return <DatePicker
+      timezone={this.props.laundry.timezone}
+      date={this.state.date.clone().add(this.state.i, 'd')}
+      onCancel={this._onHidePicker}
+      onChange={this._onPickerDateChange} />
   }
 
   render () {
     return (
-      <FlatList
-        getItemLayout={(data, i) => ({length: this.state.width, offset: i * this.state.width, index: i})}
-        onMomentumScrollEnd={this._slide}
-        pagingEnabled
-        style={{flex: 1}}
-        horizontal
-        ref={ref => this._ref = ref}
-        showsHorizontalScrollIndicator={false}
-        data={data}
-        renderItem={({item}) => this._renderItem(item)}
-      />
+      <View style={{flex: 1}}>
+        {this._renderPicker()}
+        <FlatList
+          getItemLayout={this._getItemLayout}
+          onMomentumScrollEnd={this._slide}
+          pagingEnabled
+          style={{flex: 1}}
+          horizontal
+          ref={ref => this._ref = ref}
+          showsHorizontalScrollIndicator={false}
+          data={this.state.data}
+          extraData={this.state.extraData}
+          renderItem={this._renderItem}
+        />
+        <TimetableTitle
+          today={this.state.date} daysFromToday={this.state.i} onGoBack={this._onGoBack}
+          onGoForward={this._onGoForward} onShowPicker={this._onShowPicker} />
+      </View>
     )
   }
+}
 
+const MachineTitle = (props: { machines: Machine[] }) => (
+  <View style={[timetable.headerRow]}>
+    {props.machines.map(machine => (
+      <View style={[timetable.headerCell]} key={machine.id}>
+        <Text
+          style={timetable.headerText} numberOfLines={1}
+          ellipsizeMode={Platform.OS === 'ios' ? 'clip' : 'tail'}>
+          {(machine.name) || ''}
+        </Text>
+      </View>
+    ))}
+  </View>
+)
+
+const TimetableTitle = (props: { today: moment, daysFromToday: number, onGoBack: () => void, onGoForward: () => void, onShowPicker: () => void }) => {
+  const date = props.today.clone().add(props.daysFromToday, 'd')
+  return (
+    <View style={timetable.titleContainer}>
+      <View style={timetable.dateView}>
+        <TouchableOpacity
+          style={timetable.dateNavigator}
+          onPress={props.onGoBack}>
+          <Image
+            style={timetable.arrowHeader}
+            source={require('../../img/back_240_dark.png')} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={props.onShowPicker} style={timetable.dateHeaderTouch}>
+          <Image
+            style={timetable.dateHeaderImage}
+            source={require('../../img/calendar_240.png')} />
+
+          <Text style={timetable.dateHeader}>
+            {props.daysFromToday === 0
+              ? <FormattedMessage id='timetable.today' />
+              : props.daysFromToday === 1
+                ? <FormattedMessage id='timetable.tomorrow' />
+                : <Text>
+                  <FormattedDate value={date.toDate()} weekday='long' />
+                  <Text>{' '}</Text>
+                  <FormattedDate value={date.toDate()} month='numeric' day='numeric' />
+                </Text>}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={timetable.dateNavigator}
+          onPress={props.onGoForward}>
+          <Image style={timetable.arrowHeader} source={require('../../img/forward_240.png')} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
 }
 
 class TimetableLoader extends React.PureComponent<TimetableProps, { loaded: boolean }> {
