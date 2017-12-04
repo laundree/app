@@ -10,7 +10,7 @@ import QrCodeScanner from './QrCodeScanner'
 import QrCodeScannerCamera from './QrCodeScannerCamera'
 import { loggedInApp, constants } from '../style'
 import OneSignal from 'react-native-onesignal'
-import type { User, Laundry, State } from 'laundree-sdk/lib/redux'
+import type { User, Laundry } from 'laundree-sdk/lib/redux'
 import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
 import { StateHandler } from '../stateHandler'
@@ -58,6 +58,14 @@ class Screen extends React.PureComponent<*> {
     this.checkRedirect(props.screenProps.user)
   }
 
+  _onShowScanner = () => this.props.navigation.dispatch(NavigationActions.reset({
+    index: 1,
+    actions: [
+      NavigationActions.navigate({routeName: 'QrCodeScanner'}),
+      NavigationActions.navigate({routeName: 'QrCodeScannerCamera'})
+    ]
+  }))
+
   render () {
     const {user, laundry, stateHandler} = this.props.screenProps
     if (this.isLoading()) {
@@ -74,13 +82,7 @@ class Screen extends React.PureComponent<*> {
           user={user}
           laundry={laundry}
           stateHandler={stateHandler}
-          onShowScanner={() => this.props.navigation.dispatch(NavigationActions.reset({
-            index: 1,
-            actions: [
-              NavigationActions.navigate({routeName: 'QrCodeScanner'}),
-              NavigationActions.navigate({routeName: 'QrCodeScannerCamera'})
-            ]
-          }))}
+          onShowScanner={this._onShowScanner}
         />
       </View>
     )
@@ -289,7 +291,7 @@ class LoggedInApp extends React.PureComponent<LoggedInAppProps> {
   }
 }
 
-export default connect(({currentUser, users, laundries}: State): {
+export default connect(({currentUser, users, laundries}): {
   users: { [string]: User },
   currentUser: ?string,
   laundries: { [string]: Laundry }

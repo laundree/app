@@ -1,17 +1,18 @@
 // @flow
 import React from 'react'
 import { connect } from 'react-redux'
-import type { Booking, Laundry, Machine, State, User } from 'laundree-sdk/lib/redux'
+// eslint-disable-next-line no-unused-vars
+import type { Booking, Laundry, Machine, User, State } from 'laundree-sdk/lib/redux'
 import {
   FlatList,
   View,
   Text,
-  Dimensions,
   TouchableOpacity,
   Platform,
   ActivityIndicator,
   InteractionManager,
-  Image
+  Image,
+  Animated
 } from 'react-native'
 import { constants, loader, timetable, timetableTable } from '../style'
 import { StateHandler } from '../stateHandler'
@@ -19,6 +20,7 @@ import { FormattedDate, FormattedMessage } from 'react-intl'
 import moment from 'moment-timezone'
 import DatePicker from './DatePicker'
 import deepEqual from 'fast-deep-equal'
+import Confirm from './modal/Confirm'
 
 const cellHeight = 100
 
@@ -84,28 +86,112 @@ type BookingButtonProps = {
   onDelete: (id: string) => void
 }
 
+class FadeInView extends React.PureComponent<{ duration: number, children: * }, { fadeAnim: * }> {
+  state = {
+    fadeAnim: new Animated.Value(0)
+  }
+
+  componentDidMount () {
+    Animated.timing(
+      this.state.fadeAnim,
+      {
+        toValue: 1,
+        duration: this.props.duration
+      }
+    ).start()
+  }
+
+  render () {
+    const {fadeAnim} = this.state
+    return (
+      <Animated.View
+        style={{
+          opacity: fadeAnim
+        }}
+      >
+        {this.props.children}
+      </Animated.View>
+    )
+  }
+}
+
 type TableProps = {
   laundry: Laundry,
   bookings: { [string]: Array<?{ id: string, own: boolean }> },
   userId: string,
+  dateOffset: number,
+  onRefresh: () => void,
+  refreshing: boolean,
   machines: Machine[],
-  onDelete: (string) => void,
+  now: moment,
+  onDelete:(string) => void,
   onCreate: (id: string, h: number) => Promise<*>,
 }
-
 type TableState = {
-  sesh: number
+  sesh: number,
+  scrolled: boolean,
+  fromTime: number,
+  toTime: number,
+  data: { hour: number, key: string }[]
+}
+
+function hourMinuteToY (hour: number, minute: number): number {
+  return hour * 2 + Math.floor(minute / 30)
 }
 
 class Table extends React.PureComponent<TableProps, TableState> {
+  _initialFrom = Table._calculateFrom(this.props.laundry)
+  _initialTo = Table._calculateTo(this.props.laundry)
   state = {
-    sesh: 0
+    sesh: 0,
+    scrolled: false,
+    fromTime: this._initialFrom,
+    toTime: this._initialTo,
+    data: Table._generateData(this._initialFrom, this._initialTo)
   }
+  _ref: ?FlatList<*>
+
+  _refPuller = r => { this._ref = r }
+
+  static _generateData (from: number, to: number) {
+    const hFrom = Math.floor(from / 2)
+    const hTo = Math.ceil(to / 2) + 1
+    console.log(hFrom, hTo)
+    const data = Array(hTo - hFrom).fill(0).map((_, i) => ({hour: (i + hFrom) * 2, key: (i + hFrom).toString()}))
+    console.log(data)
+    return data
+  }
+
+  static _calculateFrom (l: Laundry) {
+    if (!l.rules.timeLimit) {
+      return 0
+    }
+    const {hour, minute} = l.rules.timeLimit.from
+    return hourMinuteToY(hour, minute)
+  }
+
+  static _calculateTo (l: Laundry) {
+    if (!l.rules.timeLimit) {
+      return 48
+    }
+    const {hour, minute} = l.rules.timeLimit.to
+    return hourMinuteToY(hour, minute)
+  }
+
+  _nowOffset () {
+    return hourMinuteToY(this.props.now.hours(), this.props.now.minutes())
+  }
+
   _renderCell = (machineId: string, time: number) => {
     const {id, own} = this.props.bookings[machineId][time] || {own: false, id: undefined}
+    const disabled = this.props.dateOffset < 0 ||
+      (this.props.dateOffset === 0 && this._nowOffset() >= time) ||
+      (time < this.state.fromTime) ||
+      (time >= this.state.toTime)
     return (
       <View style={{height: (cellHeight / 2)}}>
         <BookingButton
+          disabled={disabled}
           onCreate={() => this.props.onCreate(machineId, time)}
           onDelete={this.props.onDelete}
           own={own}
@@ -121,38 +207,39 @@ class Table extends React.PureComponent<TableProps, TableState> {
       props.bookings !== this.props.bookings ||
       props.userId !== this.props.userId ||
       props.laundry !== this.props.laundry ||
-      props.machines !== this.props.machines) {
-      this.setState(({sesh}) => ({sesh: sesh + 1}))
+      props.now !== this.props.now ||
+      props.machines !== this.props.machines ||
+      props.dateOffset !== this.props.dateOffset) {
+      this.setState(({sesh}) => ({
+        sesh: sesh + 1,
+        fromTime: Table._calculateFrom(props.laundry),
+        toTime: Table._calculateTo(props.laundry)
+      }))
     }
   }
 
   _renderRow = ({item: {hour, key}}) => {
-    const start = hour >= 0
-    const end = hour <= 46
+    const h1 = hour > this.state.fromTime
+    const h2 = hour < this.state.toTime
     return (
-      <View>
+      <FadeInView duration={500}>
         <View style={[timetableTable.row]}>
           {this.props.machines.map(m => (
             <View style={timetableTable.cellContainer} key={m.id}>
-              {start ? this._renderCell(m.id, hour) : null}
-              {end ? this._renderCell(m.id, hour + 1) : null}
+              {h1 ? this._renderCell(m.id, hour - 1) : null}
+              {h2 ? this._renderCell(m.id, hour) : null}
             </View>
           ))}
         </View>
-        {start && end
+        {h1 && h2
           ? (
             <View style={timetableTable.marker}>
               <Text style={timetableTable.markerText}>{key}</Text>
             </View>)
           : null}
-      </View>
+      </FadeInView>
     )
   }
-
-  _data: { hour: number, key: string }[] = Array(25).fill(0).map((z, key: number) => ({
-    key: key.toString(),
-    hour: key * 2 - 1
-  }))
 
   _getItemLayout = (data, index) => ({
     length: cellHeight * (index && index < 24 ? 1 : 0.5),
@@ -160,14 +247,33 @@ class Table extends React.PureComponent<TableProps, TableState> {
     index
   })
 
+  _onLayout = event => {
+    const {height} = event.nativeEvent.layout
+    if (this.state.scrolled) return
+    const ref = this._ref
+    this.setState({scrolled: true}, () => {
+      if (!ref) return
+      const f = this.state.fromTime - (this.state.fromTime % 2) - 1
+      const t = this.state.toTime + (this.state.toTime % 2) - 1
+      console.log(f, t)
+      const offset = Math.min((this._nowOffset() - f) * cellHeight / 2, (t - f) * cellHeight / 2 - height)
+      console.log('Scrolling', offset)
+      ref.scrollToOffset({offset, animated: false})
+    })
+  }
+
   render () {
     return (
       <View style={{flex: 1}}>
         <FlatList
+          refreshing={this.props.refreshing}
+          onRefresh={this.props.onRefresh}
+          onLayout={this._onLayout}
+          ref={this._refPuller}
           extraData={this.state.sesh}
           getItemLayout={this._getItemLayout}
           renderItem={this._renderRow}
-          data={this._data} />
+          data={this.state.data} />
       </View>
     )
   }
@@ -183,21 +289,26 @@ type TimetableProps = {
 type Data = { [string]: Array<?{ own: boolean, id: string }> }
 
 type TimetableState = {
+  showModal: boolean,
   i: number,
+  loading: boolean,
+  refreshing: boolean,
+  onConfirm?: () => Promise<*>,
   date: moment,
-  width: number,
   machines: Machine[],
   showPicker: boolean,
   data: Data,
 }
 
 class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
-  _initDate = moment.tz(this.props.laundry.timezone).startOf('day')
+  _initDate = moment.tz(this.props.laundry.timezone)
   _initMachines = Timetable._buildMachines(this.props.laundry, this.props.machines)
   state = {
+    loading: false,
+    showModal: false,
+    refreshing: false,
     date: this._initDate,
     i: 0,
-    width: Dimensions.get('window').width,
     machines: this._initMachines,
     showPicker: false,
     data: Timetable._buildData(this._initDate, 0, this.props.bookings, this._initMachines, this.props.user.id)
@@ -210,13 +321,9 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
     }, [])
   }
 
-  _listener = () => {
-    const width = Dimensions.get('window').width
-    this.setState({width})
-  }
-
   _load = () => InteractionManager.runAfterInteractions(async () => {
     console.log('Loading bookings...')
+    this.setState({loading: true})
     const activeDay = this.state.date.clone().add(this.state.i, 'd')
     const activeDayPlusOne = activeDay.clone().add(1, 'd')
     await this.props.stateHandler.sdk.listBookingsInTime(this.props.laundry.id, {
@@ -233,18 +340,18 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
   })
 
   componentDidMount () {
+    setInterval(() => this.setState({date: moment.tz(this.props.laundry.timezone)}), 10 * 1000)
     this._load()
     this.props.stateHandler.on('connected', this._load)
-    Dimensions.addEventListener('change', this._listener)
   }
 
   _updateData (props = this.props) {
     this.setState(({date, i, data, machines}) => {
       const newData = Timetable._buildData(date, i, props.bookings, machines, props.user.id)
       if (deepEqual(data, newData)) {
-        return {}
+        return {loading: false, refreshing: false}
       }
-      return {data: newData}
+      return {data: newData, loading: false, refreshing: false}
     })
   }
 
@@ -254,16 +361,26 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
 
   componentWillUnmount () {
     this.props.stateHandler.removeListener('connected', this._load)
-    Dimensions.removeEventListener('change', this._listener)
   }
 
   _changeDay (change) {
-    this.setState(({i}) => ({i: i + change}), this._load)
+    this.setState(({i}) => ({
+      i: i + change,
+      loading: true,
+      data: Timetable._emptyDataSet(this.state.machines)
+    }), this._load)
   }
 
   _onDelete = (id) => {
-    console.log('Deleting', id)
-    this.props.stateHandler.sdk.api.booking.del(id)
+    this.setState({
+      showModal: true,
+      onConfirm: () => this.props.stateHandler.sdk.api.booking.del(id)
+    })
+  }
+
+  _onRefresh = () => {
+    this.setState({loading: true, refreshing: true})
+    this._load()
   }
 
   _onCreate = async (id, hour) => {
@@ -278,18 +395,39 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
       minute: fromDate.minute()
     }
     const to = {...from, hour: from.minute === 0 ? from.hour : from.hour + 1, minute: from.minute === 30 ? 0 : 30}
-    console.log(from, to)
     try {
       return this.props.stateHandler.sdk.api.machine.createBooking(id, {from, to})
-
-    } catch(err) {
-      console.log(Object.keys(err))
+    } catch (err) {
+      console.log(err.message)
     }
+  }
+  _onGoBack = () => this._changeDay(-1)
+  _onGoForward = () => this._changeDay(1)
+  _onShowPicker = () => this.setState({showPicker: true})
+  _onHidePicker = () => this.setState({showPicker: false})
+  _onPickerDateChange = date => {
+    this.setState(({date: oldDate}) => {
+      const newI = date.diff(oldDate.clone(), 'd')
+      return {i: newI, showPicker: false, data: Timetable._emptyDataSet(this.state.machines)}
+    }, this._load)
+  }
+
+  _onConfirm = async () => {
+    if (!this.state.onConfirm) {
+      return
+    }
+    await this.state.onConfirm()
+    this._onHideModal()
+  }
+  _onHideModal = () => this.setState({showModal: false, onConfirm: undefined})
+
+  static _emptyDataSet (machines: Machine[]) {
+    return machines.reduce((acc, {id}) => ({...acc, [id]: Array(48).fill(null)}), {})
   }
 
   static _buildData (date: moment, i: number, bookings: { [string]: Booking }, machines: Machine[], userId: string): Data {
-    const initial = machines.reduce((acc, {id}) => ({...acc, [id]: Array(48).fill(null)}), {})
-    const d = date.clone().add(i, 'd')
+    const initial = Timetable._emptyDataSet(machines)
+    const d = date.clone().add(i, 'd').startOf('d')
     return Object
       .keys(bookings)
       .map(id => bookings[id])
@@ -301,25 +439,12 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
           if (fromD <= minute && minute < toD) {
             matrix[booking.machine][i] = {
               id: booking.id,
-              from: booking.from,
-              to: booking.to,
               own: booking.owner === userId
             }
           }
         }
         return matrix
       }, initial)
-  }
-
-  _onGoBack = () => this._changeDay(-1)
-  _onGoForward = () => this._changeDay(1)
-  _onShowPicker = () => this.setState({showPicker: true})
-  _onHidePicker = () => this.setState({showPicker: false})
-  _onPickerDateChange = date => {
-    this.setState(({date: oldDate}) => {
-      const newI = date.diff(oldDate.clone(), 'd')
-      return {i: newI, showPicker: false}
-    }, this._load)
   }
 
   _renderPicker () {
@@ -334,6 +459,24 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
         onChange={this._onPickerDateChange} />)
   }
 
+  _loadingStyle = {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0
+  }
+
+  _renderLoading () {
+    if (Platform.OS !== 'ios') return
+    if (!this.state.loading || this.state.refreshing) return
+    return (
+      <View style={this._loadingStyle}>
+        <ActivityIndicator color={constants.darkTheme} size={'large'} style={{flex: 1}} />
+      </View>
+    )
+  }
+
   render () {
     return (
       <View style={{flex: 1}}>
@@ -341,16 +484,26 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
         <TimetableTitle
           today={this.state.date} daysFromToday={this.state.i} onGoBack={this._onGoBack}
           onGoForward={this._onGoForward} onShowPicker={this._onShowPicker} />
-        <View style={{flex: 1, width: this.state.width}}>
+        <View style={{flex: 1}}>
           <MachineTitle machines={this.state.machines} />
           <Table
+            refreshing={(Platform.OS !== 'ios' && this.state.loading) || this.state.refreshing}
+            onRefresh={this._onRefresh}
+            dateOffset={this.state.i}
+            now={this.state.date}
             bookings={this.state.data}
             userId={this.props.user.id}
             laundry={this.props.laundry}
             onDelete={this._onDelete}
             onCreate={this._onCreate}
             machines={this.state.machines} />
+          {this._renderLoading()}
         </View>
+        <Confirm
+          onConfirm={this._onConfirm}
+          onCancel={this._onHideModal}
+          visible={this.state.showModal}
+          id='general.confirm.delete' />
       </View>
     )
   }
@@ -441,7 +594,6 @@ class TimetableLoader extends React.PureComponent<TimetableProps, { loaded: bool
         laundry={this.props.laundry}
         stateHandler={this.props.stateHandler}
         user={this.props.user} />)
-
   }
 }
 

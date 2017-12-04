@@ -3,7 +3,7 @@
 set -e
 
 echo "Testing flow"
-if ./node_modules/.bin/flow --one-line --quiet | grep "^src" -q; then
+if ./node_modules/.bin/flow --one-line --quiet | grep "^Error: src" -q; then
     ./node_modules/.bin/flow
 fi
 echo "Testing eslint"

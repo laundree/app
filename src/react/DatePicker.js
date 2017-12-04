@@ -16,7 +16,6 @@ type DatePickerProps = {
 }
 
 class DatePickerAndroidWrapper extends React.PureComponent<DatePickerProps> {
-
   async componentDidMount () {
     const {action, year, month, day} = await DatePickerAndroid.open({
       date: this.props.date.toDate(),

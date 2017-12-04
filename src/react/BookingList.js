@@ -14,6 +14,7 @@ import moment from 'moment-timezone'
 import { bookingList, constants } from '../style'
 import Confirm from './modal/Confirm'
 import { FormattedDate, FormattedMessage } from 'react-intl'
+// eslint-disable-next-line no-unused-vars
 import type { Booking, Machine, User, Laundry, State } from 'laundree-sdk/lib/redux'
 import type { StateHandler } from '../stateHandler'
 import { connect } from 'react-redux'
@@ -89,13 +90,11 @@ class BookingList extends React.PureComponent<BookingListProps, BookingListState
       <Text style={bookingList.headerText}> {
         d.isSame(moment(), 'd')
           ? <FormattedMessage id='timetable.today' />
-          : d.isSame(moment().add(1, 'day'), 'd')
-          ? <FormattedMessage id='timetable.tomorrow' />
-          : <Text>
+          : (d.isSame(moment().add(1, 'day'), 'd') ? <FormattedMessage id='timetable.tomorrow' /> : <Text>
             <FormattedDate value={d} weekday='long' />
             <Text>{' '}</Text>
             <FormattedDate value={d} month='numeric' day='numeric' />
-          </Text>
+          </Text>)
       } </Text>
     </View>
   }

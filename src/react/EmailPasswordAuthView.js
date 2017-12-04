@@ -14,7 +14,7 @@ import { FormattedMessage } from 'react-intl'
 
 type EmailPasswordAuthViewProps = {
   stateHandler: StateHandler,
-  onSuccess: ({ secret: string, userId: string }) => void,
+  onSuccess: (s: { secret: string, userId: string }) => void,
   onAuthFailed: (err: Error) => void,
   onOpenForgot: () => void
 }
@@ -22,7 +22,7 @@ type EmailPasswordAuthViewProps = {
 export default class EmailPasswordAuthView extends React.PureComponent<EmailPasswordAuthViewProps, { email: string, password: string, loading: boolean }> {
   state = {email: '', password: '', loading: false}
 
-  async login () {
+  login = async () => {
     const {email, password} = this.state
     this.setState({loading: true})
     try {
@@ -37,6 +37,9 @@ export default class EmailPasswordAuthView extends React.PureComponent<EmailPass
     this.setState({loading: false})
   }
 
+  _onChangeEmail = email => this.setState({email: email.trim()})
+  _onChangePassword = password => this.setState({password})
+
   render () {
     // TODO FancyTextInput should use formatMessage
     return (
@@ -44,17 +47,17 @@ export default class EmailPasswordAuthView extends React.PureComponent<EmailPass
         <View style={login.input}>
           <FancyTextInput
             label={'E-mail address'} keyboardType={'email-address'} value={this.state.email}
-            onChangeText={email => this.setState({email: email.trim()})} />
+            onChangeText={this._onChangeEmail} />
         </View>
         <View style={login.input}>
           <FancyTextInput
             label={'Password'} secureTextEntry value={this.state.password}
-            onChangeText={password => this.setState({password})} />
+            onChangeText={this._onChangePassword} />
         </View>
         <View style={login.buttonInput}>
           <FancyTextButton
             disabled={this.isDisabled()}
-            onPress={() => this.login()}
+            onPress={this.login}
             id='login.button' />
         </View>
         <TouchableOpacity onPress={this.props.onOpenForgot}>
