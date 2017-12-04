@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Upgrade all dependencies
+- Performance improvements
+- Rewrite timetable
+
 ## [0.2.3]
 
 - Add better privacy description
