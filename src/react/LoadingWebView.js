@@ -23,6 +23,8 @@ type LoadingWebViewProps = {
 export default class LoadingWebView extends React.PureComponent<LoadingWebViewProps, {loaded: boolean}> {
   state = {loaded: false}
 
+  _onLoadEnd = () => this.setState({loaded: true})
+
   render () {
     return (
       <View style={this.props.viewStyle}>
@@ -35,7 +37,7 @@ export default class LoadingWebView extends React.PureComponent<LoadingWebViewPr
           style={this.props.style}
           onLoadStart={this.props.onLoadStart}
           onMessage={this.props.onMessage}
-          onLoadEnd={() => this.setState({loaded: true})}
+          onLoadEnd={this._onLoadEnd}
           injectedJavaScript={this.props.injectedJavaScript}
           userAgent={this.props.fakeUserAgent ? 'Mozilla/5.0' : undefined}
           automaticallyAdjustContentInsets={false} />

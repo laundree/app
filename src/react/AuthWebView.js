@@ -10,7 +10,7 @@ type AuthWebViewProps = {
   source: {
     uri: string
   },
-  onSuccess: ({ userId: string, secret: string }) => void,
+  onSuccess: (s: { userId: string, secret: string }) => void,
   onAuthFailed: () => void
 }
 type AuthWebViewState = { onMessage: ?() => void }

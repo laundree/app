@@ -12,6 +12,7 @@ import FancyTextButton from './input/FancyTextButton'
 import { settings } from '../style'
 import { FormattedMessage } from 'react-intl'
 import type { StateHandler } from '../stateHandler'
+// eslint-disable-next-line no-unused-vars
 import type { User, Laundry, State } from 'laundree-sdk/lib/redux'
 import { connect } from 'react-redux'
 

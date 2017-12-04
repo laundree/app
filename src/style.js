@@ -541,8 +541,8 @@ export const timetable = StyleSheet.create({
     alignItems: 'center'
   },
   arrowHeader: {
-    height: 17,
-    width: 17
+    height: 20,
+    width: 20
   },
   arrowHeaderDisabled: {
     opacity: 0.1
@@ -563,7 +563,7 @@ export const timetable = StyleSheet.create({
     flex: 1
   },
   dateNavigator: {
-    width: 50,
+    padding: 15,
     alignItems: 'center'
   },
   titleContainer: {

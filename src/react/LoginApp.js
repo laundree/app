@@ -22,7 +22,7 @@ import { StateHandler } from '../stateHandler'
 type ScreenProps = {
   authFailed: boolean,
   stateHandler: StateHandler,
-  onAuthFailed: (boolean) => void
+  onAuthFailed: (f: boolean) => void
 }
 
 class LoginScreen extends React.PureComponent<{ screenProps: ScreenProps, navigation: * }> {
