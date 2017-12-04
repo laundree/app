@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add better privacy description
+
 ## [0.2.2]
 
 - Add new IOS assets
