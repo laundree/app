@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [0.2.3]
+
 - Add better privacy description
 
 ## [0.2.2]
