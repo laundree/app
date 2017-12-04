@@ -90,7 +90,7 @@ type TableProps = {
   userId: string,
   machines: Machine[],
   onDelete: (string) => void,
-  onCreate: (id: string, h: number) => Promise<void>,
+  onCreate: (id: string, h: number) => Promise<*>,
 }
 
 type TableState = {
