@@ -156,10 +156,7 @@ class Table extends React.PureComponent<TableProps, TableState> {
   static _generateData (from: number, to: number) {
     const hFrom = Math.floor(from / 2)
     const hTo = Math.ceil(to / 2) + 1
-    console.log(hFrom, hTo)
-    const data = Array(hTo - hFrom).fill(0).map((_, i) => ({hour: (i + hFrom) * 2, key: (i + hFrom).toString()}))
-    console.log(data)
-    return data
+    return Array(hTo - hFrom).fill(0).map((_, i) => ({hour: (i + hFrom) * 2, key: (i + hFrom).toString()}))
   }
 
   static _calculateFrom (l: Laundry) {
@@ -255,7 +252,6 @@ class Table extends React.PureComponent<TableProps, TableState> {
       if (!ref) return
       const f = this.state.fromTime - (this.state.fromTime % 2) - 1
       const t = this.state.toTime + (this.state.toTime % 2) - 1
-      console.log(f, t)
       const offset = Math.min((this._nowOffset() - f) * cellHeight / 2, (t - f) * cellHeight / 2 - height)
       console.log('Scrolling', offset)
       ref.scrollToOffset({offset, animated: false})
@@ -407,7 +403,7 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
   _onHidePicker = () => this.setState({showPicker: false})
   _onPickerDateChange = date => {
     this.setState(({date: oldDate}) => {
-      const newI = date.diff(oldDate.clone(), 'd')
+      const newI = date.diff(oldDate.clone().startOf('d'), 'd')
       return {i: newI, showPicker: false, data: Timetable._emptyDataSet(this.state.machines)}
     }, this._load)
   }
