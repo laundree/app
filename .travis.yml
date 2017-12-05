@@ -1,15 +1,19 @@
 language: node_js
 node_js:
-- '7'
+- '8'
 cache:
   directories:
   - node_modules
+before_install:
+- npm i -g npm@5
+- npm i -g greenkeeper-lockfile@1
+- openssl aes-256-cbc -K $encrypted_d5ba94eb55ce_key -iv $encrypted_d5ba94eb55ce_iv -in secrets.tar.enc -out secrets.tar -d
+- tar xvf secrets.tar
+before_script: greenkeeper-lockfile-update
+after_script: greenkeeper-lockfile-upload
 install:
 - npm install -g react-native-cli
 script:
 - scripts/checkChangeLog.sh
 - npm install
 - npm test
-before_install:
-- openssl aes-256-cbc -K $encrypted_d5ba94eb55ce_key -iv $encrypted_d5ba94eb55ce_iv -in secrets.tar.enc -out secrets.tar -d
-- tar xvf secrets.tar
