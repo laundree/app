@@ -11,7 +11,7 @@
     "buffer": "^5.0.6",
     "events": "^1.1.1",
     "extend": "^3.0.0",
-    "fast-deep-equal": "^1.0.0",
+    "fast-deep-equal": "^2.0.1",
     "intl": "^1.2.5",
     "laundree-sdk": "^0.3.6",
     "moment-timezone": "^0.5.14",
