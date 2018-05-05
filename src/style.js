@@ -682,10 +682,12 @@ export const modal = StyleSheet.create({
     color: constants.defaultTextColor
   },
   buttonContainer: {
-    marginTop: 20
+    marginTop: 20,
+    flexDirection: 'row'
   },
   button: {
-    marginTop: 10
+    flex: 1,
+    margin: 5
   },
   redButton: {
     backgroundColor: constants.colorRed

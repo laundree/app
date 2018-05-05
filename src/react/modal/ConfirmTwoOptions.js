@@ -18,7 +18,7 @@ type Props = {
   visible?: boolean
 }
 
-const Confirm = ({id, visible, onCancel, onConfirm}: Props) => (
+const ConfirmTwoOptions = ({id, visible, onCancel, onConfirm, onConfirmSlot}: Props) => (
   <Base visible={visible} onRequestClose={onCancel}>
     <View style={modal.title}>
       <Text style={modal.titleText}>
@@ -36,7 +36,13 @@ const Confirm = ({id, visible, onCancel, onConfirm}: Props) => (
           id='general.confirm.delete'
           onPress={onConfirm} />
       </View>
+      <View style={modal.button}>
+        <FancyTextButton
+          id='general.confirm.delete.slot'
+          onPress={onConfirmSlot}
+          visible={false} />
+      </View>
     </View>
   </Base>)
 
-export default Confirm
+export default ConfirmTwoOptions

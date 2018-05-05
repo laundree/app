@@ -21,6 +21,7 @@ import moment from 'moment-timezone'
 import DatePicker from './DatePicker'
 import deepEqual from 'fast-deep-equal'
 import Confirm from './modal/Confirm'
+import ConfirmTwoOptions from './modal/ConfirmTwoOptions'
 
 const cellHeight = 100
 
@@ -62,12 +63,17 @@ class BookingButton extends React.PureComponent<BookingButtonProps, { created: b
       return
     }
     if (!this.props.own) return
-    this.props.onDelete(this.props.booking)
+    if (this.props.isBoundarySlot) {
+      this.props.onPressBoundarySlot(this.props.booking, this.props.time)
+      return
+    }
+    this.props.onPressMiddleSlot(this.props.booking)
   }
 
   render () {
     return (
       <View style={this._renderCellBgStyle()}>
+        <Text>{this.props.time+" "+this.props.from+" "+this.props.to}</Text>
         <TouchableOpacity
           activeOpacity={0}
           onPress={this._onPress}
@@ -80,10 +86,15 @@ class BookingButton extends React.PureComponent<BookingButtonProps, { created: b
 
 type BookingButtonProps = {
   booking?: string,
+  time?: number,
+  from?: number,
+  to?: number,
   own?: boolean,
   disabled?: boolean,
   onCreate: () => Promise<*>,
-  onDelete: (id: string) => void
+  onPressMiddleSlot: (id: string) => void,
+  onPressBoundarySlot: (id: string, time: number) => void,
+  isBoundarySlot?: boolean
 }
 
 class FadeInView extends React.PureComponent<{ duration: number, children: * }, { fadeAnim: * }> {
@@ -117,14 +128,15 @@ class FadeInView extends React.PureComponent<{ duration: number, children: * }, 
 
 type TableProps = {
   laundry: Laundry,
-  bookings: { [string]: Array<?{ id: string, own: boolean }> },
+  bookings: { [string]: Array<?{ id: string, own: boolean, from: number, to: number }> },
   userId: string,
   dateOffset: number,
   onRefresh: () => void,
   refreshing: boolean,
   machines: Machine[],
   now: moment,
-  onDelete:(string) => void,
+  onPressMiddleSlot:(string) => void,
+  onPressBoundarySlot:(string, number) => void,
   onCreate: (id: string, h: number) => Promise<*>,
 }
 type TableState = {
@@ -180,19 +192,25 @@ class Table extends React.PureComponent<TableProps, TableState> {
   }
 
   _renderCell = (machineId: string, time: number) => {
-    const {id, own} = this.props.bookings[machineId][time] || {own: false, id: undefined}
+    const {id, own, from, to} = this.props.bookings[machineId][time] || {own: false, id: undefined, from: undefined, to: undefined}
     const disabled = this.props.dateOffset < 0 ||
       (this.props.dateOffset === 0 && this._nowOffset() >= time) ||
       (time < this.state.fromTime) ||
       (time >= this.state.toTime)
+    const isBoundarySlot = time == from || time == to
     return (
       <View style={{height: (cellHeight / 2)}}>
         <BookingButton
           disabled={disabled}
           onCreate={() => this.props.onCreate(machineId, time)}
-          onDelete={this.props.onDelete}
+          onPressMiddleSlot={this.props.onPressMiddleSlot}
+          onPressBoundarySlot={this.props.onPressBoundarySlot}
           own={own}
           booking={id}
+          time={time}
+          from={id}
+          to={own}
+          isBoundarySlot={isBoundarySlot}
           data={{}} />
       </View>
 
@@ -286,10 +304,12 @@ type Data = { [string]: Array<?{ own: boolean, id: string }> }
 
 type TimetableState = {
   showModal: boolean,
+  showModalForSlots: boolean,
   i: number,
   loading: boolean,
   refreshing: boolean,
   onConfirm?: () => Promise<*>,
+  onConfirmSlot?: () => Promise<*>,
   date: moment,
   machines: Machine[],
   showPicker: boolean,
@@ -302,6 +322,7 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
   state = {
     loading: false,
     showModal: false,
+    showModalForSlots: false,
     refreshing: false,
     date: this._initDate,
     i: 0,
@@ -367,10 +388,18 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
     }), this._load)
   }
 
-  _onDelete = (id) => {
+  _onPressMiddleSlot = (id) => {
     this.setState({
       showModal: true,
       onConfirm: () => this.props.stateHandler.sdk.api.booking.del(id)
+    })
+  }
+
+  _onPressBoundarySlot = (id, time) => {
+    this.setState({
+      showModalForSlots: true,
+      onConfirm: () => this.props.stateHandler.sdk.api.booking.del(id),
+      onConfirmSlot: () => this.props.stateHandler.sdk.api.booking.del(id)
     })
   }
 
@@ -415,7 +444,18 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
     await this.state.onConfirm()
     this._onHideModal()
   }
+
+  _onConfirmSlot = async () => {
+    if (!this.state.onConfirmSlot) {
+      return
+    }
+    await this.state.onConfirmSlot()
+    this._onHideModalTwoOptions()
+  }
+
   _onHideModal = () => this.setState({showModal: false, onConfirm: undefined})
+
+  _onHideModalTwoOptions = () => this.setState({showModalForSlots: false, onConfirm: undefined, onConfirmSlot: undefined})
 
   static _emptyDataSet (machines: Machine[]) {
     return machines.reduce((acc, {id}) => ({...acc, [id]: Array(48).fill(null)}), {})
@@ -490,7 +530,8 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
             bookings={this.state.data}
             userId={this.props.user.id}
             laundry={this.props.laundry}
-            onDelete={this._onDelete}
+            onPressMiddleSlot={this._onPressMiddleSlot}
+            onPressBoundarySlot={this._onPressBoundarySlot}
             onCreate={this._onCreate}
             machines={this.state.machines} />
           {this._renderLoading()}
@@ -499,7 +540,13 @@ class Timetable extends React.PureComponent<TimetableProps, TimetableState> {
           onConfirm={this._onConfirm}
           onCancel={this._onHideModal}
           visible={this.state.showModal}
-          id='general.confirm.delete' />
+          id='general.confirm.delete.message' />
+        <ConfirmTwoOptions
+          onConfirm={this._onConfirm}
+          onConfirmSlot={this._onConfirmSlot}
+          onCancel={this._onHideModalTwoOptions}
+          visible={this.state.showModalForSlots}
+          id='general.confirm.delete.message' />
       </View>
     )
   }
