@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "buffer": "^5.0.6",
-    "events": "^1.1.1",
+    "events": "^2.1.0",
     "extend": "^3.0.0",
     "fast-deep-equal": "^1.0.0",
     "intl": "^1.2.5",
