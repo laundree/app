@@ -15,7 +15,7 @@
     "intl": "^1.2.5",
     "laundree-sdk": "^0.3.6",
     "moment-timezone": "^0.5.14",
-    "react": "16.2.0",
+    "react": "16.6.1",
     "react-intl": "^2.2.3",
     "react-native": "0.50.4",
     "react-native-camera": "^0.12.0",
